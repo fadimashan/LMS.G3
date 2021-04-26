@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LMS.Core.Entities1
+namespace LMS.Core.Entities
 {
-    public class Module
+    public class Course
     {
 
         public int Id { get; set; }
@@ -18,5 +18,6 @@ namespace LMS.Core.Entities1
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
+
     }
 }

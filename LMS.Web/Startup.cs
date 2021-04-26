@@ -28,7 +28,8 @@ namespace LMS.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options => {
+            services.AddDbContext<LMSWebContext>(options =>
+            {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     options.UseSqlServer(
@@ -42,12 +43,21 @@ namespace LMS.Web
                     );
                 }
             });
-            
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<IdentityUser>(options => { 
+                options.SignIn.RequireConfirmedAccount = true;
+            })
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<LMSWebContext>();
+
+            services.Configure<LMSWebContext>(o => o.Database.Migrate());
+
             services.AddControllersWithViews();
+
+            services.AddDbContext<LMSWebContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("LMSWebContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
