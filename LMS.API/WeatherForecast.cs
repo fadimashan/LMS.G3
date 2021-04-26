@@ -1,6 +1,6 @@
 using System;
 
-namespace Literature.API
+namespace LMS.API
 {
     public class WeatherForecast
     {
