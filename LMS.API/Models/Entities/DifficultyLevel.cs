@@ -3,7 +3,7 @@ namespace LMS.API.Models.Entities
     public enum DifficultyLevel
     {
         Beginner,
-        Intermediary,
+        Intermediate,
         Advanced,
         None
     }

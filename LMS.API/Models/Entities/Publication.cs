@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LMS.API.Models.Entities
 {
-    public class Literature
+    public class Publication
     {
         public int Id { get; set; }
         public string Title  { get; set; }
@@ -12,7 +12,8 @@ namespace LMS.API.Models.Entities
         
         public DifficultyLevel Level { get; set; }
         
-        public LiteratureType Type { get; set; }
+        public int TypeId { get; set; }
+        public PublicationType Type { get; set; }
         
         public int SubjectId  { get; set; }
         public Subject Subject  { get; set; }

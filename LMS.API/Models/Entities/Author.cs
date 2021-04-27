@@ -10,6 +10,6 @@ namespace LMS.API.Models.Entities
         public string LastName  { get; set; }
         public DateTime DateOfBirth { get; set; }
         
-        public ICollection<Literature> Literatures { get; set; }
+        public ICollection<Publication> Publications { get; set; }
     }
 }

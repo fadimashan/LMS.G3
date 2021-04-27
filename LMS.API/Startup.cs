@@ -36,11 +36,11 @@ namespace LMS.API
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    options.UseSqlServer(Configuration.GetConnectionString("ConnectionSQLServer"));
+                    options.UseSqlServer(Configuration.GetConnectionString("SQLServerConnectionApi"));
                 }
                 else
                 {
-                    options.UseSqlite(Configuration.GetConnectionString("ConnectionSQLite"));
+                    options.UseSqlite(Configuration.GetConnectionString("SQLiteConnectionApi"));
                 }
             }); 
 
