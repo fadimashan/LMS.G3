@@ -1757,5 +1757,6 @@ ol {
 }
 
 #register {
-	background-image: url("img/bg.jpg");
+	background-image: url("../img/bg.jpg");
+	width: 100%;
 }
