@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -25,10 +26,12 @@
 
 </head>
 <body>
+
+
     @*Page Preloder*@
     @*<div id="preloder">
-        <div class="loader"></div>
-    </div>*@
+            <div class="loader"></div>
+        </div>*@
 
     <!-- Header section -->
     <header class="header-section">
@@ -43,7 +46,7 @@
                     </div>
                 </div>
                 <div class="col-lg-9 col-md-9">
-                    <a href="" class="site-btn header-btn">Login</a>
+
                     <nav class="main-menu">
                         <ul>
                             <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
@@ -65,22 +68,27 @@
                 <h2>Get The Best Free Online Courses</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla <br> dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
             </div>
-            <div class="row">
-                <div class="col-lg-10 offset-lg-1">
-                    <form class="intro-newslatter">
-                        <input type="text" placeholder="Name">
-                        <input type="text" class="last-s" placeholder="E-mail">
-                        <a class="site-btn" asp-area="Identity" asp-page="/Account/Register">Sign Up Now</a>
-                    </form>
-                </div>
-            </div>
+           
+        
+            @*<if exclude-if="showCode">
+                    <div class="row justify-content-center">
+
+                        <a asp-area="Identity" asp-page="/Account/Register" class="site-btn m-2">Sign Up</a>
+                        <a asp-area="Identity" class="site-btn m-2" asp-page="/Account/Login">Login</a>
+
+                    </div>
+             </if>*@
+            
+            
+
+
+
         </div>
     </section>
     <!-- Hero section end -->
     <!--<header class="header-section">
 
         <!-- Header section -->
-    -->
     <!--@*<header >*@
     <div class="container">
         <div class="row">
@@ -159,7 +167,7 @@
                 </div>
             </div>
         </nav>*@
-    </header>
+
 
     <div class="container">
         <main role="main" class="pb-3">
