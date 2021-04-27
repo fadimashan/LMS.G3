@@ -1,28 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LMS.Core.Entities;
+using LMS.Data.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using LMS.Core.Entities;
-using LMS.Data.Data;
 
 namespace LMS.Web.Controllers
 {
+    [Authorize]
     public class CoursesController : Controller
     {
-        private readonly LMSWebContext _context;
+        private readonly LMSWebContext db;
 
         public CoursesController(LMSWebContext context)
         {
-            _context = context;
+            db = context;
+
         }
 
         // GET: Courses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Course.ToListAsync());
+            //List of Users
+            var users = db.Users.ToList();
+
+          
+
+            return View(await db.Course.ToListAsync());
         }
 
         // GET: Courses/Details/5
@@ -33,7 +38,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Course
+            var course = await db.Course
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (course == null)
             {
@@ -58,8 +63,8 @@ namespace LMS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(course);
-                await _context.SaveChangesAsync();
+                db.Add(course);
+                await db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(course);
@@ -73,7 +78,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Course.FindAsync(id);
+            var course = await db.Course.FindAsync(id);
             if (course == null)
             {
                 return NotFound();
@@ -97,8 +102,8 @@ namespace LMS.Web.Controllers
             {
                 try
                 {
-                    _context.Update(course);
-                    await _context.SaveChangesAsync();
+                    db.Update(course);
+                    await db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,7 +129,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Course
+            var course = await db.Course
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (course == null)
             {
@@ -139,15 +144,15 @@ namespace LMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var course = await _context.Course.FindAsync(id);
-            _context.Course.Remove(course);
-            await _context.SaveChangesAsync();
+            var course = await db.Course.FindAsync(id);
+            db.Course.Remove(course);
+            await db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CourseExists(int id)
         {
-            return _context.Course.Any(e => e.Id == id);
+            return db.Course.Any(e => e.Id == id);
         }
     }
 }
