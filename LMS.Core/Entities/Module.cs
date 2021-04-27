@@ -18,5 +18,12 @@ namespace LMS.Core.Entities
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
+
+        public int CourseId { get; set; }
+
+        // Navigation Properties
+        public Course Course { get; set; }
+        public ICollection<Activity> Activities { get; set; }
+        public ICollection<Document> Documents { get; set; }
     }
 }

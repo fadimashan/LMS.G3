@@ -17,6 +17,12 @@ namespace LMS.Core.Entities
 
         //public string Email { get; set; }
 
+        public int CourseId { get; set; }
+
+        // Navigation Properties
+        public Course Course { get; set; }
+        public ICollection<Document> Documents { get; set; }
+
 
 
     }
