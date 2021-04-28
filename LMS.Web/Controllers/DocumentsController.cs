@@ -7,27 +7,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Data.Data;
-using Microsoft.AspNetCore.Authorization;
 
 namespace LMS.Web.Controllers
 {
-    [Authorize]
-    public class ModulesController : Controller
+    public class DocumentsController : Controller
     {
-        private readonly LMSWebContext db;
+        private readonly LMSWebContext _context;
 
-        public ModulesController(LMSWebContext context)
+        public DocumentsController(LMSWebContext context)
         {
-            db = context;
+            _context = context;
         }
 
-        // GET: Modules
+        // GET: Documents
         public async Task<IActionResult> Index()
         {
-            return View(await db.Module.ToListAsync());
+            return View(await _context.Document.ToListAsync());
         }
 
-        // GET: Modules/Details/5
+        // GET: Documents/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,49 +33,39 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var @module = await db.Module
+            var document = await _context.Document
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@module == null)
+            if (document == null)
             {
                 return NotFound();
             }
 
-            return View(@module);
+            return View(document);
         }
 
-        // GET: Modules/Create
+        // GET: Documents/Create
         public IActionResult Create()
         {
-            var model = new Module
-            {
-                GetAllCourses = GetAllCourses()
-            };
-
-            return View(model);
+            return View();
         }
 
-        // POST: Modules/Create
+        // POST: Documents/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate,CourseId")] Module @module)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,UploadTime")] Document document)
         {
             if (ModelState.IsValid)
             {
-                db.Add(@module);
-                await db.SaveChangesAsync();
-                var moduleFromdb = db.Module.Where(m => m.Title == module.Title && m.StartDate == module.StartDate && m.EndDate == module.EndDate).FirstOrDefault();
-                var course = db.Course.Find(module.CourseId);
-                
-                await db.SaveChangesAsync();
-
+                _context.Add(document);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(@module);
+            return View(document);
         }
 
-        // GET: Modules/Edit/5
+        // GET: Documents/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,22 +73,22 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var @module = await db.Module.FindAsync(id);
-            if (@module == null)
+            var document = await _context.Document.FindAsync(id);
+            if (document == null)
             {
                 return NotFound();
             }
-            return View(@module);
+            return View(document);
         }
 
-        // POST: Modules/Edit/5
+        // POST: Documents/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,StartDate,EndDate")] Module @module)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,UploadTime")] Document document)
         {
-            if (id != @module.Id)
+            if (id != document.Id)
             {
                 return NotFound();
             }
@@ -109,12 +97,12 @@ namespace LMS.Web.Controllers
             {
                 try
                 {
-                    db.Update(@module);
-                    await db.SaveChangesAsync();
+                    _context.Update(document);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ModuleExists(@module.Id))
+                    if (!DocumentExists(document.Id))
                     {
                         return NotFound();
                     }
@@ -125,10 +113,10 @@ namespace LMS.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(@module);
+            return View(document);
         }
 
-        // GET: Modules/Delete/5
+        // GET: Documents/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,51 +124,30 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var @module = await db.Module
+            var document = await _context.Document
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@module == null)
+            if (document == null)
             {
                 return NotFound();
             }
 
-            return View(@module);
+            return View(document);
         }
 
-        // POST: Modules/Delete/5
+        // POST: Documents/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @module = await db.Module.FindAsync(id);
-            db.Module.Remove(@module);
-            await db.SaveChangesAsync();
+            var document = await _context.Document.FindAsync(id);
+            _context.Document.Remove(document);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ModuleExists(int id)
+        private bool DocumentExists(int id)
         {
-            return db.Module.Any(e => e.Id == id);
+            return _context.Document.Any(e => e.Id == id);
         }
-
-
-
-        public IEnumerable<SelectListItem> GetAllCourses()
-        {
-            var courses = new List<SelectListItem>();
-
-            foreach (var course in  db.Course.ToList())
-            {
-                var selectListItem = (new SelectListItem
-                {
-                    Text = course.Title,
-                    Value = course.Id.ToString()
-                    
-                }) ;
-                courses.Add(selectListItem);
-            }
-            return (courses);
-
-        }
-
     }
 }

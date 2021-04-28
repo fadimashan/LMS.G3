@@ -12,22 +12,22 @@ using Microsoft.AspNetCore.Authorization;
 namespace LMS.Web.Controllers
 {
     [Authorize]
-    public class ModulesController : Controller
+    public class ActivitiesController : Controller
     {
-        private readonly LMSWebContext db;
+        private readonly LMSWebContext _context;
 
-        public ModulesController(LMSWebContext context)
+        public ActivitiesController(LMSWebContext context)
         {
-            db = context;
+            _context = context;
         }
 
-        // GET: Modules
+        // GET: Activities
         public async Task<IActionResult> Index()
         {
-            return View(await db.Module.ToListAsync());
+            return View(await _context.Activity.ToListAsync());
         }
 
-        // GET: Modules/Details/5
+        // GET: Activities/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,49 +35,39 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var @module = await db.Module
+            var activity = await _context.Activity
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@module == null)
+            if (activity == null)
             {
                 return NotFound();
             }
 
-            return View(@module);
+            return View(activity);
         }
 
-        // GET: Modules/Create
+        // GET: Activities/Create
         public IActionResult Create()
         {
-            var model = new Module
-            {
-                GetAllCourses = GetAllCourses()
-            };
-
-            return View(model);
+            return View();
         }
 
-        // POST: Modules/Create
+        // POST: Activities/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate,CourseId")] Module @module)
+        public async Task<IActionResult> Create([Bind("Id,Name,ActivityType,StartDate,EndDate,Description")] Activity activity)
         {
             if (ModelState.IsValid)
             {
-                db.Add(@module);
-                await db.SaveChangesAsync();
-                var moduleFromdb = db.Module.Where(m => m.Title == module.Title && m.StartDate == module.StartDate && m.EndDate == module.EndDate).FirstOrDefault();
-                var course = db.Course.Find(module.CourseId);
-                
-                await db.SaveChangesAsync();
-
+                _context.Add(activity);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(@module);
+            return View(activity);
         }
 
-        // GET: Modules/Edit/5
+        // GET: Activities/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,22 +75,22 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var @module = await db.Module.FindAsync(id);
-            if (@module == null)
+            var activity = await _context.Activity.FindAsync(id);
+            if (activity == null)
             {
                 return NotFound();
             }
-            return View(@module);
+            return View(activity);
         }
 
-        // POST: Modules/Edit/5
+        // POST: Activities/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,StartDate,EndDate")] Module @module)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ActivityType,StartDate,EndDate,Description")] Activity activity)
         {
-            if (id != @module.Id)
+            if (id != activity.Id)
             {
                 return NotFound();
             }
@@ -109,12 +99,12 @@ namespace LMS.Web.Controllers
             {
                 try
                 {
-                    db.Update(@module);
-                    await db.SaveChangesAsync();
+                    _context.Update(activity);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ModuleExists(@module.Id))
+                    if (!ActivityExists(activity.Id))
                     {
                         return NotFound();
                     }
@@ -125,10 +115,10 @@ namespace LMS.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(@module);
+            return View(activity);
         }
 
-        // GET: Modules/Delete/5
+        // GET: Activities/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,51 +126,30 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var @module = await db.Module
+            var activity = await _context.Activity
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@module == null)
+            if (activity == null)
             {
                 return NotFound();
             }
 
-            return View(@module);
+            return View(activity);
         }
 
-        // POST: Modules/Delete/5
+        // POST: Activities/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @module = await db.Module.FindAsync(id);
-            db.Module.Remove(@module);
-            await db.SaveChangesAsync();
+            var activity = await _context.Activity.FindAsync(id);
+            _context.Activity.Remove(activity);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ModuleExists(int id)
+        private bool ActivityExists(int id)
         {
-            return db.Module.Any(e => e.Id == id);
+            return _context.Activity.Any(e => e.Id == id);
         }
-
-
-
-        public IEnumerable<SelectListItem> GetAllCourses()
-        {
-            var courses = new List<SelectListItem>();
-
-            foreach (var course in  db.Course.ToList())
-            {
-                var selectListItem = (new SelectListItem
-                {
-                    Text = course.Title,
-                    Value = course.Id.ToString()
-                    
-                }) ;
-                courses.Add(selectListItem);
-            }
-            return (courses);
-
-        }
-
     }
 }

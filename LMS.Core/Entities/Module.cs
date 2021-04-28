@@ -22,13 +22,16 @@ namespace LMS.Core.Entities
 
         public DateTime EndDate { get; set; }
 
-        //[Required]
         public int CourseId { get; set; }
+
+        public Course Course { get; set; }
 
         public ICollection<Activity> Activities { get; set; }
 
         [NotMapped]
         public IEnumerable<SelectListItem> GetAllCourses { get; set; }
+
+        public ICollection<Document> Documents { get; set; }
 
 
     }
