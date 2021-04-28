@@ -21,33 +21,66 @@ namespace LMS.Data.Data
             using (var context = new LMSWebContext(services.GetRequiredService<DbContextOptions<LMSWebContext>>()))
             {
 
-                //  if (await context.GymClasses.AnyAsync()) return;
-
                 var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                 var listOfStudent = new List<ApplicationUser>();
-                var courses = new List<Course>();
 
                 fake = new Faker("sv");
 
+                var courses = GetCourses(2);
+                var modules = GetModules(20);
+                var activities = GetActivities(10);
+                var documents = GetDocuments(20, listOfStudent);
 
-                for (int i = 0; i < 2; i++)
+                foreach (var course in courses)
                 {
-                    var date = DateTime.Now.AddDays(fake.Random.Int(-2, 2));
-                    var course = new Course
-                    {
-                        Title = fake.Company.CatchPhrase(),
-                        Description = fake.Hacker.Verb(),
-                        StartDate = date,
-                        EndDate = date.AddMonths(6)
-                    };
+                    var someModules = new List<Module>();
+                    var someDocs = new List<Document>(); ;
+                    var r = new Random();
 
-                    courses.Add(course);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        someModules.Add(modules[r.Next(0, 5)]);
+                        someDocs.Add(documents[r.Next(0, 20)]);
+                    }
+                    course.Modules = someModules;
+                    course.Documents = someDocs;
                 }
 
-                await context.AddRangeAsync(courses);
+                foreach (var module in modules)
+                {
+                    var someActivites = new List<Activity>();
+                    var someDocs = new List<Document>(); ;
+                    var r = new Random();
 
-                // i need to use for loop to creating student
+                    for (int i = 0; i < 5; i++)
+                    {
+                        someActivites.Add(activities[r.Next(0, 5)]);
+                        var doc = fake.PickRandom(documents);
+                        if (courses.Any(c => c.Documents.Contains(doc))) continue;
+                        someDocs.Add(doc);
+                    }
+                    module.Activities = someActivites;
+                    module.Documents = someDocs;
+                }
+
+
+                foreach (var activty in activities)
+                {
+                    var someDocs = new List<Document>(); ;
+                    var r = new Random();
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var doc = fake.PickRandom(documents);
+                        if (courses.Any(c => c.Documents.Contains(doc))) continue;
+                        if (modules.Any(c => c.Documents.Contains(doc))) continue;
+                        someDocs.Add(doc);
+                    }
+                    activty.Documents = someDocs;
+                }
+
+
 
                 var roleNames = new[] { "Teacher", "Student" };
 
@@ -115,62 +148,57 @@ namespace LMS.Data.Data
 
                     if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
                 }
-
-
-                var modules = new List<Module>();
-                for (int i = 0; i < 5; i++)
-                {
-                    var date = DateTime.Now.AddDays(fake.Random.Int(-2, 2));
-
-                    var module = new Module
-                    {
-                        Title = fake.Company.CatchPhrase(),
-                        Description = fake.Hacker.Verb(),
-                        StartDate = date,
-                        EndDate = date.AddMonths(1),
-                        Course = new Course
-                        {
-                            Title = fake.Company.CatchPhrase(),
-                            Description = fake.Hacker.Verb(),
-                            StartDate = date,
-                            EndDate = date.AddMonths(6)
-                        }
-                    };
-                    modules.Add(module);
-                }
-
-
-                foreach (var course in courses)
-                {
-                    var someModules = new List<Module>();
-                    var r = new Random();
-
-
-                    for (int i = 0; i < 5; i++)
-                    {
-                        someModules.Add(modules[r.Next(0, 5)]);
-                    }
-                    course.Modules = someModules;
-                }
-
-                var activities = GetActivities(10);
-                var documents = GetDocuments(5, listOfStudent, courses);
-
-
-
+                await context.AddRangeAsync(courses);
                 await context.AddRangeAsync(modules);
                 await context.AddRangeAsync(activities);
                 await context.AddRangeAsync(documents);
-                await context.AddRangeAsync(modules);
                 await context.SaveChangesAsync();
             }
         }
 
-        private static object GetActivities(int count)
+        private static List<Course> GetCourses(int count)
+        {
+            var courses = new List<Course>();
+
+            for (int i = 0; i < count; i++)
+            {
+                var date = DateTime.Now.AddDays(fake.Random.Int(-2, 2));
+                var course = new Course
+                {
+                    Title = fake.Company.CatchPhrase(),
+                    Description = fake.Hacker.Verb(),
+                    StartDate = date,
+                    EndDate = date.AddMonths(6)
+                };
+
+                courses.Add(course);
+            }
+
+            return courses;
+        }
+
+        private static List<Module> GetModules(int count)
+        {
+            var modules = new List<Module>();
+            for (int i = 0; i < count; i++)
+            {
+                var date = DateTime.Now.AddDays(fake.Random.Int(-2, 2));
+
+                var module = new Module
+                {
+                    Title = fake.Company.CatchPhrase(),
+                    Description = fake.Hacker.Verb(),
+                    StartDate = date,
+                    EndDate = date.AddMonths(1)
+                };
+                modules.Add(module);
+            }
+            return modules;
+        }
+
+        private static List<Activity> GetActivities(int count)
         {
             var activities = new List<Activity>();
-
-
             for (int i = 0; i < count; i++)
             {
                 var date = DateTime.Now.AddDays(fake.Random.Int(-2, 2));
@@ -190,7 +218,7 @@ namespace LMS.Data.Data
             return activities;
         }
 
-        private static object GetDocuments(int count, List<ApplicationUser> listOfStudent, List<Course> courses)
+        private static List<Document> GetDocuments(int count, List<ApplicationUser> listOfStudent)
         {
             var documents = new List<Document>();
 
@@ -203,14 +231,11 @@ namespace LMS.Data.Data
                     Name = fake.System.CommonFileName(),
                     Description = fake.Hacker.Verb(),
                     UploadTime = date,
-                    ApplicationUser = fake.PickRandom<ApplicationUser>(listOfStudent),
-                    Course = fake.PickRandom<Course>(courses)
-                    
+                    ApplicationUser = fake.PickRandom<ApplicationUser>(listOfStudent), 
                 };
 
                 documents.Add(document);
             }
-
             return documents;
         }
     }
