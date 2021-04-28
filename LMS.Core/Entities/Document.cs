@@ -17,10 +17,11 @@ namespace LMS.Core.Entities
 
         public DateTime UploadTime { get; set; }
 
-        public int ApplicationUserId { get; set; }
-        public int CourseId { get; set; }
-        public int ModuleId { get; set; }
-        public int ActivityId { get; set; }
+        // I don't get it why should be the problem in here
+        //public int ApplicationUserId { get; set; }
+        public int? CourseId { get; set; }
+        public int? ModuleId { get; set; }
+        public int? ActivityId { get; set; }
 
 
         // Navigation Properties

@@ -30,10 +30,11 @@ namespace LMS.Web
                 var confiq = services.GetRequiredService<IConfiguration>();
 
                 var adminPW = confiq["AdminPW"];
+                var studentPW = confiq["StudentPW"];
 
                 try
                 {
-                    SeedData.InitAsync(services, adminPW).Wait();
+                    SeedData.InitAsync(services, adminPW, studentPW).Wait();
                 }
                 catch (Exception ex)
                 {
