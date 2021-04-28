@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using LMS.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace LMS.Data.Data
@@ -17,14 +18,16 @@ namespace LMS.Data.Data
         }
 
         public DbSet<Course> Course { get; set; }
-        public DbSet<ApplicationUserCourse> AppUserCourses { get; set; }
+        public DbSet<Module> Module { get; set; }
+  
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<ApplicationUserCourse>().HasKey(a => new { a.ApplicationUserId, a.CourseId });
-
+            builder.Entity<ApplicationUserCourse>().HasKey(a => new { a.CourseId, a.ApplicationUserId });
+            builder.Entity<ApplicationCourseModule>().HasKey(a => new { a.CourseId, a.ModuleId});
+         
         }
     }
 }

@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace LMS.Core.Entities
 {
-    public class ApplicationUserCourse
+    public class ApplicationCourseModule
     {
-        
+
         public int CourseId { get; set; }
 
-        public string ApplicationUserId { get; set; }
+        public int ModuleId { get; set; }
 
-        public ApplicationUser Student { get; set; }
+        public Module Module { get; set; }
 
         public Course Course { get; set; }
     }
