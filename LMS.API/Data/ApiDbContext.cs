@@ -1,5 +1,5 @@
-using LMS.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using LMS.API.Models.Entities;
 
 namespace LMS.API.Data
 {

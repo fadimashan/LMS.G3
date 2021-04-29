@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Bogus;
 using LMS.API.Models.Entities;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace LMS.API.Data
 {
