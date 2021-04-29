@@ -32,6 +32,7 @@ namespace LMS.Web
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
+
                     options.UseSqlServer(
                         Configuration.GetConnectionString("SQLServerConnectionMvc")
                     );
