@@ -27,6 +27,21 @@ namespace LMS.Data.Data
 
                 fake = new Faker("sv");
 
+                var date = DateTime.Now;
+                var course45 = new Course
+                {
+                    Title = fake.Company.CatchPhrase(),
+                    Description = fake.Hacker.Verb(),
+                    StartDate = date,
+                    EndDate = date.AddMonths(6),
+                    Modules = GetModules2(10),
+
+                };
+
+                context.Add(course45);
+                context.SaveChanges();
+
+
                 var courses = GetCourses(2);
                 context.AddRange(courses);
                 context.SaveChanges();
@@ -234,6 +249,8 @@ namespace LMS.Data.Data
             }
         }
 
+
+
         private static List<Course> GetCourses(int count)
         {
             var courses = new List<Course>();
@@ -269,6 +286,27 @@ namespace LMS.Data.Data
                     StartDate = date,
                     EndDate = date.AddMonths(1),
                     CourseId = courceId
+                };
+                modules.Add(module);
+            }
+            return modules;
+        } 
+        
+        private static List<Module> GetModules2(int count)
+        {
+            var modules = new List<Module>();
+            for (int i = 0; i < count; i++)
+            {
+                var date = DateTime.Now.AddDays(fake.Random.Int(-2, 2));
+
+                var module = new Module
+                {
+                    Title = fake.Company.CatchPhrase(),
+                    Description = fake.Commerce.ProductAdjective(),
+                    StartDate = date,
+                    EndDate = date.AddMonths(1),
+                    Activities = GetActivities(5)
+                    
                 };
                 modules.Add(module);
             }
