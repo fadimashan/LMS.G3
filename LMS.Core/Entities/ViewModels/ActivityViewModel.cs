@@ -8,7 +8,6 @@ namespace LMS.Core.Entities.ViewModels
 {
     public class ActivityViewModel
     {
-
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -24,7 +23,6 @@ namespace LMS.Core.Entities.ViewModels
         public Course Course { get; set; }
 
         public Module Module { get; set; }
-
-
+        
     }
 }
