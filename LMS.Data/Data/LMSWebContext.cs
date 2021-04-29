@@ -12,17 +12,15 @@ namespace LMS.Data.Data
 {
     public class LMSWebContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
-        public LMSWebContext(DbContextOptions<LMSWebContext> options)
-            : base(options)
-        {
-        }
-
         public DbSet<Course> Course { get; set; }
         public DbSet<Module> Module { get; set; }
         public DbSet<Activity> Activity { get; set; }
         public DbSet<Document> Document { get; set; }
-  
 
+        public LMSWebContext(DbContextOptions<LMSWebContext> options)
+          : base(options)
+        {
+        }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

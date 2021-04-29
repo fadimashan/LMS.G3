@@ -22,6 +22,8 @@ namespace LMS.Core.Entities
 
         public int ModuleId { get; set; }
 
+        public Module Module { get; set; }
+
         public ICollection<Document> Documents { get; set; }
 
     }

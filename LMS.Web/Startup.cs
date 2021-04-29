@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 
 namespace LMS.Web
@@ -53,7 +54,7 @@ namespace LMS.Web
             services.AddControllersWithViews();
 
             services.AddDbContext<LMSWebContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("LMSWebContext")));
+                    options.UseSqlServer(Configuration.GetConnectionString("LMSWebContext")).LogTo(System.Console.WriteLine, LogLevel.Information));
 
         }
 

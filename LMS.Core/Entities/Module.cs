@@ -26,10 +26,11 @@ namespace LMS.Core.Entities
 
         public Course Course { get; set; }
 
-        public ICollection<Activity> Activities { get; set; }
 
         [NotMapped]
         public IEnumerable<SelectListItem> GetAllCourses { get; set; }
+
+        public ICollection<Activity> Activities { get; set; }
 
         public ICollection<Document> Documents { get; set; }
 
