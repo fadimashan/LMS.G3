@@ -29,8 +29,11 @@ namespace LMS.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options => {
+
+                //options.UseSqlServer(b => b.MigrationsAssembly("LMS.Web"));
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
+
                     options.UseSqlServer(
                         Configuration.GetConnectionString("SQLServerConnectionMvc")
                     );
