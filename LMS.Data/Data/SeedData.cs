@@ -28,8 +28,11 @@ namespace LMS.Data.Data
                 fake = new Faker("sv");
 
                 var courses = GetCourses(2);
-                var modules = GetModules(20);
-                var activities = GetActivities(10);
+                context.AddRange(courses);
+                context.SaveChanges();
+
+               var modules = GetModules(20, 1);
+                var activities = GetActivities(40);
 
                 var roleNames = new[] { "Teacher", "Student" };
 
@@ -80,14 +83,16 @@ namespace LMS.Data.Data
                 //}
 
 
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    var studentName = fake.Internet.UserName();
-                    var Email = fake.Internet.Email();
+                    var fName = fake.Name.FirstName();
+                    var lName = fake.Name.LastName();
                     var student = new ApplicationUser()
                     {
-                        UserName = studentName,
-                        Email = Email
+                        FirstName = fName,
+                        LastName = lName,
+                        UserName = fName,
+                        Email = fake.Internet.Email($"{fName} {lName}")
 
                     };
                     listOfStudent.Add(student);
@@ -106,44 +111,43 @@ namespace LMS.Data.Data
 
                     if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
                 }
+                //await context.SaveChangesAsync();
                 //if (listOfStudent.Any())
                 //{
                 // CreateStudentRoles(userManager, roleNames, studentPW, listOfStudent);
 
                 var documents = GetDocuments(20, listOfStudent);
-                var allmodules = modules;
+                //var allmodules = new List<Module>();
+                //for (int i = 0; i < modules.Count; i++)
+                //{
+                //    allmodules.Add(modules[i]);
+                //}
+
                 foreach (var course in courses)
                 {
-                    var someModules = new List<Module>();
-                    var someDocs = new List<Document>();
-                    var r = new Random();
-
-                    for (int i = 0; i < 10; i++)
-                    {
-                        var mod = allmodules[0];
-                        var doc = documents[r.Next(0, 19)];
-                        if (!someModules.Contains(mod))
-                        {
-                            someModules.Add(mod);
-                            allmodules.Remove(mod);
-                        }
-                        if (!someDocs.Contains(doc)) someDocs.Add(doc);
-                    }
-                    course.Modules = someModules;
-                    course.Documents = someDocs;
+                   
+                    course.Modules = GetModules(5, course.Id);
+                   // course.Documents = ;
                 }
 
-                await context.AddRangeAsync(courses);
+               // await context.AddRangeAsync(courses);
+                
+
                 await context.SaveChangesAsync();
 
-                var allActivities = activities;
+                var allActivities = new List<Activity>();
+                for (int i = 0; i < activities.Count; i++)
+                {
+                    allActivities.Add(activities[i]);
+                }
+
                 foreach (var module in modules)
                 {
                     var someActivites = new List<Activity>();
                     var someDocs = new List<Document>(); ;
                     var r = new Random();
 
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < 2; i++)
                     {
                         var activty = allActivities[0];
                         if (!someActivites.Contains(activty))
@@ -186,9 +190,27 @@ namespace LMS.Data.Data
 
                 //}
                 var enrollments = new List<ApplicationUserCourse>();
-                foreach (var user in listOfStudent)
+                foreach (var user in context.Users)
                 {
                     if (await userManager.IsInRoleAsync(user, "Student"))
+                    {
+                        foreach (var course in courses)
+                        {
+                            if (course == courses[0])
+                            {
+                                var enrollment = new ApplicationUserCourse
+                                {
+                                    CourseId = course.Id,
+                                    ApplicationUserId = user.Id
+
+                                };
+                                enrollments.Add(enrollment);
+                                await context.SaveChangesAsync();
+                            }
+                        }
+                    }
+
+                    if (await userManager.IsInRoleAsync(user, "Teacher"))
                     {
                         foreach (var course in courses)
                         {
@@ -197,6 +219,7 @@ namespace LMS.Data.Data
                             {
                                 Course = course,
                                 Student = user
+
                             };
                             enrollments.Add(enrollment);
 
@@ -232,7 +255,7 @@ namespace LMS.Data.Data
             return courses;
         }
 
-        private static List<Module> GetModules(int count)
+        private static List<Module> GetModules(int count, int courceId)
         {
             var modules = new List<Module>();
             for (int i = 0; i < count; i++)
@@ -242,9 +265,10 @@ namespace LMS.Data.Data
                 var module = new Module
                 {
                     Title = fake.Company.CatchPhrase(),
-                    Description = fake.Hacker.Verb(),
+                    Description = fake.Commerce.ProductAdjective(),
                     StartDate = date,
-                    EndDate = date.AddMonths(1)
+                    EndDate = date.AddMonths(1),
+                    CourseId = courceId
                 };
                 modules.Add(module);
             }
