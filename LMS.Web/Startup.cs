@@ -18,28 +18,26 @@ namespace LMS.Web
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options => {
+
+            services.AddDbContext<ApplicationDbContext>(options => 
+            {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    options.UseSqlServer(
-                        Configuration.GetConnectionString("SQLServerConnectionMvc")
-                    );
+                    options.UseSqlServer(Configuration.GetConnectionString("SQLServerConnectionMvc"));
                 }
                 else
                 {
-                    options.UseSqlite(
-                        Configuration.GetConnectionString("SQLiteConnectionMvc")
-                    );
+                    options.UseSqlite(Configuration.GetConnectionString("SQLiteConnectionMvc"));
                 }
             });
             
