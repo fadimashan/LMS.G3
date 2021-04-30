@@ -1,6 +1,7 @@
 ﻿using LMS.Core.Entities;
 using LMS.Data.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -12,15 +13,17 @@ namespace LMS.Web.Controllers
     public class CoursesController : Controller
     {
         private readonly LMSWebContext db;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CoursesController(LMSWebContext context)
+        public CoursesController(LMSWebContext context, UserManager<ApplicationUser> userManager)
         {
             db = context;
-
+            _userManager = userManager;
         }
 
         // GET: Courses
-        public async Task<IActionResult> Index()
+        //public async Task<IActionResult> Index()
+        public async Task<IActionResult> test()
         {
             //List of Users
             var users = db.Users.ToList();
@@ -154,5 +157,20 @@ namespace LMS.Web.Controllers
         {
             return db.Course.Any(e => e.Id == id);
         }
+
+
+       // public async Task<IActionResult> UserMainPageViewModel()
+        public async Task<IActionResult> Index(string moduleID)
+        {
+            var currentUser = _userManager.GetUserId(User);
+            ViewBag.CurrentModule = moduleID;
+            int modID ;
+            var ne = int.TryParse(moduleID,out modID);
+            var course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+                .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a=> a.ModuleId == modID)).FirstOrDefaultAsync();
+
+            return View("UserMainPageViewModel", course);
+        }
+
     }
 }

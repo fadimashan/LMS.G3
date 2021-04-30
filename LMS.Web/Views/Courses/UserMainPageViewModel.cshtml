@@ -1,0 +1,101 @@
+﻿@model LMS.Core.Entities.Course
+
+@{
+    ViewData["Title"] = "UserMainPageViewModel";
+}
+
+<h1>UserMainPageViewModel</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div class="row">
+    <div class="col-5">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().StartDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().EndDate)
+                    </th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Modules)
+                {
+                    <tr>
+                        <td>
+                            @*@Html.DisplayFor(modelItem => item.Title)*@
+                            <p>
+                                @{ var moduleId = item.Id;}
+                                <a style="color:black" href="@Url.Action("Index", new { moduleID = moduleId, currentModuleID = moduleId })">
+                                    @Html.DisplayFor(modelItem => item.Title) <i class="fa fa-sort" aria-hidden="true"> </i>
+                                </a>
+                            </p>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EndDate)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-5">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().Activities.FirstOrDefault().Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().Activities.FirstOrDefault().StartDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().Activities.FirstOrDefault().EndDate)
+                    </th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Modules.FirstOrDefault().Activities)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EndDate)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+ </div>
