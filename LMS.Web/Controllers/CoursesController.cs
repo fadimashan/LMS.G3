@@ -164,7 +164,7 @@ namespace LMS.Web.Controllers
         {
             var currentUser = _userManager.GetUserId(User);
             ViewBag.CurrentModule = moduleID;
-            int modID ;
+            int modID = 1 ;
             var ne = int.TryParse(moduleID,out modID);
             var course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
                 .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a=> a.ModuleId == modID)).FirstOrDefaultAsync();

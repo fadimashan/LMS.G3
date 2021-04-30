@@ -9,8 +9,8 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<div class="row">
-    <div class="col-5">
+<div class="row" id="userPage">
+    <div class="col-6">
         <table class="table">
             <thead>
                 <tr>
@@ -33,33 +33,46 @@
                     <tr>
                         <td>
                             @*@Html.DisplayFor(modelItem => item.Title)*@
+                            @{ var startModule = item.StartDate.ToString("yyyy-MM-dd"); var endModule = item.EndDate.ToString("yyyy-MM-dd"); }
                             <p>
                                 @{ var moduleId = item.Id;}
                                 <a style="color:black" href="@Url.Action("Index", new { moduleID = moduleId, currentModuleID = moduleId })">
-                                    @Html.DisplayFor(modelItem => item.Title) <i class="fa fa-sort" aria-hidden="true"> </i>
+                                    @Html.DisplayFor(modelItem => item.Title)
                                 </a>
                             </p>
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.StartDate)
+                            @Html.DisplayFor(modelItem => startModule)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.EndDate)
+                            @Html.DisplayFor(modelItem => endModule)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+
+                            <a asp-action="Edit" asp-route-id="@item.Id">
+                                
+                            </a>
+                            <div class="btn-group">
+                                <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" font-size:24px"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></p>
+                                <div class="dropdown-menu shadow">
+                                    <a asp-controller="Modules" asp-action="Details" asp-route-id="@item.Id" type="button" class="dropdown-item">Details</a>
+                                    <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.Id" type="button" class="dropdown-item">Edit</a>
+                                </div>
+                            </div>
+
+                            @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
+    <div class="col-1"></div>
     <div class="col-5">
-
-        <table class="table">
-            <thead>
+        @*<table class="table">*@
+        @*<thead>
                 <tr>
                     <th>
                         @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().Activities.FirstOrDefault().Name)
@@ -73,11 +86,13 @@
 
                     <th></th>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Modules.FirstOrDefault().Activities)
-                {
-                    <tr>
+            </thead>*@
+        @*<tbody>*@
+        <div id="list-itmes" class="row no-gutters">
+
+            @foreach (var item in Model.Modules.FirstOrDefault().Activities)
+            {
+                @*<tr>
                         <td>
                             @Html.DisplayFor(modelItem => item.Name)
                         </td>
@@ -92,10 +107,26 @@
                             <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                             <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                    </tr>*@
+                <div class="card-padding">
 
+                    <div class="card" id="coffe-0">
+                        @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd"); }
+                        <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
+                            <div class="card-body">
+                                <h5 class="card-title">  @Html.DisplayFor(modelItem => item.Name)</h5>
+                                <p class="card-text"> @Html.DisplayFor(modelItem => start) </p>
+                                <p class="card-text">  @Html.DisplayFor(modelItem => end) </p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+            }
+        </div>
+        @*</tbody>*@
     </div>
- </div>
+    @*</table>*@
+</div>
+
+
