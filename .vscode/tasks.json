@@ -7,6 +7,18 @@
             "type": "process",
             "args": [
                 "build",
+                "${workspaceFolder}/LMS.Web/LMS.Web.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build API",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
                 "${workspaceFolder}/LMS.API/LMS.API.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
@@ -19,6 +31,18 @@
             "type": "process",
             "args": [
                 "publish",
+                "${workspaceFolder}/LMS.Web/LMS.Web.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish API",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
                 "${workspaceFolder}/LMS.API/LMS.API.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
@@ -27,6 +51,19 @@
         },
         {
             "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "${workspaceFolder}/LMS.Web/LMS.Web.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch API",
             "command": "dotnet",
             "type": "process",
             "args": [
