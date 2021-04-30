@@ -26,6 +26,13 @@ namespace LMS.Data.Data
             base.OnModelCreating(builder);
 
             builder.Entity<ApplicationUserCourse>().HasKey(a => new { a.CourseId, a.ApplicationUserId });
+
+            builder.Entity<ApplicationUser>()
+                .HasMany(u => u.Courses)
+                .WithMany(c => c.Students)
+                .UsingEntity<ApplicationUserCourse>(
+                    a => a.HasOne(a => a.Course).WithMany(c => c.Enrollments),
+                    a => a.HasOne(app => app.Student).WithMany(s => s.AttendingCourses));
          
         }
     }
