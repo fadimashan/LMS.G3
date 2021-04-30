@@ -208,7 +208,7 @@ namespace LMS.Data.Data
                     Name = fake.System.CommonFileName(),
                     Description = fake.Hacker.Verb(),
                     UploadTime = date,
-                   // ApplicationUser = listStudent[fake.Random.Int(1, (listStudent.Count-1))]
+                    UserId = listStudent[fake.Random.Int(1, (listStudent.Count-1))].Id
                 };
 
                 documents.Add(document);
