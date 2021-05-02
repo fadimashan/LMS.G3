@@ -7,11 +7,12 @@ namespace LMS.API.Services
     public interface IAuthorsRepository
     {
         Task<IEnumerable<Author>> GetAllAsync();
-        Task<IEnumerable<Author>> GetAllWithAuthorsAsync();
+        Task<IEnumerable<Author>> GetAllWithPublicationsAsync();
         Task<Author> GetAsync(int? id);
-        Task<Author> GetWithAuthorsAsync(int? id);
+        Task<Author> GetWithPublicationsAsync(int? id);
         void Add(Publication publication);
         void Update(Publication publication);
         void Remove(Publication publication);
+        public bool Any(int id);
     }
 }

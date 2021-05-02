@@ -29,21 +29,21 @@ namespace LMS.API.Controllers
         public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
         {
             var authorsFromRepo = await _authorsRepository.GetAllAsync();
-            return new JsonResult(authorsFromRepo);
+            return Ok(authorsFromRepo);
         }
 
         // GET: api/Authors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Author>> GetAuthor(int id)
         {
-            var author = await _dbContext.Authors.FindAsync(id);
+            var authorFromRepo = await _authorsRepository.GetAsync(id);
 
-            if (author == null)
+            if (authorFromRepo is null)
             {
                 return NotFound();
             }
 
-            return author;
+            return new JsonResult(authorFromRepo);
         }
 
         // PUT: api/Authors/5

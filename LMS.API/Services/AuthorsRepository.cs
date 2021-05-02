@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using LMS.API.Data;
@@ -20,17 +21,17 @@ namespace LMS.API.Services
             return await _dbContext.Authors.ToListAsync();
         }
 
-        public async Task<IEnumerable<Author>> GetAllWithAuthorsAsync()
+        public async Task<IEnumerable<Author>> GetAllWithPublicationsAsync()
         {
             throw new System.NotImplementedException();
         }
 
         public async Task<Author> GetAsync(int? id)
         {
-            throw new System.NotImplementedException();
+            return await _dbContext.Authors.FindAsync(id);
         }
 
-        public async Task<Author> GetWithAuthorsAsync(int? id)
+        public async Task<Author> GetWithPublicationsAsync(int? id)
         {
             throw new System.NotImplementedException();
         }
@@ -48,6 +49,11 @@ namespace LMS.API.Services
         public void Remove(Publication publication)
         {
             throw new System.NotImplementedException();
+        }
+
+        public bool Any(int id)
+        {
+            return _dbContext.Authors.Any(a => a.Id == id);
         }
 
     }

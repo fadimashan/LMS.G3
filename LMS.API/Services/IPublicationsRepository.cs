@@ -13,5 +13,6 @@ namespace LMS.API.Services
         void AddAsync(Publication publication);
         void UpdateAsync(Publication publication);
         void RemoveAsync(Publication publication);
+        public bool Any(int id);
     }
 }

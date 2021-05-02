@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using LMS.API.Data;
 using LMS.API.Services;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace LMS.API
 {
@@ -30,7 +31,10 @@ namespace LMS.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.ReturnHttpNotAcceptable = true;
+            }).AddXmlDataContractSerializerFormatters();
 
             services.AddScoped<IPublicationsRepository, PublicationsRepository>();
             services.AddScoped<IAuthorsRepository, AuthorsRepository>();

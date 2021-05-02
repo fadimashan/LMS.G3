@@ -29,21 +29,21 @@ namespace LMS.API.Controllers
         public async Task<ActionResult<IEnumerable<Publication>>> GetPublications()
         {
             var publicationsFromRepo = await _publicationsRepository.GetAllAsync();
-            return new JsonResult(publicationsFromRepo);
+            return Ok(publicationsFromRepo);
         }
 
         // GET: api/Publications/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Publication>> GetPublication(int id)
         {
-            var publication = await _dbContext.Publications.FindAsync(id);
+            var publicationFromRepo = await _publicationsRepository.GetAsync(id);
 
-            if (publication == null)
+            if (publicationFromRepo is null)
             {
                 return NotFound();
             }
 
-            return publication;
+            return Ok(publicationFromRepo);
         }
 
         // PUT: api/Publications/5
