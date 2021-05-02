@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using LMS.API.Data;
+using LMS.API.Services;
 
 namespace LMS.API
 {
@@ -29,8 +30,10 @@ namespace LMS.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
+
+            services.AddScoped<IPublicationsRepository, PublicationsRepository>();
+            services.AddScoped<IAuthorsRepository, AuthorsRepository>();
 
             services.AddDbContext<ApiDbContext>(options =>
             {

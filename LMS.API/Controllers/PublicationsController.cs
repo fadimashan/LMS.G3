@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LMS.API.Data;
 using LMS.API.Models.Entities;
+using LMS.API.Services;
 
 namespace LMS.API.Controllers
 {
@@ -15,17 +16,20 @@ namespace LMS.API.Controllers
     public class PublicationsController : ControllerBase
     {
         private readonly ApiDbContext _dbContext;
+        private readonly IPublicationsRepository _publicationsRepository;
 
-        public PublicationsController(ApiDbContext context)
+        public PublicationsController(ApiDbContext context, IPublicationsRepository publicationsRepository)
         {
             _dbContext = context;
+            _publicationsRepository = publicationsRepository ?? throw new ArgumentNullException(nameof(publicationsRepository));
         }
 
         // GET: api/Publications
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Publication>>> GetPublications()
         {
-            return await _dbContext.Publications.ToListAsync();
+            var publicationsFromRepo = await _publicationsRepository.GetAllAsync();
+            return new JsonResult(publicationsFromRepo);
         }
 
         // GET: api/Publications/5

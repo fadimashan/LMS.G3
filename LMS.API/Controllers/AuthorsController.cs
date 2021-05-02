@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LMS.API.Data;
 using LMS.API.Models.Entities;
+using LMS.API.Services;
 
 namespace LMS.API.Controllers
 {
@@ -15,17 +16,20 @@ namespace LMS.API.Controllers
     public class AuthorsController : ControllerBase
     {
         private readonly ApiDbContext _dbContext;
+        private readonly IAuthorsRepository _authorsRepository;
 
-        public AuthorsController(ApiDbContext context)
+        public AuthorsController(ApiDbContext context, IAuthorsRepository authorsRepository)
         {
             _dbContext = context;
+            _authorsRepository = authorsRepository ?? throw new ArgumentNullException(nameof(authorsRepository));
         }
 
         // GET: api/Authors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
         {
-            return await _dbContext.Authors.ToListAsync();
+            var authorsFromRepo = await _authorsRepository.GetAllAsync();
+            return new JsonResult(authorsFromRepo);
         }
 
         // GET: api/Authors/5

@@ -11,7 +11,7 @@ namespace LMS.API.Services
     {
         private readonly ApiDbContext _dbContext;
 
-        PublicationsRepository(ApiDbContext context)
+        public PublicationsRepository(ApiDbContext context)
         {
             _dbContext = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -19,8 +19,7 @@ namespace LMS.API.Services
         {
             return await _dbContext.Publications.ToListAsync();
         }
-
-        /*
+        
         public async Task<IEnumerable<Publication>> GetAllWithAuthorsAsync()
         {
             throw new System.NotImplementedException();
@@ -49,7 +48,7 @@ namespace LMS.API.Services
         public async void RemoveAsync(Publication publication)
         {
             throw new System.NotImplementedException();
-        }*/
+        }
         
     }
 }
