@@ -1,8 +1,34 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
+@if (SignInManager.IsSignedIn(User))
+{
+<div class="hero mt-3 p-2">
 
+
+  
+    
+    <div class="row justify-content-end">
+        <a class="site-btn " asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" style="background:transparent;">Hello @User.Identity.Name! </a>
+        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button type="submit" class="site-btn ml-2">Logout</button>
+        </form>
+
+
+    </div>
+      <partial name="_Navigation" />
+
+</div>
+}
+else
+{
+    <partial name="_Layout" />
+}
 <!-- categories section -->
 <section class="categories-section spad">
     <div class="container">

@@ -3,3 +3,5 @@
 
 // Write your JavaScript code.
 
+let navigation = document.getElementById("disp");
+navigation.style.display = "none";
