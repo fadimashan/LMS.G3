@@ -4,14 +4,17 @@
     ViewData["Title"] = "UserMainPageViewModel";
 }
 
-<h1>UserMainPageViewModel</h1>
+<h5 id="student-name">@User.Identity.Name</h5>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (User.IsInRole("Teacher"))
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
 <div class="row" id="userPage">
     <div class="col-6">
-        <table class="table">
+        <table class="table table-striped table-sm table-hover text-monospace">
             <thead>
                 <tr>
                     <th>
@@ -32,7 +35,6 @@
                 {
                     <tr>
                         <td>
-                            @*@Html.DisplayFor(modelItem => item.Title)*@
                             @{ var startModule = item.StartDate.ToString("yyyy-MM-dd"); var endModule = item.EndDate.ToString("yyyy-MM-dd"); }
                             <p>
                                 @{ var moduleId = item.Id;}
@@ -50,7 +52,7 @@
                         <td>
 
                             <a asp-action="Edit" asp-route-id="@item.Id">
-                                
+
                             </a>
                             <div class="btn-group">
                                 <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" font-size:24px"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></p>
@@ -59,10 +61,6 @@
                                     <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.Id" type="button" class="dropdown-item">Edit</a>
                                 </div>
                             </div>
-
-                            @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
                         </td>
                     </tr>
                 }
@@ -71,62 +69,34 @@
     </div>
     <div class="col-1"></div>
     <div class="col-5">
-        @*<table class="table">*@
-        @*<thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().Activities.FirstOrDefault().Name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().Activities.FirstOrDefault().StartDate)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().Activities.FirstOrDefault().EndDate)
-                    </th>
+        <div id="my-div">
+            <section class="categories-section spad">
+                <div class="container">
+                    <div class="row">
+                        @foreach (var item in Model.Modules.FirstOrDefault().Activities)
+                        {
+                            <!-- categorie -->
+                            <div class=" col-sd-2">
+                                <div class="categorie-item" id="card-main-item ">
+                                    @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
+                                        var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg";
+                                    }
+                                    <a asp-controller="Activities" asp-action="Details1" asp-route-id="@item.Id">
+                                        <div class="ci-thumb set-bg" data-setbg=@link></div>
+                                        <div class="ci-text">
 
-                    <th></th>
-                </tr>
-            </thead>*@
-        @*<tbody>*@
-        <div id="list-itmes" class="row no-gutters">
+                                            <h5>@Html.DisplayFor(modelItem => item.Name)</h5>
+                                            <p>@Html.DisplayFor(modelItem => item.ActivityType)</p>
+                                            <span>@Html.DisplayFor(modelItem => start) -  @Html.DisplayFor(modelItem => end)</span>
+                                        </div>
+                                    </a>
 
-            @foreach (var item in Model.Modules.FirstOrDefault().Activities)
-            {
-                @*<tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.StartDate)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.EndDate)
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                        </td>
-                    </tr>*@
-                <div class="card-padding">
-
-                    <div class="card" id="coffe-0">
-                        @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd"); }
-                        <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
-                            <div class="card-body">
-                                <h5 class="card-title">  @Html.DisplayFor(modelItem => item.Name)</h5>
-                                <p class="card-text"> @Html.DisplayFor(modelItem => start) </p>
-                                <p class="card-text">  @Html.DisplayFor(modelItem => end) </p>
+                                </div>
                             </div>
-                        </a>
+                        }
                     </div>
                 </div>
-
-            }
+            </section>
         </div>
-        @*</tbody>*@
     </div>
-    @*</table>*@
 </div>
-
-

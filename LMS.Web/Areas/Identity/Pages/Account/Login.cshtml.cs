@@ -75,6 +75,8 @@ namespace LMS.Web.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+            var mainPageStudent = "courses";
+            var mainPageTeatcher = "courses/GetCourses";
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         
@@ -86,8 +88,19 @@ namespace LMS.Web.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+
+                    if (User.IsInRole("Student"))
+                    {
+                        _logger.LogInformation("User logged in.");
+                        return LocalRedirect(returnUrl + mainPageStudent);
+                    } 
+                    if (User.IsInRole("Teacher"))
+                    {
+                        _logger.LogInformation("User logged in.");
+                        return LocalRedirect(returnUrl + mainPageTeatcher);
+                    } 
+
+                    
                 }
                 if (result.RequiresTwoFactor)
                 {

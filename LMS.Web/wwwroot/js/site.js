@@ -3,3 +3,6 @@
 
 // Write your JavaScript code.
 
+$(document).ready(function () {
+    $('[data-toggle="popover"]').popover();
+});

@@ -12,6 +12,7 @@
 html,
 body {
 	height: 100%;
+	height: 100%;
 	font-family: 'Raleway', sans-serif;
 	-webkit-font-smoothing: antialiased;
 	font-smoothing: antialiased;
@@ -130,7 +131,7 @@ ol {
 }
 
 .spad {
-	padding-top: 115px;
+	padding-top: 45px;
 	padding-bottom: 115px;
 }
 
@@ -279,7 +280,7 @@ ol {
 .main-menu ul li a {
 	display: inline-block;
 	font-size: 16px;
-	color: #fff;
+	color: black;
 	margin-left: 45px;
 	font-weight: 600;
 	padding: 20px 0 5px;
@@ -339,6 +340,7 @@ ol {
 
 .categories-section .container {
 	margin-bottom: -34px;
+
 }
 
 .categorie-item {
@@ -347,6 +349,13 @@ ol {
 	-webkit-transition: all 0.4s;
 	-o-transition: all 0.4s;
 	transition: all 0.4s;
+	margin: 10px;
+}
+
+#card-main-item {
+	margin: 10px;
+	min-width: 160px;
+	max-width: 150px;
 }
 
 .categorie-item .ci-thumb {
@@ -1759,4 +1768,30 @@ ol {
 #register {
 	background-image: url("../img/bg.jpg");
 	width: 100%;
+}
+
+#my-div {
+	height:100%;
+	width: 110%;
+	margin:-20px;
+	max-height: 1050px;
+	overflow: auto;
+	margin-top:-20px;
+}
+
+#content {
+	width: 100%;
+	margin-top: -50px;
+}
+
+#student-name {
+	padding-top: 135px;
+	padding-left: 20px;
+	padding-bottom: 30px;
+}
+
+#disp {
+	background-color: rgba(96,96,96,0.5);
+	padding-bottom: 40px;
+	margin-top: -20px;
 }

@@ -97,9 +97,16 @@ namespace LMS.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                var activityOne = _context.Activity.Find(id);
                 try
                 {
-                    _context.Update(activity);
+                    activityOne.Module = activity.Module;
+                    activityOne.ModuleId = activityOne.ModuleId;
+                    activityOne.Name = activity.Name;
+                    activityOne.StartDate = activity.StartDate;
+                    activityOne.EndDate = activity.EndDate;
+                    activityOne.ActivityType = activity.ActivityType;
+                    _context.Update(activityOne);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -113,11 +120,16 @@ namespace LMS.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Redirect($"/courses?moduleID={activityOne.ModuleId}");
             }
             return View(activity);
         }
 
+        public ActionResult Details1(int id)
+        {
+            var activityOne = _context.Activity.Find(id);
+            return PartialView("_Details", activityOne);
+        }
         // GET: Activities/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

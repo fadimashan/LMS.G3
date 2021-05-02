@@ -23,7 +23,7 @@ namespace LMS.Web.Controllers
 
         // GET: Courses
         //public async Task<IActionResult> Index()
-        public async Task<IActionResult> test()
+        public async Task<IActionResult> GetCourses()
         {
             //List of Users
             var users = db.Users.ToList();
