@@ -1,0 +1,62 @@
+@page
+@model LoginModel
+
+@{ ViewData["Title"] = "Log in"; }
+
+<script>
+    let navigation = document.getElementById("disp");
+    navigation.style.display = "none";
+</script>
+
+
+<div id="register" class="container mt-5">
+
+
+
+    <div class="col text-light p-2">
+        <div class="justify-content-center ">
+            @*Form had following ID id="account"*@
+            <form method="post" class="w-100">
+                <h4 class="text-light">Use a local account to log in.</h4>
+                <hr />
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Input.Email"></label>
+                    <br />
+                    <input asp-for="Input.Email" class="w-100" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Password"></label>
+                    <br />
+                    <input asp-for="Input.Password" class="w-100" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label asp-for="Input.RememberMe">
+                            <input asp-for="Input.RememberMe" />
+                            @Html.DisplayNameFor(m => m.Input.RememberMe)
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="site-btn  mb-1">Login</button>
+                    <a class="site-btn  mb-1" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
