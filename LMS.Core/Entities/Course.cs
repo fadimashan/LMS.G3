@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +27,10 @@ namespace LMS.Core.Entities
         public ICollection<ApplicationUser> Students { get; set; }
 
         public ICollection<Document> Documents { get; set; }
+
+        [NotMapped]
+        public IEnumerable<SelectListItem> GetModulesTitles { get; set; }
+
 
     }
 }

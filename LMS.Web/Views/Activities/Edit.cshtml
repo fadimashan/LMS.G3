@@ -19,6 +19,13 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label class="control-label"> Belongs to Module </label>
+                <select id="select" asp-for="ModuleId" asp-items="@Model.GetModulesSelectListItem" class="form-control">
+                    <option value="0">Select</option>
+                </select>
+                <span asp-validation-for="ModuleId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="ActivityType" class="control-label"></label>
                 <select asp-for="ActivityType" asp-items="@Html.GetEnumSelectList<ActivityType>();" class="form-control"></select>
                 <span asp-validation-for="ActivityType" class="text-danger"></span>

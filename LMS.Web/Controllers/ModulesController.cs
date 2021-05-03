@@ -46,6 +46,7 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Modules/Create
+        [Authorize(Roles = "Teacher")]
         public IActionResult Create()
         {
             var model = new Module
@@ -61,6 +62,7 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate,CourseId")] Module @module)
         {
             if (ModelState.IsValid)
@@ -69,7 +71,7 @@ namespace LMS.Web.Controllers
                 await db.SaveChangesAsync();
                 var moduleFromdb = db.Module.Where(m => m.Title == module.Title && m.StartDate == module.StartDate && m.EndDate == module.EndDate).FirstOrDefault();
                 var course = db.Course.Find(module.CourseId);
-                
+
                 await db.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
@@ -78,6 +80,7 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Modules/Edit/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -98,18 +101,22 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,StartDate,EndDate")] Module @module)
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Edit(int id, [Bind("Title,Description,StartDate,EndDate")] Module @module)
         {
-            if (id != @module.Id)
-            {
-                return NotFound();
-            }
+            var mod = db.Module.Find(id);
+
+            if (mod == null) { return NotFound(); }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    db.Update(@module);
+                    mod.Title = module.Title;
+                    mod.StartDate = module.StartDate;
+                    mod.EndDate = module.EndDate;
+                    mod.Description = module.Description;
+                    db.Update(mod);
                     await db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -129,6 +136,7 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Modules/Delete/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -149,6 +157,7 @@ namespace LMS.Web.Controllers
         // POST: Modules/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var @module = await db.Module.FindAsync(id);
@@ -168,14 +177,14 @@ namespace LMS.Web.Controllers
         {
             var courses = new List<SelectListItem>();
 
-            foreach (var course in  db.Course.ToList())
+            foreach (var course in db.Course.ToList())
             {
                 var selectListItem = (new SelectListItem
                 {
                     Text = course.Title,
                     Value = course.Id.ToString()
-                    
-                }) ;
+
+                });
                 courses.Add(selectListItem);
             }
             return (courses);

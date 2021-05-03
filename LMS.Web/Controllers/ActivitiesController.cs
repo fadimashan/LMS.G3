@@ -14,17 +14,17 @@ namespace LMS.Web.Controllers
     [Authorize]
     public class ActivitiesController : Controller
     {
-        private readonly LMSWebContext _context;
+        private readonly LMSWebContext db;
 
         public ActivitiesController(LMSWebContext context)
         {
-            _context = context;
+            db = context;
         }
 
         // GET: Activities
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Activity.ToListAsync());
+            return View(await db.Activity.ToListAsync());
         }
 
         // GET: Activities/Details/5
@@ -35,7 +35,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var activity = await _context.Activity
+            var activity = await db.Activity
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (activity == null)
             {
@@ -60,8 +60,8 @@ namespace LMS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(activity);
-                await _context.SaveChangesAsync();
+                db.Add(activity);
+                await db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(activity);
@@ -75,7 +75,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var activity = await _context.Activity.FindAsync(id);
+            var activity = await db.Activity.FindAsync(id);
             if (activity == null)
             {
                 return NotFound();
@@ -97,7 +97,7 @@ namespace LMS.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var activityOne = _context.Activity.Find(id);
+                var activityOne = db.Activity.Find(id);
                 try
                 {
                     activityOne.Module = activity.Module;
@@ -106,8 +106,8 @@ namespace LMS.Web.Controllers
                     activityOne.StartDate = activity.StartDate;
                     activityOne.EndDate = activity.EndDate;
                     activityOne.ActivityType = activity.ActivityType;
-                    _context.Update(activityOne);
-                    await _context.SaveChangesAsync();
+                    db.Update(activityOne);
+                    await db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -127,7 +127,7 @@ namespace LMS.Web.Controllers
 
         public ActionResult Details1(int id)
         {
-            var activityOne = _context.Activity.Find(id);
+            var activityOne = db.Activity.Find(id);
             return PartialView("_Details", activityOne);
         }
         // GET: Activities/Delete/5
@@ -138,7 +138,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var activity = await _context.Activity
+            var activity = await db.Activity
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (activity == null)
             {
@@ -153,15 +153,32 @@ namespace LMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var activity = await _context.Activity.FindAsync(id);
-            _context.Activity.Remove(activity);
-            await _context.SaveChangesAsync();
+            var activity = await db.Activity.FindAsync(id);
+            db.Activity.Remove(activity);
+            await db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ActivityExists(int id)
         {
-            return _context.Activity.Any(e => e.Id == id);
+            return db.Activity.Any(e => e.Id == id);
+        }
+
+
+        private IEnumerable<SelectListItem> GetModulesSelectListItem()
+        {
+            var modules = db.Module;
+            var GetModules = new List<SelectListItem>();
+            foreach (var mod in modules)
+            {
+                var newType = (new SelectListItem
+                {
+                    Text = mod.Title,
+                    Value = mod.Id.ToString(),
+                });
+                GetModules.Add(newType);
+            }
+            return (GetModules);
         }
     }
 }

@@ -3,7 +3,9 @@ using LMS.Data.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,15 +24,10 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Courses
-        //public async Task<IActionResult> Index()
         public async Task<IActionResult> GetCourses()
         {
-            //List of Users
-            var users = db.Users.ToList();
 
-          
-
-            return View(await db.Course.ToListAsync());
+            return View("GetCourses", await db.Course.ToListAsync());
         }
 
         // GET: Courses/Details/5
@@ -52,6 +49,7 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Courses/Create
+        [Authorize(Roles = "Teacher")]
         public IActionResult Create()
         {
             return View();
@@ -62,11 +60,16 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate")] Course course)
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate")] Course course, [Bind("Id,Title,Description,StartDate,EndDate")] Module @module)
         {
             if (ModelState.IsValid)
             {
-                db.Add(course);
+                List<Module> newMod  = new List<Module>();
+                newMod.Add(module);
+                var co = course;
+                co.Modules = newMod;
+                db.Add(co);
                 await db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -94,6 +97,7 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,StartDate,EndDate")] Course course)
         {
             if (id != course.Id)
@@ -125,6 +129,7 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Courses/Delete/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -145,6 +150,7 @@ namespace LMS.Web.Controllers
         // POST: Courses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var course = await db.Course.FindAsync(id);
@@ -169,8 +175,33 @@ namespace LMS.Web.Controllers
             var course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
                 .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a=> a.ModuleId == modID)).FirstOrDefaultAsync();
 
-            return View("UserMainPageViewModel", course);
+            if (User.IsInRole("Teacher"))
+            {
+                return View("GetCourses", await db.Course.ToListAsync());
+
+            }
+            if (User.IsInRole("Student"))
+            {
+                return View("UserMainPageViewModel", course);
+            }
+            else
+            {
+                return NotFound();
+            }
+
         }
+
+
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> GetStudents()
+        {
+            var currentUser = _userManager.GetUserId(User);
+            var course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+                .Include(c => c.Students).FirstOrDefaultAsync();
+
+            return View("GetStudentsForThisCourse", course);
+        }
+
 
     }
 }

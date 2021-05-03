@@ -5,12 +5,12 @@
 
 <h1>Create</h1>
 
-<h4>Course</h4>
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <h4>Course</h4>
+            <hr />
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
@@ -31,12 +31,38 @@
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
+            <br />
+            <h4>Module</h4>
+            <hr/>
+            @{ var module = new Module();}
+            <div class="form-group">
+                <label class="control-label">Module Title</label>
+                <input asp-for="@module.Title" class="form-control" />
+                <span asp-validation-for="@module.Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Module Description </label>
+                <input asp-for="@module.Description" class="form-control" />
+                <span asp-validation-for="@module.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Module Start Date</label>
+                <input asp-for="@module.StartDate" class="form-control" value="@DateTime.Now" />
+                <span asp-validation-for="@module.StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Module End Date</label>
+                <input asp-for="@module.EndDate" class="form-control" value="@DateTime.Now" />
+                <span asp-validation-for="@module.EndDate" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+
 
 <div>
     <a asp-action="Index">Back to List</a>

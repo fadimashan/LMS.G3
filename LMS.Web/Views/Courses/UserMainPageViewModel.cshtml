@@ -4,27 +4,31 @@
     ViewData["Title"] = "UserMainPageViewModel";
 }
 
-<h5 id="student-name">@User.Identity.Name</h5>
-
 @if (User.IsInRole("Teacher"))
 {
     <p>
-        <a asp-action="Create">Create New</a>
+        <a asp-action="Create" type="button">Create New</a>
+    </p>
+}
+@if (User.IsInRole("Student"))
+{
+    <p style="margin-top:150px">
+        <a asp-action="GetStudents">participants </a>
     </p>
 }
 <div class="row" id="userPage">
     <div class="col-6">
-        <table class="table table-striped table-sm table-hover text-monospace">
+        <table class="table my-auto">
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().Title)
+                        <h2>Title</h2>
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().StartDate)
+                        <h2>Start Date</h2>
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Modules.FirstOrDefault().EndDate)
+                        <h2>End Date</h2>
                     </th>
 
                     <th></th>
@@ -50,15 +54,16 @@
                             @Html.DisplayFor(modelItem => endModule)
                         </td>
                         <td>
-
                             <a asp-action="Edit" asp-route-id="@item.Id">
-
                             </a>
                             <div class="btn-group">
                                 <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" font-size:24px"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></p>
                                 <div class="dropdown-menu shadow">
                                     <a asp-controller="Modules" asp-action="Details" asp-route-id="@item.Id" type="button" class="dropdown-item">Details</a>
-                                    <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.Id" type="button" class="dropdown-item">Edit</a>
+                                    @if (User.IsInRole("Teacher"))
+                                    {
+                                        <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.Id" type="button" class="dropdown-item">Edit</a>
+                                    }
                                 </div>
                             </div>
                         </td>
@@ -81,7 +86,7 @@
                                     @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
                                         var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg";
                                     }
-                                    <a asp-controller="Activities" asp-action="Details1" asp-route-id="@item.Id">
+                                    <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
                                         <div class="ci-thumb set-bg" data-setbg=@link></div>
                                         <div class="ci-text">
 

@@ -22,7 +22,7 @@ namespace LMS.Web.Areas.Identity.Pages.Account
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, 
+        public LoginModel(SignInManager<ApplicationUser> signInManager,
             ILogger<LoginModel> logger,
             UserManager<ApplicationUser> userManager)
         {
@@ -75,11 +75,9 @@ namespace LMS.Web.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-            var mainPageStudent = "courses";
-            var mainPageTeatcher = "courses/GetCourses";
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-        
+
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
@@ -89,18 +87,9 @@ namespace LMS.Web.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
 
-                    if (User.IsInRole("Student"))
-                    {
-                        _logger.LogInformation("User logged in.");
-                        return LocalRedirect(returnUrl + mainPageStudent);
-                    } 
-                    if (User.IsInRole("Teacher"))
-                    {
-                        _logger.LogInformation("User logged in.");
-                        return LocalRedirect(returnUrl + mainPageTeatcher);
-                    } 
+                    _logger.LogInformation("User logged in.");
+                    return LocalRedirect(returnUrl + "courses");
 
-                    
                 }
                 if (result.RequiresTwoFactor)
                 {
