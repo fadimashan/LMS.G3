@@ -283,7 +283,7 @@ ol {
         .main-menu ul li a {
             display: inline-block;
             font-size: 16px;
-            color: black;
+            color: antiquewhite;
             margin-left: 45px;
             font-weight: 600;
             padding: 20px 0 5px;
@@ -1839,13 +1839,12 @@ ol {
     width: 100%;
 }
 
-#my-div {
-    height: 100%;
-    width: 110%;
-    margin: -20px;
-    max-height: 1050px;
-    overflow: auto;
-    margin-top: -20px;
+
+.hero {
+    background-image: url("../img/page-top-bg.jpg");
+    width: 90%;
+    height: 400px;
+    margin: 0 auto;
 }
 
 #content {
@@ -1859,15 +1858,18 @@ ol {
     padding-bottom: 30px;
 }
 
-#disp {
 
-    margin-top: -20px;
-}
 
-#userPage {
-    margin-top: 30px;
-    padding-left: 5%;
-    padding-right: 5%;
+@media (min-width: 780px) {
+    #userPage {
+       display:flex;
+       flex-direction: row;
+    }
+    }
+}#userPage {
+   /* margin-top: 30px;*/
+   /* padding-left: 5%;
+    padding-right: 5%;*/
 }
 
 .table .my-auto tr th {

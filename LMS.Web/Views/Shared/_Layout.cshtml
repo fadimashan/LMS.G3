@@ -24,69 +24,12 @@
 </head>
 <body>
 
-    <!-- Header section -->
-    <header class="header-section" id="disp">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-3">
-                    <div class="site-logo">
-                        <img src="img/logo.png" alt="">
-                    </div>
-                    <div class="nav-switch">
-                        <i class="fa fa-bars"></i>
-                    </div>
-                </div>
-                <div class="col-lg-7 col-md-9">
+    <partial name="_Navigation" />
+   
+    
 
-                    <nav class="main-menu">
-                        <ul>
-                            <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                            <li><a asp-area="" asp-controller="Documents" asp-action="Index">Home</a></li>
-                            <li><a  asp-controller="courses" asp-action="Index">Courses</a></li>
-                            <li><a asp-area="" asp-controller="modules" asp-action="Index">Modules</a></li>
-                            <li><a asp-area="" asp-controller="activities" asp-action="Index">Activities</a></li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="col-lg-2 col-md-9">
 
-                    @{
-                        if (User.Identity.IsAuthenticated)
-                        {
-                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                                <button type="submit" class="nav-link btn btn-link text-dark"><i class="fas fa-sign-out-alt"></i></button>
-                            </form>
-                        }
-                        else
-                        {
-                            <p>You have successfully logged out of the application.</p>
-                        }
-                    }
-                </div>
-            </div>
-        </div>
-    </header>
-    <!-- Header section end -->
-    <!-- Hero section -->
 
-    @if (Context.Request.Path.Value == "/")
-    {
-        <section class="hero-section set-bg " data-setbg="img/bg.jpg">
-            <div class="container">
-                <div class="hero-text text-white">
-                    <h2>Get The Best Free Online Courses</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla <br> dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
-                </div>
-                <div class="row justify-content-center">
-
-                    @*<a asp-area="Identity" asp-page="/Account/Register" class="site-btn m-2">Sign Up</a>*@
-                    <a asp-area="Identity" class="site-btn m-2" asp-page="/Account/Login">Login</a>
-
-                </div>
-            </div>
-        </section>
-        <!-- Hero section end -->
-    }
 
     <div class="container-fluid">
         <main role="main" class="pb-3">
