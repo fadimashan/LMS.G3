@@ -18,6 +18,6 @@ namespace LMS.Core.Entities.ViewModels
 
         public DateTime EndDate { get; set; }
 
-        ICollection<Module> Modules { get; set; }
+        public ICollection<Module> Modules { get; set; }
     }
 }

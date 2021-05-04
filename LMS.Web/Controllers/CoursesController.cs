@@ -1,8 +1,11 @@
 ﻿using LMS.Core.Entities;
+using LMS.Core.Entities.ViewModels;
 using LMS.Data.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,15 +23,47 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Courses
-        public async Task<IActionResult> Index()
+        //public async Task<IActionResult> Index()
+        //{
+        //    //List of Users
+        //    var users = db.Users.ToList();
+
+        //    return View(await db.Course.ToListAsync());
+        //}
+
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
-            //List of Users
-            var users = db.Users.ToList();
+            ViewData["TitleSortParm"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewData["CurrentFilter"] = searchString;
 
-          
+            var courses = from c in db.Course
+                           select c;
 
-            return View(await db.Course.ToListAsync());
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                courses = courses.Where(c => c.Title.Contains(searchString));
+
+            }
+
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    courses = courses.OrderByDescending(t => t.Title);
+                    break;
+                case "Date":
+                    courses = courses.OrderBy(d => d.StartDate);
+                    break;
+                case "date_desc":
+                    courses = courses.OrderByDescending(d => d.StartDate);
+                    break;
+                default:
+                    courses = courses.OrderBy(t => t.Title);
+                    break;
+            }
+            return View(await courses.AsNoTracking().ToListAsync());
         }
+
 
         // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
