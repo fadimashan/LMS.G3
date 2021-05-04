@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<LMS.Core.Entities.Course>
 
-@{
-    ViewData["Title"] = "GetCourses";
-}
-
 <div class="row">
     <h4>LMS Courses</h4>
     <div class="btn-group">
@@ -19,77 +15,55 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th></th>
+            <th> Title </th>
+            <th class="text-center"> Period </th>
+            <th class="text-center"> Start Date </th>
+            <th class="text-center"> Modules No.</th>
+            <th class="text-center"> Activities No. </th>
+            <th> Description </th>
         </tr>
     </thead>
-    @*<tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.StartDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EndDate)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>*@
 
     <tbody class="table-body">
         @foreach (var item in Model)
         {
             var itemID = @item.Id;
-            <tr data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                @*data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndDate)
-                </td>
-
-
-                <td  class="btn-group">
-                    @*<div class="btn-group">*@
-
-                      
+            <tr>
+                <td class="text-left">
+                    <div class="btn-group">
+                        <p class="btn btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@item.Title</p>
                         <div class="dropdown-menu ">
                             @foreach (var mod in item.Modules)
                             {
                                 <a asp-controller="Modules" asp-action="Details" asp-route-id="@mod.Id" type="button" class="dropdown-item">@mod.Title</a>
                             }
                         </div>
-                    @*</div>*@
+                    </div>
+                </td>
+                <td class="text-center">
+                    @{ var period = (int)(item.EndDate - item.StartDate).TotalDays / 30;}
+                    <button disabled="" class="btn btn-light ">@period Month</button>
+                </td> 
+                <td class="text-center">
+                    @{ string date = $"{item.StartDate.ToString("dd/MMM/yyyy")}";}
+                    <button disabled="" class="btn btn-light ">@date</button>
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Modules.Count)
+                </td>
+                <td class="text-center">
+                    @{ var numberOfActivities = 0;}
+                    @foreach (var oneModule in item.Modules)
+                    {
+                        if (oneModule.Activities != null)
+                        {
+                            numberOfActivities = oneModule.Activities.Count;
+                        }
+                    }
+                    @Html.DisplayFor(modelItem => numberOfActivities)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
                 </td>
             </tr>
         }
