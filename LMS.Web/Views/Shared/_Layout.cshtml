@@ -1,4 +1,8 @@
 ﻿
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,54 +30,12 @@
 </head>
 <body>
 
-    <!-- Header section -->
-    <header class="header-section" id="disp">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-3">
-                    <div class="site-logo">
-                        <img src="img/logo.png" alt="">
-                    </div>
-                    <div class="nav-switch">
-                        <i class="fa fa-bars"></i>
-                    </div>
-                </div>
-                <div class="col-lg-9 col-md-9">
+    <partial name="_Navigation" />
+   
+    
 
-                    <nav class="main-menu">
-                        <ul>
-                            <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                            <li><a href="#">About us</a></li>
-                            <li><a href="courses">Courses</a></li>
-                            <li><a href="modules">Modules</a></li>
-                            <li><a href="activities">Contact</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
-    <!-- Header section end -->
-    <!-- Hero section -->
 
-    @if (Context.Request.Path.Value == "/")
-    {
-        <section class="hero-section set-bg " data-setbg="img/bg.jpg">
-            <div class="container">
-                <div class="hero-text text-white">
-                    <h2>Get The Best Free Online Courses</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla <br> dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
-                </div>
-                <div class="row justify-content-center">
 
-                    @*<a asp-area="Identity" asp-page="/Account/Register" class="site-btn m-2">Sign Up</a>*@
-                    <a asp-area="Identity" class="site-btn m-2" asp-page="/Account/Login">Login</a>
-
-                </div>
-            </div>
-        </section>
-        <!-- Hero section end -->
-    }
 
     <div class="container-fluid">
         <main role="main" class="pb-3">

@@ -283,7 +283,7 @@ ol {
         .main-menu ul li a {
             display: inline-block;
             font-size: 16px;
-            color: black;
+            color: antiquewhite;
             margin-left: 45px;
             font-weight: 600;
             padding: 20px 0 5px;
@@ -1839,19 +1839,27 @@ ol {
     width: 100%;
 }
 
-#my-div {
-    height: 100%;
-    width: 110%;
-    margin: -20px;
-    max-height: 1050px;
-    overflow: auto;
-    margin-top: -20px;
+
+.hero {
+    background-image: url("../img/page-top-bg.jpg");
+    width: 90%;
+    height: 400px;
+    margin: 0 auto;
 }
 
+/*#my-div {
+    height: 100%;
+    width: 110%;*/
+  /*  margin: -20px;*/
+    /*max-height: 1050px;
+    overflow: auto;*/
+   /* margin-top: -20px;*/
+/*}
+
 #content {
-    width: 100%;
-    margin-top: -50px;
-}
+    width: 100%;*/
+  /*  margin-top: -50px;*/
+/*}*/
 
 #student-name {
     padding-top: 135px;
@@ -1862,16 +1870,22 @@ ol {
 #disp {
 /*    background-color: rgba(96,96,96,0.5);
 */    /*padding-bottom: 40px;*/
-    margin-top: -20px;
+   /* margin-top: -20px;*/
 }
 
-#userPage {
-    margin-top: 30px;
-    padding-left: 5%;
-    padding-right: 5%;
+@media (min-width: 780px) {
+    #userPage {
+       display:flex;
+       flex-direction: row;
+    }
+    }
+}#userPage {
+   /* margin-top: 30px;*/
+   /* padding-left: 5%;
+    padding-right: 5%;*/
 }
 
-.table .my-auto tr th {
+/*.table .my-auto tr th {
     font-size: 24px;
     font-family: Copperplate / Copperplate Gothic Light, sans-serif;
-}
+}*/

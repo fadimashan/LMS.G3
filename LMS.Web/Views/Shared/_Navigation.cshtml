@@ -1,0 +1,113 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+
+<div class="hero mt-3 p-2">
+
+
+
+
+    <header class="header-section mt-2" id="disp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3">
+                    <div class="site-logo ml-2">
+                        <img src="img/logo.png" alt="">
+                    </div>
+                    <div class="nav-switch">
+                        <i class="fa fa-bars"></i>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-9">
+
+                    <nav class="main-menu">
+                        <ul>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                            <li><a href="#">About us</a></li>
+
+                            <li><a asp-area="" asp-controller="Courses" asp-action="Index">Courses</a></li>
+
+
+
+                            <li><a href="blog.html">News</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header section end -->
+
+
+    <div class="row justify-content-end">
+        <a class="site-btn " asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" style="background:transparent;">Hello @User.Identity.Name! </a>
+
+        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+            <button type="submit" class="site-btn ml-2 btn-link">Logout</button>
+        </form>
+
+    </div>
+
+</div>
+}
+else
+{
+    <!-- Header section -->
+    <header class="header-section mt-2" id="disp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3">
+                    <div class="site-logo ml-2">
+                        <img src="img/logo.png" alt="">
+                    </div>
+                    <div class="nav-switch">
+                        <i class="fa fa-bars"></i>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-9">
+
+                    <nav class="main-menu">
+                        <ul>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                            <li><a href="#">About us</a></li>
+
+                            <li><a asp-area="" asp-controller="Courses" asp-action="Index">Courses</a></li>
+
+                            <li><a href="blog.html">News</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header section end -->
+    <!-- Hero section -->
+    @if (!Context.Request.Path.Value.Contains("Login"))
+    {
+        <section id="disp" class="hero-section set-bg " data-setbg="img/bg.jpg">
+            <div class="container">
+                <div class="hero-text text-white">
+                    <h2>Get The Best Free Online Courses</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla <br> dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+                </div>
+                <div class="row justify-content-center">
+
+                    @*<a asp-area="Identity" asp-page="/Account/Register" class="site-btn m-2">Sign Up</a>*@
+                    <a asp-area="Identity" class="site-btn m-2" asp-page="/Account/Login">Login</a>
+
+                </div>
+            </div>
+        </section>
+        <!-- Hero section end -->
+
+    }
+
+
+
+}
+
