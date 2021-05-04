@@ -1,36 +1,33 @@
-﻿using LMS.Core.Entities;
-using LMS.Data.Data;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using LMS.Core.Entities;
+using LMS.Data.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LMS.Web.Controllers
 {
     [Authorize]
-    public class CoursesController : Controller
+    public class ActivitiesController : Controller
     {
-        private readonly LMSWebContext db;
+        private readonly LMSWebContext _context;
 
-        public CoursesController(LMSWebContext context)
+        public ActivitiesController(LMSWebContext context)
         {
-            db = context;
-
+            _context = context;
         }
 
-        // GET: Courses
+        // GET: Activities
         public async Task<IActionResult> Index()
         {
-            //List of Users
-            var users = db.Users.ToList();
-
-          
-
-            return View(await db.Course.ToListAsync());
+            return View(await _context.Activity.ToListAsync());
         }
 
-        // GET: Courses/Details/5
+        // GET: Activities/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -38,39 +35,39 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var course = await db.Course
+            var activity = await _context.Activity
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (course == null)
+            if (activity == null)
             {
                 return NotFound();
             }
 
-            return View(course);
+            return View(activity);
         }
 
-        // GET: Courses/Create
+        // GET: Activities/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Courses/Create
+        // POST: Activities/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate")] Course course)
+        public async Task<IActionResult> Create([Bind("Id,Name,ActivityType,StartDate,EndDate,Description")] Activity activity)
         {
             if (ModelState.IsValid)
             {
-                db.Add(course);
-                await db.SaveChangesAsync();
+                _context.Add(activity);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            return View(activity);
         }
 
-        // GET: Courses/Edit/5
+        // GET: Activities/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,22 +75,22 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var course = await db.Course.FindAsync(id);
-            if (course == null)
+            var activity = await _context.Activity.FindAsync(id);
+            if (activity == null)
             {
                 return NotFound();
             }
-            return View(course);
+            return View(activity);
         }
 
-        // POST: Courses/Edit/5
+        // POST: Activities/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,StartDate,EndDate")] Course course)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ActivityType,StartDate,EndDate,Description")] Activity activity)
         {
-            if (id != course.Id)
+            if (id != activity.Id)
             {
                 return NotFound();
             }
@@ -102,12 +99,12 @@ namespace LMS.Web.Controllers
             {
                 try
                 {
-                    db.Update(course);
-                    await db.SaveChangesAsync();
+                    _context.Update(activity);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CourseExists(course.Id))
+                    if (!ActivityExists(activity.Id))
                     {
                         return NotFound();
                     }
@@ -118,10 +115,10 @@ namespace LMS.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            return View(activity);
         }
 
-        // GET: Courses/Delete/5
+        // GET: Activities/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,30 +126,30 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var course = await db.Course
+            var activity = await _context.Activity
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (course == null)
+            if (activity == null)
             {
                 return NotFound();
             }
 
-            return View(course);
+            return View(activity);
         }
 
-        // POST: Courses/Delete/5
+        // POST: Activities/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var course = await db.Course.FindAsync(id);
-            db.Course.Remove(course);
-            await db.SaveChangesAsync();
+            var activity = await _context.Activity.FindAsync(id);
+            _context.Activity.Remove(activity);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CourseExists(int id)
+        private bool ActivityExists(int id)
         {
-            return db.Course.Any(e => e.Id == id);
+            return _context.Activity.Any(e => e.Id == id);
         }
     }
 }
