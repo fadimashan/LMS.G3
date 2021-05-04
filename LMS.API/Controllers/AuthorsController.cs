@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LMS.API.Data;
+using LMS.API.Helpers;
+using LMS.API.Models.DTO;
 using LMS.API.Models.Entities;
 using LMS.API.Services;
 
@@ -15,26 +18,31 @@ namespace LMS.API.Controllers
     [Route("api/authors")]
     public class AuthorsController : ControllerBase
     {
-        private readonly ApiDbContext _dbContext;
         private readonly IAuthorsRepository _authorsRepository;
+        private readonly IMapper _mapper;
+        
+        // ToDo: To be removed when all methods are using the Repository
+        private readonly ApiDbContext _dbContext;
 
-        public AuthorsController(ApiDbContext context, IAuthorsRepository authorsRepository)
+        public AuthorsController(ApiDbContext context, IAuthorsRepository authorsRepository, IMapper mapper)
         {
             _dbContext = context;
             _authorsRepository = authorsRepository ?? throw new ArgumentNullException(nameof(authorsRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
+        public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors()
         {
-            var authorsFromRepo = await _authorsRepository.GetAllAsync();
-            return Ok(authorsFromRepo);
+            var authorsFromRepo = await _authorsRepository.GetAllWithPublicationsAsync();
+
+            return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
         }
 
         // GET: api/Authors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Author>> GetAuthor(int id)
+        public async Task<ActionResult<AuthorDto>> GetAuthor(int id)
         {
             var authorFromRepo = await _authorsRepository.GetAsync(id);
 
@@ -43,7 +51,20 @@ namespace LMS.API.Controllers
                 return NotFound();
             }
 
-            return new JsonResult(authorFromRepo);
+            return Ok(_mapper.Map<AuthorDto>(authorFromRepo));
+        }
+
+        [HttpGet("{id}/publications")]
+        public async Task<ActionResult<IEnumerable<PublicationDto>>> GetPublicationsForAuthor(int id)
+        {
+            if (!_authorsRepository.Exists(id))
+            {
+                return NotFound();
+            }
+            
+            var publicationsFromRepo = await _authorsRepository.GetPublicationsAsync(id);
+
+            return Ok(_mapper.Map<IEnumerable<PublicationDto>>(publicationsFromRepo));
         }
 
         // PUT: api/Authors/5

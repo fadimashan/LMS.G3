@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LMS.API.Data;
+using LMS.API.Models.DTO;
 using LMS.API.Models.Entities;
 using LMS.API.Services;
 
@@ -15,26 +17,32 @@ namespace LMS.API.Controllers
     [Route("api/publications")]
     public class PublicationsController : ControllerBase
     {
-        private readonly ApiDbContext _dbContext;
         private readonly IPublicationsRepository _publicationsRepository;
+        private readonly IMapper _mapper;
 
-        public PublicationsController(ApiDbContext context, IPublicationsRepository publicationsRepository)
+        // ToDo: To be removed when all methods are using the Repository
+        private readonly ApiDbContext _dbContext;
+        
+
+        public PublicationsController(ApiDbContext context, IPublicationsRepository publicationsRepository, IMapper mapper)
         {
             _dbContext = context;
             _publicationsRepository = publicationsRepository ?? throw new ArgumentNullException(nameof(publicationsRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Publications
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Publication>>> GetPublications()
+        public async Task<ActionResult<IEnumerable<PublicationDto>>> GetPublications()
         {
             var publicationsFromRepo = await _publicationsRepository.GetAllAsync();
-            return Ok(publicationsFromRepo);
+            
+            return Ok(_mapper.Map<IEnumerable<PublicationDto>>(publicationsFromRepo));
         }
 
         // GET: api/Publications/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Publication>> GetPublication(int id)
+        public async Task<ActionResult<PublicationDto>> GetPublication(int id)
         {
             var publicationFromRepo = await _publicationsRepository.GetAsync(id);
 
@@ -43,7 +51,7 @@ namespace LMS.API.Controllers
                 return NotFound();
             }
 
-            return Ok(publicationFromRepo);
+            return Ok(_mapper.Map<PublicationDto>(publicationFromRepo));
         }
 
         // PUT: api/Publications/5

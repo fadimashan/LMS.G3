@@ -9,10 +9,12 @@ namespace LMS.API.Services
         Task<IEnumerable<Author>> GetAllAsync();
         Task<IEnumerable<Author>> GetAllWithPublicationsAsync();
         Task<Author> GetAsync(int? id);
-        Task<Author> GetWithPublicationsAsync(int? id);
-        void Add(Publication publication);
-        void Update(Publication publication);
-        void Remove(Publication publication);
-        public bool Any(int id);
+        // Task<Author> GetWithPublicationsAsync(int? id);
+        Task<IEnumerable<Publication>> GetPublicationsAsync(int id);
+        void AddAsync(Publication publication);
+        void UpdateAsync(Publication publication);
+        void RemoveAsync(Publication publication);
+        public bool Exists(int id);
+        
     }
 }

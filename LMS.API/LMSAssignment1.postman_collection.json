@@ -37,7 +37,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Author 15",
+			"name": "Get Author by Id",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept": true
@@ -63,38 +63,6 @@
 						"api",
 						"authors",
 						"15"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Author 16",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {
-					"accept": true
-				}
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "https://localhost:5001/api/authors/16",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"api",
-						"authors",
-						"16"
 					]
 				}
 			},
@@ -133,6 +101,39 @@
 			"response": []
 		},
 		{
+			"name": "Get Author's Publications",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/api/authors/16/publications",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"authors",
+						"16",
+						"publications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Publications",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
@@ -164,71 +165,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Publication 1",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {
-					"accept": true
-				}
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "https://localhost:5001/api/publications/1",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"api",
-						"publications",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Publication 3",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {
-					"accept": true
-				}
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "https://localhost:5001/api/publications/3",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"api",
-						"publications",
-						"3"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Publication 15",
+			"name": "Get Publication by Id",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept": true

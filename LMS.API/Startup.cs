@@ -16,6 +16,7 @@ using Microsoft.OpenApi.Models;
 using LMS.API.Data;
 using LMS.API.Services;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Newtonsoft.Json;
 
 namespace LMS.API
 {
@@ -34,7 +35,12 @@ namespace LMS.API
             services.AddControllers(options =>
             {
                 options.ReturnHttpNotAcceptable = true;
+            }).AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             }).AddXmlDataContractSerializerFormatters();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<IPublicationsRepository, PublicationsRepository>();
             services.AddScoped<IAuthorsRepository, AuthorsRepository>();

@@ -23,35 +23,50 @@ namespace LMS.API.Services
 
         public async Task<IEnumerable<Author>> GetAllWithPublicationsAsync()
         {
-            throw new System.NotImplementedException();
+            return await _dbContext.Authors
+                .Include(a => a.Publications)
+                .ToListAsync();
         }
 
         public async Task<Author> GetAsync(int? id)
         {
-            return await _dbContext.Authors.FindAsync(id);
+            return await _dbContext.Authors
+                .Include(a => a.Publications)
+                .FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public async Task<Author> GetWithPublicationsAsync(int? id)
+        public async Task<IEnumerable<Publication>> GetPublicationsAsync(int id)
+        {
+            var author = await _dbContext.Authors
+                .Include(a => a.Publications)
+                .ThenInclude(p => p.Type)
+                .Include(a => a.Publications)
+                .ThenInclude(p => p.Subject)
+                .FirstOrDefaultAsync(a => a.Id == id);
+            return author.Publications;
+        }
+
+        /* public async Task<Author> GetWithPublicationsAsync(int? id)
+        {
+            throw new System.NotImplementedException();
+        } */
+
+        public void AddAsync(Publication publication)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Add(Publication publication)
+        public void UpdateAsync(Publication publication)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Update(Publication publication)
+        public void RemoveAsync(Publication publication)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Remove(Publication publication)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool Any(int id)
+        public bool Exists(int id)
         {
             return _dbContext.Authors.Any(a => a.Id == id);
         }
