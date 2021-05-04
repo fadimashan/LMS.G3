@@ -65,7 +65,7 @@ namespace LMS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                List<Module> newMod  = new List<Module>();
+                List<Module> newMod = new List<Module>();
                 newMod.Add(module);
                 var co = course;
                 co.Modules = newMod;
@@ -165,21 +165,32 @@ namespace LMS.Web.Controllers
         }
 
 
-       // public async Task<IActionResult> UserMainPageViewModel()
+        // public async Task<IActionResult> UserMainPageViewModel()
         public async Task<IActionResult> Index(string moduleID)
         {
             var currentUser = _userManager.GetUserId(User);
             ViewBag.CurrentModule = moduleID;
-            int modID = 1 ;
-            var ne = int.TryParse(moduleID,out modID);
-            var course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
-                .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == modID)).ToListAsync();
+            int modID = 1;
+            var ne = int.TryParse(moduleID, out modID);
+            var course = new List<Course>();
+            if (moduleID is null)
+            {
+                var firstModuleID = db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+                .Include(c => c.Modules).FirstOrDefault().Id;
+                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+                   .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == firstModuleID)).ToListAsync();
+            }
+            else
+            {
+                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+            .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == modID)).ToListAsync();
+            }
 
 
 
             if (User.IsInRole("Teacher"))
             {
-                var module = await db.Course.Include(c => c.Modules).ThenInclude(m=>m.Activities).ToListAsync();
+                var module = await db.Course.Include(c => c.Modules).ThenInclude(m => m.Activities).ToListAsync();
                 return View("GetCourses", module);
 
             }

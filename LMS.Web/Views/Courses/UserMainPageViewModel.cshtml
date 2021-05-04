@@ -5,31 +5,14 @@
 }
 
 
-<!--<div class="row justify-content-center text-center">-->
 <!-- categorie -->
-<!--<div class="col-6">
-
-        <div class="categorie-item">
-            <div class="ci-thumb set-bg" data-setbg="img/categories/1.jpg"></div>
-            <div class="ci-text">
-                <h5>You are enrolled in: <span class="text-capitalize">@Model.Title</span></h5>
-                <p>Lorem ipsum dolor sit amet, consectetur</p>
-                <a href="#" id="my-btn" class="btn-outline-primary">Click Here to see Modules & Activities</a>
-            </div>
-        </div>
-    </div>
-</div>
-          <!-- categorie -->
 
 <div class="row text-center mx-auto mb-0" style="width: 600px;">
     <div class="col text-center mx-auto" style="top:-180px;">
-
         <div class="categorie-item">
-
             <div class="ci-text">
-                <a href="#" id="my-btn" class="btn">You are enrolled in: <span class="text-capitalize">@Model.Title</span></a>
+                <a href="#" id="my-btn" class="btn">You are enrolled in: <span class="text-capitalize">@Model.FirstOrDefault().Title</span></a>
                 <p>Lorem ipsum dolor sit amet, consectetur</p>
-                @*<a href="#" id="my-btn" class="btn-outline-primary">Click Here to see Modules & Activities</a>*@
             </div>
         </div>
     </div>
@@ -66,12 +49,12 @@
                             <p>
                                 @{ var moduleId = item.Id;
                                 }
-                                <a class="btn-outline-danger" href="@Url.Action("Index", new { moduleID = moduleId, currentModuleID = moduleId })" >
+                                <a class="btn-outline-danger" href="@Url.Action("Index", new { moduleID = moduleId, currentModuleID = moduleId })">
                                     @Html.DisplayFor(modelItem => item.Title)
-                                </a >
+                                </a>
 
                             </p>
-                           
+
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => startModule)
@@ -93,55 +76,39 @@
                                 </div>
                             </div>
                         </td>
-
                     </tr>
-
-
-                    num += 1;
-
-
-
                 }
 
             </tbody>
         </table>
     </div>
-    @*<div class="col-1"></div>*@
-
-
 
     <div class="text-center" id="activity">
-
-
-        <h3 class="text-center site-btn ml-1 w-auto" id="activity-title">  <i class="fas fa-list"></i> Activity List for : @Model.Modules.FirstOrDefault().Title</h3>
+        <h3 class="text-center site-btn ml-1 w-auto" id="activity-title">  <i class="fas fa-list"></i> Activity List for : @Model.FirstOrDefault().Modules.FirstOrDefault().Title</h3>
         <div id="my-div">
-
             <section class="categories-section">
                 <div class=" ">
-
                     <div class="row justify-content-center overflow-auto" id="check-item">
 
-
-
-                      @foreach (var items in Model.FirstOrDefault().Modules)
+                        @foreach (var items in Model.FirstOrDefault().Modules)
                         {
                             foreach (var item in items.Activities)
                             {
-                            <!-- categorie -->
-                            <div class="col-sd-2">
-                                <div class="categorie-item" id="card-main-item ">
-                                    @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
-                                        var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg";
-                                    }
-                                    <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
-                                        <div class="ci-thumb set-bg" data-setbg=@link></div>
-                                        <div class="ci-text">
+                                <!-- categorie -->
+                                <div class="col-sd-2">
+                                    <div class="categorie-item" id="card-main-item ">
+                                        @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
+                                            var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg";
+                                        }
+                                        <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
+                                            <div class="ci-thumb set-bg" data-setbg=@link></div>
+                                            <div class="ci-text">
 
-                                            <h5>@Html.DisplayFor(modelItem => item.Name)</h5>
-                                            <p>@Html.DisplayFor(modelItem => item.ActivityType)</p>
-                                            <span>@Html.DisplayFor(modelItem => start) -  @Html.DisplayFor(modelItem => end)</span>
-                                        </div>
-                                    </a>
+                                                <h5>@Html.DisplayFor(modelItem => item.Name)</h5>
+                                                <p>@Html.DisplayFor(modelItem => item.ActivityType)</p>
+                                                <span>@Html.DisplayFor(modelItem => start) -  @Html.DisplayFor(modelItem => end)</span>
+                                            </div>
+                                        </a>
 
                                     </div>
                                 </div>
@@ -159,8 +126,7 @@
     let userPage = document.getElementById("userPage");
     let activity = document.getElementById("activity");
     let el = document.getElementById("my-btn");
-    //userPage.style.display = "none";
-    //activity.style.display = "none";
+
     el.addEventListener("click", () => {
         if (userPage.style.display == "none") {
 
