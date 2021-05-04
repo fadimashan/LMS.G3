@@ -1860,8 +1860,7 @@ ol {
 }
 
 #disp {
-/*    background-color: rgba(96,96,96,0.5);
-*/    /*padding-bottom: 40px;*/
+
     margin-top: -20px;
 }
 
@@ -1874,4 +1873,24 @@ ol {
 .table .my-auto tr th {
     font-size: 24px;
     font-family: Copperplate / Copperplate Gothic Light, sans-serif;
+}
+
+.cell-1 {
+    border-collapse: separate;
+    border-spacing: 0 4em;
+    background: #ffffff;
+    border-bottom: 5px solid transparent;
+    background-clip: padding-box;
+    cursor: pointer
+}
+
+.table-elipse {
+    cursor: pointer
+}
+
+#demo {
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s 0.1s ease-in-out;
+    transition: all 0.3s ease-in-out
 }

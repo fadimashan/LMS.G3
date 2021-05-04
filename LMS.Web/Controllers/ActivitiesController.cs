@@ -48,7 +48,11 @@ namespace LMS.Web.Controllers
         // GET: Activities/Create
         public IActionResult Create()
         {
-            return View();
+            var module = new Activity
+            {
+                GetModulesSelectListItem = GetModulesSelectListItem()
+            };
+            return View(module);
         }
 
         // POST: Activities/Create
@@ -56,7 +60,7 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ActivityType,StartDate,EndDate,Description")] Activity activity)
+        public async Task<IActionResult> Create([Bind("Id,Name,ActivityType,StartDate,EndDate,Description,ModuleId")] Activity activity)
         {
             if (ModelState.IsValid)
             {
@@ -125,11 +129,6 @@ namespace LMS.Web.Controllers
             return View(activity);
         }
 
-        public ActionResult Details1(int id)
-        {
-            var activityOne = db.Activity.Find(id);
-            return PartialView("_Details", activityOne);
-        }
         // GET: Activities/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -167,7 +166,7 @@ namespace LMS.Web.Controllers
 
         private IEnumerable<SelectListItem> GetModulesSelectListItem()
         {
-            var modules = db.Module;
+            var modules = db.Module.OrderBy(m=>m.Title);
             var GetModules = new List<SelectListItem>();
             foreach (var mod in modules)
             {

@@ -4,11 +4,18 @@
     ViewData["Title"] = "GetCourses";
 }
 
-<h1>GetCourses</h1>
+<div class="row">
+    <h4>LMS Courses</h4>
+    <div class="btn-group">
+        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" font-size:24px">Create</p>
+        <div class="dropdown-menu shadow">
+            <a asp-controller="Courses" asp-action="Create" type="button" class="dropdown-item">Course</a>
+            <a asp-controller="Modules" asp-action="Create" type="button" class="dropdown-item">Module</a>
+            <a asp-controller="Activities" asp-action="Create" type="button" class="dropdown-item">Activity</a>
+        </div>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -27,27 +34,65 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+    @*<tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndDate)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>*@
+
+    <tbody class="table-body">
+        @foreach (var item in Model)
+        {
+            var itemID = @item.Id;
+            <tr data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @*data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+
+
+                <td  class="btn-group">
+                    @*<div class="btn-group">*@
+
+                      
+                        <div class="dropdown-menu ">
+                            @foreach (var mod in item.Modules)
+                            {
+                                <a asp-controller="Modules" asp-action="Details" asp-route-id="@mod.Id" type="button" class="dropdown-item">@mod.Title</a>
+                            }
+                        </div>
+                    @*</div>*@
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+

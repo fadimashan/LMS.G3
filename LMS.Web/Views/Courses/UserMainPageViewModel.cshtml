@@ -1,4 +1,4 @@
-﻿@model LMS.Core.Entities.Course
+﻿@model IEnumerable<LMS.Core.Entities.Course>
 
 @{
     ViewData["Title"] = "UserMainPageViewModel";
@@ -19,7 +19,7 @@
 <div class="row" id="userPage">
     <div class="col-6">
         <table class="table my-auto">
-            <thead>
+            <thead class="table table-bordered">
                 <tr>
                     <th>
                         <h2>Title</h2>
@@ -35,13 +35,14 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.Modules)
+                @foreach (var item in Model.FirstOrDefault().Modules)
                 {
                     <tr>
                         <td>
                             @{ var startModule = item.StartDate.ToString("yyyy-MM-dd"); var endModule = item.EndDate.ToString("yyyy-MM-dd"); }
                             <p>
-                                @{ var moduleId = item.Id;}
+                                @{var moduleId = item.Id;
+                                }
                                 <a style="color:black" href="@Url.Action("Index", new { moduleID = moduleId, currentModuleID = moduleId })">
                                     @Html.DisplayFor(modelItem => item.Title)
                                 </a>
@@ -78,26 +79,31 @@
             <section class="categories-section spad">
                 <div class="container">
                     <div class="row">
-                        @foreach (var item in Model.Modules.FirstOrDefault().Activities)
+
+                        @foreach (var items in Model.FirstOrDefault().Modules)
                         {
-                            <!-- categorie -->
-                            <div class=" col-sd-2">
-                                <div class="categorie-item" id="card-main-item ">
-                                    @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
-                                        var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg";
-                                    }
-                                    <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
-                                        <div class="ci-thumb set-bg" data-setbg=@link></div>
-                                        <div class="ci-text">
+                            foreach (var item in items.Activities)
+                            {
 
-                                            <h5>@Html.DisplayFor(modelItem => item.Name)</h5>
-                                            <p>@Html.DisplayFor(modelItem => item.ActivityType)</p>
-                                            <span>@Html.DisplayFor(modelItem => start) -  @Html.DisplayFor(modelItem => end)</span>
-                                        </div>
-                                    </a>
+                                <!-- categorie -->
+                                <div class=" col-sd-2">
+                                    <div class="categorie-item" id="card-main-item ">
+                                        @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
+                                            var activityIs = (item != null) ? item.ActivityType.ToString() : null; var link = $"img/activity/{activityIs}.jpg";
+                                        }
+                                        <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
+                                            <div class="ci-thumb set-bg" data-setbg=@link></div>
+                                            <div class="ci-text">
+                                                @* need another forloop *@
+                                                <h5>@Html.DisplayFor(modelItem => item.Name)</h5>
+                                                <p>@Html.DisplayFor(modelItem => item.ActivityType)</p>
+                                                <span>@Html.DisplayFor(modelItem => start) -  @Html.DisplayFor(modelItem => end)</span>
+                                            </div>
+                                        </a>
 
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         }
                     </div>
                 </div>

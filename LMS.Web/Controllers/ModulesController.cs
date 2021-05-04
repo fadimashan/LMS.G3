@@ -69,8 +69,8 @@ namespace LMS.Web.Controllers
             {
                 db.Add(@module);
                 await db.SaveChangesAsync();
-                var moduleFromdb = db.Module.Where(m => m.Title == module.Title && m.StartDate == module.StartDate && m.EndDate == module.EndDate).FirstOrDefault();
-                var course = db.Course.Find(module.CourseId);
+                //var moduleFromdb = db.Module.Where(m => m.Title == module.Title && m.StartDate == module.StartDate && m.EndDate == module.EndDate).FirstOrDefault();
+                //var course = db.Course.Find(module.CourseId);
 
                 await db.SaveChangesAsync();
 

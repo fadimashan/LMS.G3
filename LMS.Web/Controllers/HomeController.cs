@@ -16,6 +16,7 @@ namespace LMS.Web.Controllers
 
         public HomeController(ILogger<HomeController> logger)
         {
+
             _logger = logger;
         }
 
@@ -34,5 +35,7 @@ namespace LMS.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+     
     }
 }

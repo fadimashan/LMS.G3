@@ -26,8 +26,8 @@ namespace LMS.Web.Controllers
         // GET: Courses
         public async Task<IActionResult> GetCourses()
         {
-
-            return View("GetCourses", await db.Course.ToListAsync());
+            var module = await db.Course.Include(c => c.Modules).ToListAsync();
+            return View("GetCourses", module);
         }
 
         // GET: Courses/Details/5
@@ -173,11 +173,14 @@ namespace LMS.Web.Controllers
             int modID = 1 ;
             var ne = int.TryParse(moduleID,out modID);
             var course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
-                .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a=> a.ModuleId == modID)).FirstOrDefaultAsync();
+                .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == modID)).ToListAsync();
+
+
 
             if (User.IsInRole("Teacher"))
             {
-                return View("GetCourses", await db.Course.ToListAsync());
+                var module = await db.Course.Include(c => c.Modules).ToListAsync();
+                return View("GetCourses", module);
 
             }
             if (User.IsInRole("Student"))
@@ -191,8 +194,6 @@ namespace LMS.Web.Controllers
 
         }
 
-
-        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> GetStudents()
         {
             var currentUser = _userManager.GetUserId(User);

@@ -14,14 +14,12 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
     <!-- Fluent Design Bootstrap -->
-    <link rel="stylesheet" href="~/css/fluent.css">
+    <link href="~/css/fluent.css" rel="stylesheet">
     <!-- Micon icons-->
-    <link rel="stylesheet" href="~/css/micon.min.css">
+    <link href="~/css/micon.min.css" rel="stylesheet" >
     <link href="~/css/style.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/css/font-awesome.min.css" rel="stylesheet" />
-
-    <link href="~/lib/bootstrap/dist/css/owl.carousel.css" rel="stylesheet" />
 
 </head>
 <body>
@@ -38,7 +36,7 @@
                         <i class="fa fa-bars"></i>
                     </div>
                 </div>
-                <div class="col-lg-9 col-md-9">
+                <div class="col-lg-7 col-md-9">
 
                     <nav class="main-menu">
                         <ul>
@@ -49,6 +47,21 @@
                             <li><a href="activities">Contact</a></li>
                         </ul>
                     </nav>
+                </div>
+                <div class="col-lg-2 col-md-9">
+
+                    @{
+                        if (User.Identity.IsAuthenticated)
+                        {
+                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                                <button type="submit" class="nav-link btn btn-link text-dark"><i class="fas fa-sign-out-alt"></i></button>
+                            </form>
+                        }
+                        else
+                        {
+                            <p>You have successfully logged out of the application.</p>
+                        }
+                    }
                 </div>
             </div>
         </div>
