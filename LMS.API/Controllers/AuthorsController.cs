@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using LMS.API.Data;
 using LMS.API.Models.Entities;
 using LMS.API.Services;
+using LMS.API.DtoModels;
+using LMS.API.Helpers;
+using AutoMapper;
 
 namespace LMS.API.Controllers
 {
@@ -17,11 +20,14 @@ namespace LMS.API.Controllers
     {
         private readonly ApiDbContext _dbContext;
         private readonly IAuthorsRepository _authorsRepository;
+        private readonly IMapper _mapper;
 
-        public AuthorsController(ApiDbContext context, IAuthorsRepository authorsRepository)
+        public AuthorsController(ApiDbContext context, IAuthorsRepository authorsRepository,
+            IMapper mapper)
         {
             _dbContext = context;
             _authorsRepository = authorsRepository ?? throw new ArgumentNullException(nameof(authorsRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Authors
@@ -29,7 +35,7 @@ namespace LMS.API.Controllers
         public async Task<ActionResult<IEnumerable<Author>>> GetAuthors(string searchQuery,string sortQuery)
         {
             var authorsFromRepo = await _authorsRepository.GetAllAsync();
-            return Ok(authorsFromRepo);
+            return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
         }
 
         // GET: api/Authors/5
