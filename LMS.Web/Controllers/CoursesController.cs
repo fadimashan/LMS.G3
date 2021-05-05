@@ -173,20 +173,6 @@ namespace LMS.Web.Controllers
             int modID = 1;
             var ne = int.TryParse(moduleID, out modID);
             var course = new List<Course>();
-            if (moduleID is null)
-            {
-                var firstModuleID = db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
-                .Include(c => c.Modules).FirstOrDefault().Id;
-                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
-                   .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == firstModuleID)).ToListAsync();
-            }
-            else
-            {
-                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
-            .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == modID)).ToListAsync();
-            }
-
-
 
             if (User.IsInRole("Teacher"))
             {
@@ -194,6 +180,23 @@ namespace LMS.Web.Controllers
                 return View("GetCourses", module);
 
             }
+
+            if (moduleID is null && User.IsInRole("Student"))
+            {
+                var firstModuleID = db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+                .Include(c => c.Modules).FirstOrDefault();
+                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+                   .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == firstModuleID.Modules.FirstOrDefault().Id)).ToListAsync();
+            }
+            else if(User.IsInRole("Student"))
+            {
+                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+            .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == modID)).ToListAsync();
+            }
+
+
+
+          
             if (User.IsInRole("Student"))
             {
                 return View("UserMainPageViewModel", course);

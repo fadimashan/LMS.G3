@@ -12,7 +12,6 @@
         <div class="categorie-item">
             <div class="ci-text">
                 <a href="#" id="my-btn" class="btn">You are enrolled in: <span class="text-capitalize">@Model.FirstOrDefault().Title</span></a>
-                <p>Lorem ipsum dolor sit amet, consectetur</p>
             </div>
         </div>
     </div>
@@ -40,21 +39,16 @@
             <tbody>
                 @foreach (var item in Model.FirstOrDefault().Modules)
                 {
-
                     <tr class="change-color" onclick="changeColor()">
                         <td>
-
-
                             @{ var startModule = item.StartDate.ToString("yyyy-MM-dd"); var endModule = item.EndDate.ToString("yyyy-MM-dd"); }
                             <p>
                                 @{ var moduleId = item.Id;
                                 }
-                                <a class="btn-outline-danger" href="@Url.Action("Index", new { moduleID = moduleId, currentModuleID = moduleId })">
+                                <a class="btn-outline-danger" href="@Url.Action("Index", new { moduleID = moduleId })">
                                     @Html.DisplayFor(modelItem => item.Title)
                                 </a>
-
                             </p>
-
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => startModule)
