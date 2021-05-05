@@ -26,7 +26,7 @@ namespace LMS.API.Controllers
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
+        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors(string searchQuery)
         {
             var authorsFromRepo = await _authorsRepository.GetAllAsync();
             return Ok(authorsFromRepo);
