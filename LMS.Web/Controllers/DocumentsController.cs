@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Data.Data;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace LMS.Web.Controllers
 {
@@ -24,6 +26,82 @@ namespace LMS.Web.Controllers
         {
             return View(await _context.Document.ToListAsync());
         }
+
+        [HttpPost("FileUpload")]
+        public async Task<IActionResult> UploadFile(List<IFormFile> files)
+        {
+            long size = files.Sum(f => f.Length);
+
+            var filePaths = new List<string>();
+
+            foreach (var formFile in files)
+            {
+                if (formFile != null && formFile.Length > 0)
+                {
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", formFile.FileName);
+                    filePaths.Add(filePath);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
+
+                }
+            }
+
+            return Ok(new { count = files.Count, size, filePaths });
+        }
+
+        //Course, module, acitivity
+        //[Authorize]
+        //public async Task<IActionResult> UploadFile(List<IFormFile> files, Course course)
+        //{
+        //    long size = files.Sum(f => f.Length);
+
+        //    var filePaths = new List<string>();
+
+        //    var user = await userManager.GetUserAsync(User);
+        //    var userId = userManager.GetUserId(User);
+
+        //    foreach (var formFile in files)
+        //    {
+        //        if (formFile != null && formFile.Length > 0)
+        //        {
+
+        //            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", formFile.FileName);
+        //            filePaths.Add(filePath);
+
+        //            using (var stream = new FileStream(filePath, FileMode.Create))
+        //            {
+        //                await formFile.CopyToAsync(stream);
+        //            }
+
+        //        }
+        //    }
+
+        //    //return Ok(new { count = files.Count, size, filePaths });
+        //   // return View();
+        //    return RedirectToAction("Index");
+        //}
+
+
+        //public async Task<IActionResult> Download(string filename)
+        //{
+        //    if (filename == null)
+        //        return Content("filename not present");
+
+        //    var path = Path.Combine(
+        //                   Directory.GetCurrentDirectory(),
+        //                   "wwwroot/files", filename);
+
+        //    var memory = new MemoryStream();
+        //    using (var stream = new FileStream(path, FileMode.Open))
+        //    {
+        //        await stream.CopyToAsync(memory);
+        //    }
+        //    memory.Position = 0;
+        //    return File(memory, GetContentType(path), Path.GetFileName(path));
+        //}
 
         // GET: Documents/Details/5
         public async Task<IActionResult> Details(int? id)
