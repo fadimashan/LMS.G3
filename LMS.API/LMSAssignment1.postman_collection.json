@@ -165,6 +165,117 @@
 			"response": []
 		},
 		{
+			"name": "Get Filtered Publications",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/api/publications?subject=Java",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications"
+					],
+					"query": [
+						{
+							"key": "subject",
+							"value": "Java"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Publications Filtered by Complex Subject",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/api/publications?subject=restful%20api",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications"
+					],
+					"query": [
+						{
+							"key": "subject",
+							"value": "restful%20api"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Publications Filtered by Different Subject",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/api/publications?subject=C%23%20foundations",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications"
+					],
+					"query": [
+						{
+							"key": "subject",
+							"value": "C%23%20foundations"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Publication by Id",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {

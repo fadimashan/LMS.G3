@@ -31,6 +31,12 @@ namespace LMS.API.Services
         public async Task<Author> GetAsync(int? id)
         {
             return await _dbContext.Authors
+                .FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        public async Task<Author> GetWithPublicationsAsync(int? id)
+        {
+            return await _dbContext.Authors
                 .Include(a => a.Publications)
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
@@ -43,7 +49,21 @@ namespace LMS.API.Services
                 .Include(a => a.Publications)
                 .ThenInclude(p => p.Subject)
                 .FirstOrDefaultAsync(a => a.Id == id);
+            
             return author.Publications;
+        }
+
+        public async Task<Publication> GetPublicationAsync(int authorId, int publicationId)
+        {
+            // Review: Do we need this?
+            var author = await _dbContext.Authors
+                .Include(a => a.Publications)
+                .ThenInclude(p => p.Type)
+                .Include(a => a.Publications)
+                .ThenInclude(p => p.Subject)
+                .FirstOrDefaultAsync(a => a.Id == authorId);
+            
+            return author.Publications.FirstOrDefault(p => p.Id == publicationId);
         }
 
         /* public async Task<Author> GetWithPublicationsAsync(int? id)
@@ -51,19 +71,19 @@ namespace LMS.API.Services
             throw new System.NotImplementedException();
         } */
 
-        public void AddAsync(Publication publication)
+        public async void AddAsync(Publication publication)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public void UpdateAsync(Publication publication)
+        public async void UpdateAsync(Publication publication)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public void RemoveAsync(Publication publication)
+        public async void RemoveAsync(Publication publication)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public bool Exists(int id)

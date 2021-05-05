@@ -24,6 +24,22 @@ namespace LMS.API.Services
                 .Include(p => p.Type)
                 .ToListAsync();
         }
+        
+        public async Task<IEnumerable<Publication>> GetAllAsync(string subject)
+        {
+            if (string.IsNullOrWhiteSpace(subject))
+            {
+                return await GetAllAsync();
+            }
+
+            subject = subject.Trim();
+
+            return await _dbContext.Publications
+                .Include(p => p.Subject)
+                .Include(p => p.Type)
+                .Where(p => p.Subject.Name.ToLower().Equals(subject.ToLower()))
+                .ToListAsync();
+        }
 
         public async Task<IEnumerable<Publication>> GetAllWithAuthorsAsync()
         {
@@ -50,7 +66,26 @@ namespace LMS.API.Services
                 .Include(p => p.Authors)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
-/* 
+
+        public async Task<IEnumerable<Author>> GetAuthorsAsync(int id)
+        {
+            var publication = await _dbContext.Publications
+                .Include(p => p.Authors)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            
+            return publication.Authors;
+        }
+
+        public async Task<Author> GetAuthorAsync(int publicationId, int authorId)
+        {
+            var publication = await _dbContext.Publications
+                .Include(p => p.Authors)
+                .FirstOrDefaultAsync(p => p.Id == publicationId);
+
+            return publication.Authors.FirstOrDefault(a => a.Id == authorId);
+        }
+
+        /* 
         public async void AddAsync(Publication publication)
         {
             throw new System.NotImplementedException();

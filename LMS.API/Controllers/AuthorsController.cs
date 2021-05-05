@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 using LMS.API.Data;
-using LMS.API.Helpers;
 using LMS.API.Models.DTO;
 using LMS.API.Models.Entities;
 using LMS.API.Services;
@@ -33,6 +31,7 @@ namespace LMS.API.Controllers
 
         // GET: api/Authors
         [HttpGet]
+        [HttpHead]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors()
         {
             var authorsFromRepo = await _authorsRepository.GetAllWithPublicationsAsync();
@@ -65,6 +64,25 @@ namespace LMS.API.Controllers
             var publicationsFromRepo = await _authorsRepository.GetPublicationsAsync(id);
 
             return Ok(_mapper.Map<IEnumerable<PublicationDto>>(publicationsFromRepo));
+        }
+        
+        // Review: Do we need this?
+        [HttpGet("{authorId}/publications/{publicationId}")]
+        public async Task<ActionResult<PublicationDto>> GetPublicationForAuthor(int authorId, int publicationId)
+        {
+            if (!_authorsRepository.Exists(authorId))
+            {
+                return NotFound();
+            }
+            
+            var publicationForAuthorFromRepo = await _authorsRepository.GetPublicationAsync(authorId, publicationId);
+
+            if (publicationForAuthorFromRepo is null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(_mapper.Map<PublicationDto>(publicationForAuthorFromRepo));
         }
 
         // PUT: api/Authors/5
