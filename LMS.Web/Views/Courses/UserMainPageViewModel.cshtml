@@ -8,131 +8,159 @@
 <!-- categorie -->
 
 <div class="row text-center mx-auto mb-0" style="width: 600px;">
-    <div class="col text-center mx-auto" style="top:-180px;">
+    <div class="col text-center mx-auto" style="top:-90px;">
         <div class="categorie-item">
             <div class="ci-text">
-                <a href="#" id="my-btn" class="btn">You are enrolled in: <span class="text-capitalize">@Model.FirstOrDefault().Title</span></a>
+                <a style="width: 100%;" id="my-btn" class="btn">You are enrolled in: <span class="text-capitalize">@Model.FirstOrDefault().Title</span></a>
             </div>
         </div>
     </div>
 </div>
 
+<div id="course" class="mt-0" style="top:-200px;">
 
-<div class="text-center justify-content-center mt-0" id="userPage" style="top:-120px;">
-    <div class="">
-        <table class="table  table-dark table-striped text-danger">
-            <thead>
-                <tr>
-                    <th>
-                        Module Title
-                    </th>
-                    <th>
-                        Start Date
-                    </th>
-                    <th>
-                        End Date
-                    </th>
 
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.FirstOrDefault().Modules)
-                {
-                    <tr class="change-color" onclick="changeColor()">
-                        <td>
-                            @{ var startModule = item.StartDate.ToString("yyyy-MM-dd"); var endModule = item.EndDate.ToString("yyyy-MM-dd"); }
-                            <p>
+    <div class="text-center justify-content-center mt-0" id="userPage">
+        <div class="">
+            <table class="table  table-dark table-striped text-white mr-auto">
+                <thead>
+                    <tr class="text-start">
+                        <th class="text-start">
+                            Module Title
+                        </th>
+                        <th class="text-start">
+                            Start Date
+                        </th>
+                        <th class="text-start">
+                            End Date
+                        </th>
+
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="table-body">
+                    @foreach (var item in Model.FirstOrDefault().Modules)
+                    {
+
+                        <tr class="change-color">
+
+                            <td class="text-start">
+                                @{ var startModule = item.StartDate.ToString("yyyy-MM-dd"); var endModule = item.EndDate.ToString("yyyy-MM-dd"); }
+
                                 @{ var moduleId = item.Id;
                                 }
-                                <a class="btn-outline-danger" href="@Url.Action("Index", new { moduleID = moduleId })">
+                                <a class="btn text-white text-start" href="@Url.Action("Index", new { moduleID = moduleId })" style="width: 100%;">
                                     @Html.DisplayFor(modelItem => item.Title)
                                 </a>
-                            </p>
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => startModule)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => endModule)
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id">
-                            </a>
-                            <div class="btn-group">
-                                <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" font-size:24px"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></p>
-                                <div class="dropdown-menu shadow">
-                                    <a asp-controller="Modules" asp-action="Details" asp-route-id="@item.Id" type="button" class="dropdown-item">Details</a>
-                                    @if (User.IsInRole("Teacher"))
-                                    {
-                                        <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.Id" type="button" class="dropdown-item">Edit</a>
-                                    }
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                }
 
-            </tbody>
-        </table>
-    </div>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => startModule)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => endModule)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id">
+                                </a>
 
-    <div class="text-center" id="activity">
-        <h3 class="text-center site-btn ml-1 w-auto" id="activity-title">  <i class="fas fa-list"></i> Activity List for : @Model.FirstOrDefault().Modules.FirstOrDefault().Title</h3>
-        <div id="my-div">
-            <section class="categories-section">
-                <div class=" ">
-                    <div class="row justify-content-center overflow-auto" id="check-item">
 
-                        @foreach (var items in Model.FirstOrDefault().Modules)
-                        {
-                            foreach (var item in items.Activities)
+                                @*<div class="btn-group">
+                        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" font-size:24px">Details</p>
+                        <div class="dropdown-menu shadow">
+                            <a asp-controller="Modules" asp-action="Details" asp-route-id="@item.Id" type="button" class="dropdown-item">Details</a>
+                            @if (User.IsInRole("Teacher"))
                             {
-                                <!-- categorie -->
-                                <div class="col-sd-2">
-                                    <div class="categorie-item" id="card-main-item ">
-                                        @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
-                                            var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg";
-                                        }
-                                        <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
-                                            <div class="ci-thumb set-bg" data-setbg=@link></div>
-                                            <div class="ci-text">
-
-                                                <h5>@Html.DisplayFor(modelItem => item.Name)</h5>
-                                                <p>@Html.DisplayFor(modelItem => item.ActivityType)</p>
-                                                <span>@Html.DisplayFor(modelItem => start) -  @Html.DisplayFor(modelItem => end)</span>
-                                            </div>
-                                        </a>
-
-                                    </div>
-                                </div>
+                                <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.Id" type="button" class="dropdown-item">Edit</a>
                             }
-                        }
+                        </div>
+                    </div>*@
+                            </td>
+
+                         
+
+                        </tr>
+
+
+
+                    }
+                   
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center p-2" id="activity">
+            <h3 class="text-center site-btn ml-1 w-auto" id="activity-title">  <i class="fas fa-list"></i> Activity List for : @Model.FirstOrDefault().Modules.FirstOrDefault().Title</h3>
+            <div id="my-div">
+                <section class="categories-section">
+                    <div class=" ">
+                        <div class="row justify-content-center overflow-auto" id="check-item">
+
+                            @foreach (var items in Model.FirstOrDefault().Modules)
+                            {
+                                foreach (var item in items.Activities)
+                                {
+                                    <!-- categorie -->
+                                    <div class="col-sd-2">
+                                        <div class="categorie-item" id="card-main-item ">
+                                            @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
+                                                var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg";
+                                            }
+                                            <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
+                                                <div class="ci-thumb set-bg" data-setbg=@link></div>
+                                                <div class="ci-text">
+
+                                                    <h5>@Html.DisplayFor(modelItem => item.Name)</h5>
+                                                    <p>@Html.DisplayFor(modelItem => item.ActivityType)</p>
+                                                    <span>@Html.DisplayFor(modelItem => start) -  @Html.DisplayFor(modelItem => end)</span>
+                                                </div>
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </div>
     </div>
 </div>
 
-
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
 <script>
     let userPage = document.getElementById("userPage");
     let activity = document.getElementById("activity");
+    let course = document.getElementById("course");
+
+    /*  course.style.display = "none";*/
     let el = document.getElementById("my-btn");
 
     el.addEventListener("click", () => {
-        if (userPage.style.display == "none") {
+        if (course.style.display == "none") {
+            el.setAttribute("href", "@Url.Action("Index", new { })");
 
-            userPage.style.display = "flex";
-            userPage.stye.width = "50%";
-            activity.style.display = "flex";
+            course.style.display = "block";
+            /* userPage.stye.width = "50%";*/
+            userPage.style.display = "block";
+            activity.style.display = "block";
         }
         else {
+             el.setAttribute("href", "#");
+            course.style.display = "none";
             userPage.style.display = "none";
             activity.style.display = "none";
         }
 
     })
+   
 
 </script>
+
+

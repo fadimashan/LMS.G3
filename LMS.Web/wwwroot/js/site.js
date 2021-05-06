@@ -7,9 +7,4 @@ $(document).ready(function () {
     $('[data-toggle="popover"]').popover();
 });
 
-let colorClass = document.querySelector(".change-color");
-function changeColor() {
-    colorClass.addEventListener("click", () => {
-        colorClass.classList.toggle("text-white");
-    })
-}
+
