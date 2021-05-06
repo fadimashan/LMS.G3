@@ -276,6 +276,84 @@
 			"response": []
 		},
 		{
+			"name": "Get Publications Searched by Title",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/api/publications?searchQuery=fro",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications"
+					],
+					"query": [
+						{
+							"key": "searchQuery",
+							"value": "fro"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Publications Filtered and Searched",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/api/publications?searchQuery=fro&subject=java",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications"
+					],
+					"query": [
+						{
+							"key": "searchQuery",
+							"value": "fro"
+						},
+						{
+							"key": "subject",
+							"value": "java"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Publication by Id",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {

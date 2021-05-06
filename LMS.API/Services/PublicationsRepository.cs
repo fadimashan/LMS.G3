@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LMS.API.Data;
 using LMS.API.Models.Entities;
+using LMS.API.ResourceParameters;
 using Microsoft.EntityFrameworkCore;
 
 namespace LMS.API.Services
@@ -25,20 +26,35 @@ namespace LMS.API.Services
                 .ToListAsync();
         }
         
-        public async Task<IEnumerable<Publication>> GetAllAsync(string subject)
+        public async Task<IEnumerable<Publication>> GetAllAsync(PublicationsResourceParameters searchParameters)
         {
-            if (string.IsNullOrWhiteSpace(subject))
+            if (searchParameters is null)
+            {
+                throw new ArgumentNullException();
+            }
+            
+            if (string.IsNullOrWhiteSpace(searchParameters.Subject) && string.IsNullOrWhiteSpace(searchParameters.SearchQuery))
             {
                 return await GetAllAsync();
             }
 
-            subject = subject.Trim();
-
-            return await _dbContext.Publications
+            var publications = _dbContext.Publications
                 .Include(p => p.Subject)
-                .Include(p => p.Type)
-                .Where(p => p.Subject.Name.ToLower().Equals(subject.ToLower()))
-                .ToListAsync();
+                .Include(p => p.Type).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchParameters.Subject))
+            {
+                var subject = searchParameters.Subject.Trim();
+                publications = publications.Where(p => p.Subject.Name.ToLower().Equals(subject.ToLower()));
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchParameters.SearchQuery))
+            {
+                var searchQuery = searchParameters.SearchQuery.Trim();
+                publications = publications.Where(p => p.Title.ToLower().Contains(searchQuery.ToLower()));
+            }
+
+            return await publications.ToListAsync();
         }
 
         public async Task<IEnumerable<Publication>> GetAllWithAuthorsAsync()

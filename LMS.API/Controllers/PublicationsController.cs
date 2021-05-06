@@ -8,6 +8,7 @@ using AutoMapper;
 using LMS.API.Data;
 using LMS.API.Models.DTO;
 using LMS.API.Models.Entities;
+using LMS.API.ResourceParameters;
 using LMS.API.Services;
 
 namespace LMS.API.Controllers
@@ -33,9 +34,9 @@ namespace LMS.API.Controllers
         // GET: api/Publications
         [HttpGet]
         [HttpHead]
-        public async Task<ActionResult<IEnumerable<PublicationDto>>> GetPublications(string subject)
+        public async Task<ActionResult<IEnumerable<PublicationDto>>> GetPublications([FromQuery] PublicationsResourceParameters searchParameters)
         {
-            var publicationsFromRepo = await _publicationsRepository.GetAllAsync(subject);
+            var publicationsFromRepo = await _publicationsRepository.GetAllAsync(searchParameters);
             
             return Ok(_mapper.Map<IEnumerable<PublicationDto>>(publicationsFromRepo));
         }
