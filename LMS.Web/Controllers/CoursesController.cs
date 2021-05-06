@@ -176,7 +176,7 @@ namespace LMS.Web.Controllers
 
             if (User.IsInRole("Teacher"))
             {
-                var module = await db.Course.Include(c => c.Modules).ThenInclude(m => m.Activities).ToListAsync();
+                var module = await db.Course.Include(c => c.Students).Include(c => c.Modules).ThenInclude(m => m.Activities).ToListAsync();
                 return View("GetCourses", module);
                 // return Redirect("/courses/GetCourses);
             }
