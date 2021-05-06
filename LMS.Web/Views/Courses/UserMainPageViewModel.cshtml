@@ -10,9 +10,7 @@
         </div>
     </div>
 </div>
-
-
-
+<div id="course" class="mt-0" style="top:-200px;">
     <div class="text-center justify-content-center mt-0" id="userPage">
         <div class="col-6">
             <table class="table  table-dark table-striped text-white mr-auto">
@@ -28,58 +26,41 @@
                         <th class="text-start">
                             Period
                         </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="table-body">
+                    @foreach (var item in Model.FirstOrDefault().Modules)
+                    {
+                        var newId = "test" + item.Id.ToString();
+                        <tr class="cell-1" data-toggle="collapse" data-target="#@newId" aria-expanded="false">
+                            <td>
+                                @{ var startModule = item.StartDate.ToString("yyyy-MM-dd"); var endModule = item.EndDate.ToString("yyyy-MM-dd"); }
 
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody class="table-body">
-                @foreach (var item in Model.FirstOrDefault().Modules)
-                {                 
-                    var newId = "test" + item.Id.ToString();
-                    <tr class="cell-1" data-toggle="collapse" data-target="#@newId" aria-expanded="false">
-                        <td>
-                            @{ var startModule = item.StartDate.ToString("yyyy-MM-dd"); var endModule = item.EndDate.ToString("yyyy-MM-dd"); }
-                            <p>
-                                @{ var moduleId = item.Id;
-                                }
+                                @{ var moduleId = item.Id; }
                                 <a class="btn text-white text-start" href="@Url.Action("Index", new { moduleID = moduleId })" style="width: 100%;">
                                     @Html.DisplayFor(modelItem => item.Title)
                                 </a>
-                            </p>
-                        </td>
-                        <td colspan="2">
-                                @Html.DisplayFor(modelItem => startModule)
-                            </td>
-                            <td></td>
-                            <td>
-                                @{ var period = (int)(item.EndDate - item.StartDate).TotalDays / 30;}
-                                <button disabled="" class="btn btn-dark ">@period Month</button>
-                            </td>
-                       
-                    <tr id="@newId" class="collapse desc-text" aria-expanded="false">
-                        <td colspan="3" class="desc-text">
-                            @Html.DisplayNameFor(modelItem => item.Description):
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                </tr>
-            }
-
-            </tbody>
-        </table>
-    </div>
 
                             </td>
                             <td colspan="2">
-                                @Html.DisplayFor(modelItem => startModule)
+                                <a class="btn text-white text-start">
+                                    @Html.DisplayFor(modelItem => startModule)
+                                </a>
                             </td>
                             <td></td>
-                            <td>
+                            <td colspan="2">
                                 @{ var period = (int)(item.EndDate - item.StartDate).TotalDays / 30;}
-                                <button disabled="" class="btn btn-dark ">@period Month</button>
+                                <a class="btn text-white text-start">@period Month</a>
                             </td>
-
                         </tr>
-                    }
+                        <tr id="@newId" class="collapse desc-text" aria-expanded="false">
+                            <td colspan="3" class="desc-text">
+                                @Html.DisplayNameFor(modelItem => item.Description):
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                        </tr>}
+
                 </tbody>
             </table>
         </div>
@@ -95,12 +76,10 @@
                             {
                                 foreach (var item in items.Activities)
                                 {
-                                    <!-- categorie -->
                                     <div class="col-sd-2">
                                         <div class="categorie-item" id="card-main-item ">
                                             @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
-                                                var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg";
-                                            }
+                                                var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg"; }
                                             <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
                                                 <div class="ci-thumb set-bg" data-setbg=@link></div>
                                                 <div class="ci-text">
@@ -112,8 +91,7 @@
                                             </a>
 
                                         </div>
-                                    </div>
-                                }
+                                    </div>}
                             }
                         </div>
                     </div>
