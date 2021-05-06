@@ -28,14 +28,15 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Modules/Details/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (!db.Module.Any(m => m.Id == id))
             {
                 return NotFound();
             }
 
-            var @module = await db.Module
+            var @module = await db.Module.Include(m=> m.Activities)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@module == null)
             {
@@ -68,10 +69,6 @@ namespace LMS.Web.Controllers
             if (ModelState.IsValid)
             {
                 db.Add(@module);
-                await db.SaveChangesAsync();
-                //var moduleFromdb = db.Module.Where(m => m.Title == module.Title && m.StartDate == module.StartDate && m.EndDate == module.EndDate).FirstOrDefault();
-                //var course = db.Course.Find(module.CourseId);
-
                 await db.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));

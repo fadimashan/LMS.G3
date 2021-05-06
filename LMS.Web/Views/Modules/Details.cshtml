@@ -4,39 +4,124 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+@*<h1>Details</h1>
 
-<div>
-    <h4>Module</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-    </dl>
+    <div>
+        <h4>Module</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Title)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Title)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.StartDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.StartDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.EndDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.EndDate)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>*@
+
+
+
+<div class="content">
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-5">
+            <h2>
+                @Html.DisplayFor(model => model.Title)
+            </h2>
+            <h3>
+                @{ var startD = @Model.StartDate.ToString("M"); var period = (int)(Model.EndDate - Model.StartDate).TotalDays / 30; }
+                Start date: @startD
+                Period: @period Month
+            </h3>
+            <h2>
+                @Html.DisplayNameFor(model => model.Description)
+            </h2>
+            <h5>
+                @Html.DisplayFor(model => model.Description)
+
+            </h5>
+        </div>
+        <div class="col-5">
+            <h1 id="activiy_view">Module's Activities</h1>
+            <div class="row justify-content-center overflow-auto" id="f-container">
+                <div id="list-items" class="row no-gutters">
+
+                    @foreach (var activity in Model.Activities)
+                    {
+                        var activityIs = activity.ActivityType.ToString();
+                        var link = $"/img/activity/{activityIs}.jpg";
+                        <div class="col-sd-2" id="img-container">
+                            <a data-toggle="dropdown" href="#coffe-1"><img id="img-circle" class="rounded-circle" src="@link" alt="@activity.Name"></a>
+                            <div class="dropdown-menu shadow">
+                                <a asp-controller="Activities" asp-action="Details" asp-route-id="@activity.Id" type="button" class="dropdown-item">Details</a>
+                                <a asp-controller="Activities" asp-action="Edit" asp-route-id="@activity.Id" type="button" class="dropdown-item">Edit</a>
+                            </div>
+                            <h5>@activity.Name</h5>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<style>
+    #f-container {
+        text-align: center;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    #activiy_view {
+        text-align: center;
+    }
+
+    #list-items {
+        max-width: 80%;
+        padding-left: 20px;
+        padding-right: 20px;
+        margin-top: 200px;
+    }
+
+    #img-circle {
+        height: 200px !important;
+        width: 200px !important;
+        min-width: 180px !important;
+        min-height: 180px !important;
+        max-width: 200px !important;
+        max-height: 200px !important;
+        background-position: right center;
+        border: 4px solid rgba(94, 6, 6, 0.836);
+    }
+
+    .no-gutters {
+        position: relative;
+        justify-content: center;
+        text-align: center;
+    }
+
+    #img-container {
+        padding: 10px;
+    }
+</style>

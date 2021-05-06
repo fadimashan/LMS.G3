@@ -52,14 +52,18 @@
                     @Html.DisplayFor(modelItem => item.Modules.Count)
                 </td>
                 <td class="text-center">
-                    @{ var numberOfActivities = 0;}
-                    @foreach (var oneModule in item.Modules)
-                    {
-                        if (oneModule.Activities != null)
+                    @{  var numberOfActivities = 0; }
+                      
+                        @foreach (var oneModule in item.Modules)
                         {
-                            numberOfActivities =+ oneModule.Activities.Count;
+                            if (oneModule.Activities != null)
+                            {
+
+                                numberOfActivities += oneModule.Activities.Count;
+
+                            }
                         }
-                    }
+                  
                     @Html.DisplayFor(modelItem => numberOfActivities)
                 </td>
                 <td>

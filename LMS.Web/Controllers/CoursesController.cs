@@ -73,7 +73,7 @@ namespace LMS.Web.Controllers
                 await db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            return View("GetCourses", course);
         }
 
         // GET: Courses/Edit/5
@@ -125,7 +125,7 @@ namespace LMS.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+           return View(course);
         }
 
         // GET: Courses/Delete/5
@@ -178,7 +178,7 @@ namespace LMS.Web.Controllers
             {
                 var module = await db.Course.Include(c => c.Modules).ThenInclude(m => m.Activities).ToListAsync();
                 return View("GetCourses", module);
-
+                // return Redirect("/courses/GetCourses);
             }
 
             if (moduleID is null && User.IsInRole("Student"))

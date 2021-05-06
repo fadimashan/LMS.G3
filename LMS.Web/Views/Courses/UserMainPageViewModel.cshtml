@@ -17,7 +17,6 @@
     </div>
 </div>
 
-
 <div class="text-center justify-content-center mt-0" id="userPage" style="top:-120px;">
     <div class="">
         <table class="table  table-dark table-striped text-danger">
@@ -36,10 +35,11 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="table-body">
                 @foreach (var item in Model.FirstOrDefault().Modules)
-                {
-                    <tr class="change-color" onclick="changeColor()">
+                {                 
+                    var newId = "test" + item.Id.ToString();
+                    <tr class="cell-1" data-toggle="collapse" data-target="#@newId" aria-expanded="false">
                         <td>
                             @{ var startModule = item.StartDate.ToString("yyyy-MM-dd"); var endModule = item.EndDate.ToString("yyyy-MM-dd"); }
                             <p>
@@ -71,7 +71,13 @@
                             </div>
                         </td>
                     </tr>
-                }
+                    <tr id="@newId" class="collapse desc-text" aria-expanded="false">
+                        <td colspan="3" class="desc-text">
+                            @Html.DisplayNameFor(modelItem => item.Description):
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                </tr>
+            }
 
             </tbody>
         </table>
@@ -136,3 +142,10 @@
     })
 
 </script>
+
+<style>
+
+    .desc-text {
+        max-width: 100px;
+    }
+</style>

@@ -66,9 +66,12 @@ namespace LMS.Web.Controllers
             {
                 db.Add(activity);
                 await db.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return Redirect("/courses");
+
             }
-            return View(activity);
+            //return View(activity);
+            return Redirect("/courses");
         }
 
         // GET: Activities/Edit/5
@@ -126,7 +129,9 @@ namespace LMS.Web.Controllers
                 }
                 return Redirect($"/courses?moduleID={activityOne.ModuleId}");
             }
-            return View(activity);
+            //return View(activity);
+            return Redirect("/courses");
+
         }
 
         // GET: Activities/Delete/5
@@ -155,7 +160,9 @@ namespace LMS.Web.Controllers
             var activity = await db.Activity.FindAsync(id);
             db.Activity.Remove(activity);
             await db.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            //return RedirectToAction(nameof(Index));
+            return Redirect("/courses");
+
         }
 
         private bool ActivityExists(int id)
