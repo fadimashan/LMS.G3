@@ -134,6 +134,43 @@
 			"response": []
 		},
 		{
+			"name": "Get Authors Searched by Name",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/api/authors?nameLike=ly",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"authors"
+					],
+					"query": [
+						{
+							"key": "nameLike",
+							"value": "ly"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Publications",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
@@ -159,6 +196,103 @@
 					"path": [
 						"api",
 						"publications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Publication by Id",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/api/publications/15",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications",
+						"15"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Publication Authors",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/api/publications/3/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications",
+						"3",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Publication (non-existent)",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/api/publications/150",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications",
+						"150"
 					]
 				}
 			},
@@ -348,70 +482,6 @@
 							"key": "subject",
 							"value": "java"
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Publication by Id",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {
-					"accept": true
-				}
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "https://localhost:5001/api/publications/15",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"api",
-						"publications",
-						"15"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Publication (non-existent)",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {
-					"accept": true
-				}
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "https://localhost:5001/api/publications/150",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"api",
-						"publications",
-						"150"
 					]
 				}
 			},
