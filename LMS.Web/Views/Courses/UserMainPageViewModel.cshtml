@@ -1,11 +1,5 @@
 ﻿@model IEnumerable<LMS.Core.Entities.Course>
 
-@{
-    ViewData["Title"] = "UserMainPageViewModel";
-}
-
-
-<!-- categorie -->
 
 <div class="row text-center mx-auto mb-0" style="width: 600px;">
     <div class="col text-center mx-auto" style="top:-90px;">
@@ -28,11 +22,12 @@
                         <th class="text-start">
                             Module Title
                         </th>
-                        <th class="text-start">
+                        <th class="text-start" colspan="2">
                             Start Date
                         </th>
+                        <th></th>
                         <th class="text-start">
-                            End Date
+                            Period
                         </th>
 
                         <th></th>
@@ -41,9 +36,7 @@
                 <tbody class="table-body">
                     @foreach (var item in Model.FirstOrDefault().Modules)
                     {
-
                         <tr class="change-color">
-
                             <td class="text-start">
                                 @{ var startModule = item.StartDate.ToString("yyyy-MM-dd"); var endModule = item.EndDate.ToString("yyyy-MM-dd"); }
 
@@ -54,38 +47,17 @@
                                 </a>
 
                             </td>
-                            <td>
+                            <td colspan="2">
                                 @Html.DisplayFor(modelItem => startModule)
                             </td>
+                            <td></td>
                             <td>
-                                @Html.DisplayFor(modelItem => endModule)
+                                @{ var period = (int)(item.EndDate - item.StartDate).TotalDays / 30;}
+                                <button disabled="" class="btn btn-dark ">@period Month</button>
                             </td>
-                            <td>
-                                <a asp-action="Edit" asp-route-id="@item.Id">
-                                </a>
-
-
-                                @*<div class="btn-group">
-                        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" font-size:24px">Details</p>
-                        <div class="dropdown-menu shadow">
-                            <a asp-controller="Modules" asp-action="Details" asp-route-id="@item.Id" type="button" class="dropdown-item">Details</a>
-                            @if (User.IsInRole("Teacher"))
-                            {
-                                <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.Id" type="button" class="dropdown-item">Edit</a>
-                            }
-                        </div>
-                    </div>*@
-                            </td>
-
-                         
 
                         </tr>
-
-
-
                     }
-                   
-
                 </tbody>
             </table>
         </div>
@@ -139,7 +111,6 @@
     let activity = document.getElementById("activity");
     let course = document.getElementById("course");
 
-    /*  course.style.display = "none";*/
     let el = document.getElementById("my-btn");
 
     el.addEventListener("click", () => {
@@ -159,7 +130,7 @@
         }
 
     })
-   
+
 
 </script>
 
