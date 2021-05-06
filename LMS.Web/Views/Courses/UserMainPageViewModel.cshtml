@@ -65,12 +65,12 @@
             </table>
         </div>
 
-        <div class="text-center p-2 col-5" id="activity">
+        <div class="text-center p-2 col-5 overflow-auto h-75" id="activity">
             <h3 class="text-center site-btn ml-1 w-auto" id="activity-title">  <i class="fas fa-list"></i> Activity List for : @Model.FirstOrDefault().Modules.FirstOrDefault().Title</h3>
             <div id="my-div">
                 <section class="categories-section">
                     <div class="">
-                        <div class="row justify-content-center overflow-auto" id="check-item">
+                        <div class="row justify-content-center" id="check-item">
 
                             @foreach (var items in Model.FirstOrDefault().Modules)
                             {
