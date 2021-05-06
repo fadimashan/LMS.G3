@@ -1,9 +1,11 @@
 ﻿@model IEnumerable<LMS.Core.Entities.Course>
 
-<div class="row">
-    <h4>LMS Courses</h4>
-    <div class="btn-group">
-        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" font-size:24px">Create</p>
+<div class="text-center justify-content-center">
+    <h2 class="m-2 text-center text-muted">LMS Courses</h2>
+    <hr />
+    <br />
+    <div class="btn-group text-center m-2">
+        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  class="site-btn m-2 text-center">Create</p>
         <div class="dropdown-menu shadow">
             <a asp-controller="Courses" asp-action="Create" type="button" class="dropdown-item">Course</a>
             <a asp-controller="Modules" asp-action="Create" type="button" class="dropdown-item">Module</a>
@@ -12,9 +14,9 @@
     </div>
 </div>
 
-<table class="table">
+<table class="table table-striped overflow-auto">
     <thead>
-        <tr>
+        <tr class="text-muted fs-3">
             <th> Title </th>
             <th class="text-center"> Period </th>
             <th class="text-center"> Start Date </th>

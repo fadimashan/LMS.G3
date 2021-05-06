@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<LMS.Core.Entities.Course>
 
 
-<div class="row text-center mx-auto mb-0" style="width: 600px;">
+<div class="row text-center mx-auto mb-0"  id="btn-card">
     <div class="col text-center mx-auto" style="top:-90px;">
         <div class="categorie-item">
             <div class="ci-text">
@@ -11,9 +11,9 @@
     </div>
 </div>
 <div id="course" class="mt-0" style="top:-200px;">
-    <div class="text-center justify-content-center mt-0" id="userPage">
-        <div class="col-6">
-            <table class="table  table-dark table-striped text-white mr-auto">
+    <div class="row  mt-0 container-fluid" id="userPage">
+        <div class="col-md">
+            <table class="table  table-dark table-striped text-white m-2 overflow-scroll">
                 <thead>
                     <tr class="text-start">
                         <th class="text-start">
@@ -64,13 +64,13 @@
                 </tbody>
             </table>
         </div>
-
-        <div class="text-center p-2 col-5 overflow-auto h-75" id="activity">
+       
+        <div class="text-center  col-md" id="activity">
             <h3 class="text-center site-btn ml-1 w-auto" id="activity-title">  <i class="fas fa-list"></i> Activity List for : @Model.FirstOrDefault().Modules.FirstOrDefault().Title</h3>
             <div id="my-div">
-                <section class="categories-section">
+                <section class="categories-section justify-content-center">
                     <div class="">
-                        <div class="row justify-content-center" id="check-item">
+                        <div class="row justify-content-center overflow-scroll" id="check-item">
 
                             @foreach (var items in Model.FirstOrDefault().Modules)
                             {
@@ -101,11 +101,7 @@
     </div>
 </div>
 
-<style>
-    .hidden {
-        display: none;
-    }
-</style>
+
 <script>
     let userPage = document.getElementById("userPage");
     let activity = document.getElementById("activity");

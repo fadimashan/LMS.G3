@@ -43,29 +43,35 @@
 
 
 
-<div class="content">
-    <div class="row">
+<div class="content justify-content-center">
+    <div class="row m-3">
         <div class="col-1"></div>
-        <div class="col-5">
-            <h2>
-                @Html.DisplayFor(model => model.Title)
-            </h2>
-            <h3>
+        <div class="col-5  align-content-center mt-3 p-5">
+            <h4 class="text-start  text-muted">
+                <span class="mr-auto"> Title:</span>  <small class="ml-auto"> @Html.DisplayFor(model => model.Title)</small>
+            </h4>
+            <hr />
+            <h4 class="text-start  text-muted">
                 @{ var startD = @Model.StartDate.ToString("M"); var period = (int)(Model.EndDate - Model.StartDate).TotalDays / 30; }
-                Start date: @startD
-                Period: @period Month
-            </h3>
-            <h2>
-                @Html.DisplayNameFor(model => model.Description)
-            </h2>
-            <h5>
-                @Html.DisplayFor(model => model.Description)
+                Start date: <small> @startD</small>
 
-            </h5>
+            </h4>
+            <hr />
+            <h4 class="text-start  text-muted">
+                Period: <small> @period Month</small>
+            </h4>
+            <hr />
+            <h4 class="text-start  text-muted">
+                @Html.DisplayNameFor(model => model.Description) : <small>@Html.DisplayFor(model => model.Description) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</small>
+            </h4>
+
+
+            <hr />
+            <button class="site-btn">Delete</button>
         </div>
-        <div class="col-5">
-            <h1 id="activiy_view">Module's Activities</h1>
-            <div class="row justify-content-center overflow-auto" id="f-container">
+        <div class="col-5 text-center">
+            <h3 id="activiy_view" class="text-black-50 m-2">Module's Activities</h3>
+            <div class="row justify-content-center" id="f-container">
                 <div id="list-items" class="row no-gutters">
 
                     @foreach (var activity in Model.Activities)
@@ -82,9 +88,13 @@
                         </div>
                     }
                 </div>
+              
             </div>
+
         </div>
+       
     </div>
+   
 </div>
 <style>
     #f-container {
@@ -101,12 +111,12 @@
         max-width: 80%;
         padding-left: 20px;
         padding-right: 20px;
-        margin-top: 200px;
+      /*  margin-top: 200px;*/
     }
 
     #img-circle {
-        height: 200px !important;
-        width: 200px !important;
+        height: 250px !important;
+        width: 250px !important;
         min-width: 180px !important;
         min-height: 180px !important;
         max-width: 200px !important;
