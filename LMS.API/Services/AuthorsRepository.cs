@@ -25,6 +25,28 @@ namespace LMS.API.Services
         {
             return await _dbContext.Authors
                 .Include(a => a.Publications)
+                .ThenInclude(p => p.Type)
+                .Include(a => a.Publications)
+                .ThenInclude(p => p.Subject)
+                .ToListAsync();
+        }
+        
+        public async Task<IEnumerable<Author>> GetAllWithPublicationsAsync(string nameLike)
+        {
+            if (string.IsNullOrWhiteSpace(nameLike))
+            {
+                return await GetAllWithPublicationsAsync();
+            }
+
+            nameLike = nameLike.Trim().ToLower();
+
+            return await _dbContext.Authors
+                .Include(a => a.Publications)
+                .ThenInclude(p => p.Type)
+                .Include(a => a.Publications)
+                .ThenInclude(p => p.Subject)
+                .Where(a => a.LastName.ToLower().Contains(nameLike) || 
+                            a.FirstName.ToLower().Contains(nameLike))
                 .ToListAsync();
         }
 
@@ -38,6 +60,9 @@ namespace LMS.API.Services
         {
             return await _dbContext.Authors
                 .Include(a => a.Publications)
+                .ThenInclude(p => p.Type)
+                .Include(a => a.Publications)
+                .ThenInclude(p => p.Subject)
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
 
@@ -71,6 +96,7 @@ namespace LMS.API.Services
             throw new System.NotImplementedException();
         } */
 
+/* 
         public async void AddAsync(Publication publication)
         {
             throw new NotImplementedException();
@@ -86,6 +112,7 @@ namespace LMS.API.Services
             throw new NotImplementedException();
         }
 
+ */
         public bool Exists(int id)
         {
             return _dbContext.Authors.Any(a => a.Id == id);

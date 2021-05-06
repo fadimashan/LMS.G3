@@ -17,6 +17,16 @@ namespace LMS.API.Profiles
                 .ForMember(dest => dest.SubjectName,
                     opt => opt.MapFrom(
                         src => src.Subject.Name));
+            
+            CreateMap<Publication, PublicationWithAuthorsDto>()
+                .ForMember(dest => dest.TypeName,
+                    opt => opt.MapFrom(
+                        src => src.Type.Name
+                    )
+                )
+                .ForMember(dest => dest.SubjectName,
+                    opt => opt.MapFrom(
+                        src => src.Subject.Name));
         }
     }
 }

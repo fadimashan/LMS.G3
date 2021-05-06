@@ -23,6 +23,7 @@ namespace LMS.API.Services
             return await _dbContext.Publications
                 .Include(p => p.Subject)
                 .Include(p => p.Type)
+                .Include(p => p.Authors)
                 .ToListAsync();
         }
         
@@ -40,7 +41,9 @@ namespace LMS.API.Services
 
             var publications = _dbContext.Publications
                 .Include(p => p.Subject)
-                .Include(p => p.Type).AsQueryable();
+                .Include(p => p.Type)
+                .Include(p => p.Authors)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchParameters.Subject))
             {
@@ -55,15 +58,6 @@ namespace LMS.API.Services
             }
 
             return await publications.ToListAsync();
-        }
-
-        public async Task<IEnumerable<Publication>> GetAllWithAuthorsAsync()
-        {
-            return await _dbContext.Publications
-                .Include(p => p.Subject)
-                .Include(p => p.Type)
-                .Include(p => p.Authors)
-                .ToListAsync();
         }
 
         public async Task<Publication> GetAsync(int? id)
@@ -117,7 +111,7 @@ namespace LMS.API.Services
             throw new System.NotImplementedException();
         } */
 
-        public bool Any(int id)
+        public bool Exists(int id)
         {
             return _dbContext.Publications.Any(p => p.Id == id);
         }

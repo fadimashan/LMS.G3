@@ -4,7 +4,7 @@ using LMS.API.Models.Entities;
 
 namespace LMS.API.Models.DTO
 {
-    public class PublicationDto
+    public class PublicationWithAuthorsDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -18,6 +18,7 @@ namespace LMS.API.Models.DTO
         
         public string SubjectName { get; set; }
         public int SubjectId { get; set; }
-
+        
+        public ICollection<AuthorDto> Authors { get; set; }
     }
 }

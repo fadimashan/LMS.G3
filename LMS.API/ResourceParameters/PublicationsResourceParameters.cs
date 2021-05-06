@@ -4,6 +4,5 @@ namespace LMS.API.ResourceParameters
     {
         public string Subject { get; set; }
         public string SearchQuery { get; set; }
-        public string NameLike { get; set; }
     }
 }

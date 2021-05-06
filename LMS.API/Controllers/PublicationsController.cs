@@ -34,31 +34,31 @@ namespace LMS.API.Controllers
         // GET: api/Publications
         [HttpGet]
         [HttpHead]
-        public async Task<ActionResult<IEnumerable<PublicationDto>>> GetPublications([FromQuery] PublicationsResourceParameters searchParameters)
+        public async Task<ActionResult<IEnumerable<PublicationWithAuthorsDto>>> GetPublications([FromQuery] PublicationsResourceParameters searchParameters)
         {
             var publicationsFromRepo = await _publicationsRepository.GetAllAsync(searchParameters);
             
-            return Ok(_mapper.Map<IEnumerable<PublicationDto>>(publicationsFromRepo));
+            return Ok(_mapper.Map<IEnumerable<PublicationWithAuthorsDto>>(publicationsFromRepo));
         }
 
         // GET: api/Publications/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PublicationDto>> GetPublication(int id)
+        public async Task<ActionResult<PublicationWithAuthorsDto>> GetPublication(int id)
         {
-            var publicationFromRepo = await _publicationsRepository.GetAsync(id);
+            var publicationFromRepo = await _publicationsRepository.GetWithAuthorsAsync(id);
 
             if (publicationFromRepo is null)
             {
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<PublicationDto>(publicationFromRepo));
+            return Ok(_mapper.Map<PublicationWithAuthorsDto>(publicationFromRepo));
         }
         
         [HttpGet("{id}/authors")]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthorsForPublication(int id)
         {
-            if (!_publicationsRepository.Any(id))
+            if (!_publicationsRepository.Exists(id))
             {
                 return NotFound();
             }
@@ -70,14 +70,14 @@ namespace LMS.API.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<AuthorDto>(authorsFromRepo));
+            return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
         }
         
         // REVIEW: Do we need this?
         [HttpGet("{publicationId}/authors/{authorId}")]
         public async Task<ActionResult<AuthorDto>> GetAuthorForPublication(int publicationId, int authorId)
         {
-            if (!_publicationsRepository.Any(publicationId))
+            if (!_publicationsRepository.Exists(publicationId))
             {
                 return NotFound();
             }
@@ -92,6 +92,20 @@ namespace LMS.API.Controllers
             return Ok(_mapper.Map<AuthorDto>(authorForPublicationFromRepo));
         }
 
+/* FIXME: Up to this point everything works properly as expected.
+ The rest of the methods work too but must be refactored to utilise Repositories and DTOs*/
+
+        // POST: api/Publications
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Publication>> PostPublication(Publication publication)
+        {
+            _dbContext.Publications.Add(publication);
+            await _dbContext.SaveChangesAsync();
+
+            return CreatedAtAction("GetPublication", new { id = publication.Id }, publication);
+        }
+        
         // PUT: api/Publications/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -122,18 +136,6 @@ namespace LMS.API.Controllers
 
             return NoContent();
         }
-        
-
-        // POST: api/Publications
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Publication>> PostPublication(Publication publication)
-        {
-            _dbContext.Publications.Add(publication);
-            await _dbContext.SaveChangesAsync();
-
-            return CreatedAtAction("GetPublication", new { id = publication.Id }, publication);
-        }
 
         // DELETE: api/Publications/5
         [HttpDelete("{id}")]
@@ -151,6 +153,7 @@ namespace LMS.API.Controllers
             return NoContent();
         }
 
+        // This method will be removed when PUT is implemented properly
         private bool PublicationExists(int id)
         {
             return _dbContext.Publications.Any(e => e.Id == id);
