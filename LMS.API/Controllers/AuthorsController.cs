@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using AutoMapper;
+using LMS.API.Data;
+using LMS.API.DtoModels;
+using LMS.API.Models.Entities;
+using LMS.API.ResourceParameter;
+using LMS.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using LMS.API.Data;
-using LMS.API.Models.Entities;
-using LMS.API.Services;
-using LMS.API.DtoModels;
-using LMS.API.Helpers;
-using AutoMapper;
 
 namespace LMS.API.Controllers
 {
@@ -32,11 +31,14 @@ namespace LMS.API.Controllers
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors(string searchQuery,string sortQuery)
+        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors(
+            [FromQuery] AuthorsResourceParameters authorsResourceParameters)
         {
             var authorsFromRepo = await _authorsRepository.GetAllAsync();
             return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
         }
+
+
 
         // GET: api/Authors/5
         [HttpGet("{id}")]
@@ -49,7 +51,7 @@ namespace LMS.API.Controllers
                 return NotFound();
             }
 
-            return new JsonResult(authorFromRepo);
+            return Ok(_mapper.Map<AuthorDto>(authorFromRepo));
         }
 
         // PUT: api/Authors/5

@@ -26,7 +26,8 @@ namespace LMS.API.Controllers
 
         // GET: api/Publications
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Publication>>> GetPublications(string searchQuery,string sortQuery)
+
+        public async Task<ActionResult<IEnumerable<Publication>>> GetPublications(string searchQuery, string sortQuery)
         {
             var publicationsFromRepo = await _publicationsRepository.GetAllAsync();
             return Ok(publicationsFromRepo);
