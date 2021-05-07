@@ -12,25 +12,19 @@
             <h4>Add a new user</h4>
             <hr />
             <div class="form-group">
-                @*asp-items="Html.GetEnumSelectList<RoleType> ()"*@
                     <label asp-for="RoleType" class="control-label"></label>
                     <select id="select" asp-for="RoleType" class="form-control">
-                        <option value="teacher"> Teacher</option>
-                        <option value="student"> Student</option>
+                        <option value="A"> Student</option>
+                        <option value="B"> Teacher</option>
                     </select>
                     <span asp-validation-for="RoleType" class="text-danger"></span>
             </div>
-
             <div class="form-group" id="select2">
                 <label class="control-label"> Belongs to Course </label>
                 <select asp-for="CourseId" asp-items="@Model.GetAllCourses" class="form-control">
-                    @*TODO Add validation to let the app dosen't accept value 0*@
-                    <option value="0">Select</option>
                 </select>
                 <span asp-validation-for="CourseId" class="text-danger"></span>
             </div>
-
-
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" />
@@ -48,11 +42,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
+                <input type="password" asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="AddUser" class="btn btn-primary" />
+                <input type="submit" value="Add User" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -60,20 +54,9 @@
 
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-outline-secondary" asp-action="GetAllStudents">Back</a>
 </div>
 
-<script>
-
-        //let sel = document.getElementById('select').value;
-        //let sel2 = document.getElementById('select2');
-        //if (sel === "teacher") {
-        //    sel2.style.display = "none";
-        //} else {
-        //    sel2.style.display = "block";
-        //}
-
-    </script>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

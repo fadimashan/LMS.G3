@@ -13,7 +13,7 @@ let sel = document.getElementById('select');
 
 sel.addEventListener('change', () => {
     
-    if (sel.value === "teacher") {
+    if (sel.value === "B") {
         sel2.style.display = "none";
     } else {
         sel2.style.display = "block";
@@ -21,10 +21,6 @@ sel.addEventListener('change', () => {
 });
 
 let sel2 = document.getElementById('select2');
-//if (sel === "teacher") {
-//    sel2.style.display = "none";
-//} else {
-//    sel2.style.display = "block";
-//}
+
 
 
