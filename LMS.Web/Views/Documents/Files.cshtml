@@ -4,67 +4,62 @@
     ViewData["Title"] = "Upload and download files";
 }
 
+<div class="container-fluid padding">
+    <div class="row padding">
+        <div class="col-md-12 col-lg-6">
+            <aside class="accordion">
+                <h1>Upload & download files</h1>
+                <div class="opened-for-codepen">
+                    <h2><i class="fas fa-folder">Course</i></h2>
+                    <div class="opened-for-codepen">
+                        <h2>Module</h2>
+                        <div>
+                            <h2>Activity</h2>
+                            <p>Assignment</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
 
-<div class="text-left">
-    <h2 style="margin-bottom:50px">Multiple File Upload</h2>
+            <br>
 
-    <form method="post" enctype="multipart/form-data">
-        <input type="file" name="files" multiple />
-        <button type="submit">Upload</button>
-    </form>
-
-    @if (ViewBag.Message != null)
-    {
-        <div class="alert alert-success" style="margin-top:50px">
-            @ViewBag.Message
         </div>
-    }
+        <div class="col-md-12 col-lg-6">
+            <div class="text-left">
+                <h2 style="margin-bottom:50px">Multiple File Upload</h2>
 
-    <p style="margin-top: 50px">List of Files</p>
+                <form method="post" enctype="multipart/form-data">
+                    <input type="file" name="files" multiple />
+                    <button type="submit">Upload</button>
+                </form>
 
-    <ul>
-        @foreach (var item in Model.Files)
-        {
-            <li>
-                <a asp-action="Download"
-                   asp-route-filename="@item.Name">
-                    @item.Name
-                </a>
-            </li>
-        }
-    </ul>
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-success" style="margin-top:50px">
+                        @ViewBag.Message
+                    </div>
+                }
 
-</div>
+                <p style="margin-top: 50px">List of Files</p>
 
+                <ul>
+                    @foreach (var item in Model.Files)
+                    {
+                        <li>
+                            <a asp-action="Download"
+                               asp-route-filename="@item.Name">
+                                @item.Name
+                            </a>
+                        </li>
+                    }
+                </ul>
 
-@**********************************************************************************************@
-
-<aside class="accordion">
-    <h1>Upload & download files</h1>
-    <div class="opened-for-codepen">
-        <h2><i class="fas fa-folder">Course</i></h2>
-        <div class="opened-for-codepen">
-            <h3>Module</h3>
-            <div>
-                <h4>Activity</h4>
-                <p>Assignment</p>
             </div>
         </div>
     </div>
-</aside>
+    <hr class="my-4">
+</div>
 
-@**************************************CSS STYLE*************************************************@
 
 
-<style>
-    @** {
-        margin: 0;
-        padding: 0;
-    }
 
-    body {
-        font-size: 100%;
-    }*@
-
-   
-</style>

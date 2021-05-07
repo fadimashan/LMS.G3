@@ -1760,6 +1760,22 @@ ol {
 	background-image: url("../img/bg.jpg");
 	width: 100%;
 }
+
+/*Uplaod and Download files*/
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-size: 100%;
+}
+
+.div {
+	text-aligh: center;
+}
+
 .accordion {
 	width: 380px;
 	margin: 20px 20px auto;
@@ -1770,16 +1786,16 @@ ol {
 	}
 
 	.accordion h2, h3, h4 {
-		font-family: "News Cycle";
+		font-family: Verdana;
 	}
 
 	.accordion h1 {
 		padding: 15px 20px;
 		background-color: #333;
-		font-family: Lobster;
-		font-size: 1.5rem;
+		font-family: Verdana;
+		font-size: 1.6rem;
 		font-weight: normal;
-		color: #1abc9c;
+		color: #fff;
 	}
 
 		.accordion h1:hover {
@@ -1804,45 +1820,27 @@ ol {
 
 	.accordion h2 {
 		padding: 5px 25px;
-		background-color: #1abc9c;
-		font-size: 1.1rem;
+		background-color: #ddd;
+		font-size: 1.3rem;
 		color: #333;
 	}
 
 		.accordion h2:hover {
-			background-color: #09ab8b;
-		}
-
-	.accordion h3 {
-		padding: 5px 30px;
-		background-color: #b94152;
-		font-size: .9rem;
-		color: #ddd;
-	}
-
-		.accordion h3:hover {
-			background-color: #a93142;
-		}
-
-	.accordion h4 {
-		padding: 5px 35px;
-		background-color: #ffc25a;
-		font-size: .9rem;
-		color: #af720a;
-	}
-
-		.accordion h4:hover {
-			background-color: #e0b040;
+			background-color: #F8F8F8;
 		}
 
 	.accordion p {
-		padding: 15px 35px;
+		padding: 5px 25px;
 		background-color: #ddd;
-		font-family: "Georgia";
-		font-size: .8rem;
+		font-size: 1.3rem;
+		font-family: Verdana;
 		color: #333;
 		line-height: 1.3rem;
 	}
+
+		.accordion p:hover {
+			background-color: #F8F8F8;
+		}
 
 	.accordion .opened-for-codepen {
 		display: block;
