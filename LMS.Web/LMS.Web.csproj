@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\files\**" />
-    <Content Remove="wwwroot\files\**" />
-    <EmbeddedResource Remove="wwwroot\files\**" />
-    <None Remove="wwwroot\files\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="lmsmvc.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
   </ItemGroup>
 
@@ -42,6 +35,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\img\" />
+    <Folder Include="wwwroot\files\" />
   </ItemGroup>
 
 </Project>

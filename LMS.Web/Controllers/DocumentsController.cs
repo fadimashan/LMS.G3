@@ -12,7 +12,6 @@ using System.IO;
 using LMS.Core.Entities.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 
-// See the line 127
 
 namespace LMS.Web.Controllers
 {
@@ -32,11 +31,7 @@ namespace LMS.Web.Controllers
         }
 
 
-        /*
-         * *************************************************************************************
-         */
-
-
+        //GET: UploadedFiles
         public IActionResult Files()
         {
             // Get files from the server
@@ -50,33 +45,39 @@ namespace LMS.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// Uploaded files
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult Files(IFormFile[] files)
         {
-
-            foreach (var file in files)
+            if (files != null && files.Length > 0)
             {
-
-                var fileName = System.IO.Path.GetFileName(file.FileName);
-
-
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
-
-                if (System.IO.File.Exists(filePath))
+                foreach (var file in files)
                 {
-                    System.IO.File.Delete(filePath);
+
+                    var fileName = System.IO.Path.GetFileName(file.FileName);
+
+
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+
+                    using (var localFile = System.IO.File.OpenWrite(filePath))
+                    using (var uploadedFile = file.OpenReadStream())
+                    {
+                        uploadedFile.CopyTo(localFile);
+                    }
                 }
 
-
-                using (var localFile = System.IO.File.OpenWrite(filePath))
-                using (var uploadedFile = file.OpenReadStream())
-                {
-                    uploadedFile.CopyTo(localFile);
-                }
+                ViewBag.Message = "Files are successfully uploaded";
             }
 
-            ViewBag.Message = "Files are successfully uploaded";
 
 
             var model = new FilesViewModel();
@@ -88,6 +89,12 @@ namespace LMS.Web.Controllers
             return View(model);
         }
 
+
+        /// <summary>
+        /// Downlaod Files
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Download(string filename)
         {
             if (filename == null)
@@ -128,11 +135,6 @@ namespace LMS.Web.Controllers
                 {".csv", "text/csv"}
             };
         }
-
-
-        /*
-         * ******************************************************************************************
-         */
 
 
         // GET: Documents/Details/5

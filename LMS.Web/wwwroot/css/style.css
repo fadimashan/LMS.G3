@@ -1772,7 +1772,7 @@ body {
 	font-size: 100%;
 }
 
-.div {
+.ul {
 	text-aligh: center;
 }
 
@@ -1814,7 +1814,7 @@ body {
 			border-bottom: 1px dotted #1abc9c;
 		}
 
-	.accordion div, .accordion p {
+	.accordion ul, .accordion p {
 		display: none;
 	}
 
