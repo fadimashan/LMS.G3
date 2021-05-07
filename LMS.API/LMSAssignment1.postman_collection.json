@@ -529,6 +529,47 @@
 			"response": []
 		},
 		{
+			"name": "Post Publication",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Bang! Bang! Bang\",\n  \"description\": \"How to Bang-Bang-Bang all the time.\",\n  \"publicationDate\": \"2021-04-14T00:00:00\",\n  \"level\": \"3\",\n  \"typeId\": \"3\",\n  \"subjectId\": \"1\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/publications",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Delete Author",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
@@ -545,7 +586,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/api/authors/22",
+					"raw": "https://localhost:5001/api/authors/23",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -554,7 +595,40 @@
 					"path": [
 						"api",
 						"authors",
-						"22"
+						"23"
+					]
+				},
+				"description": "Delete author created in the first POST request\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Publication",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/api/publications/37",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications",
+						"37"
 					]
 				},
 				"description": "Delete author created in the first POST request\n"

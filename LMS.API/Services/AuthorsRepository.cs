@@ -95,13 +95,16 @@ namespace LMS.API.Services
         {
             throw new System.NotImplementedException();
         } */
-
-/* 
-        public async void AddAsync(Publication publication)
+        
+        public async Task AddAsync(Author author)
         {
-            throw new NotImplementedException();
+            if (author is null)
+            {
+                throw new ArgumentNullException();
+            }
+            await _dbContext.AddAsync(author);
         }
-
+/*
         public async void UpdateAsync(Publication publication)
         {
             throw new NotImplementedException();
@@ -113,6 +116,11 @@ namespace LMS.API.Services
         }
 
  */
+        public async Task<bool> SaveAsync()
+        {
+            return (await _dbContext.SaveChangesAsync()) >= 0;
+        }
+        
         public bool Exists(int id)
         {
             return _dbContext.Authors.Any(a => a.Id == id);

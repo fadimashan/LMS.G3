@@ -13,9 +13,11 @@ namespace LMS.API.Services
         Task<IEnumerable<Publication>> GetPublicationsAsync(int id);
         Task<Publication> GetPublicationAsync(int authorId, int publicationId);
         
-        // void AddAsync(Publication publication);
+        Task AddAsync(Author author);
         // void UpdateAsync(Publication publication);
         // void RemoveAsync(Publication publication);
+
+        Task<bool> SaveAsync();
         
         public bool Exists(int id);
         

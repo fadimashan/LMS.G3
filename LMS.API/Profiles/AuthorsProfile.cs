@@ -24,6 +24,8 @@ namespace LMS.API.Profiles
                         src => src.DateOfBirth.GetCurrentAge()
                     )
                 );
+
+            CreateMap<AuthorCreationDto, Author>();
         }
     }
 }

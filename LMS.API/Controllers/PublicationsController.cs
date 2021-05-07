@@ -42,7 +42,7 @@ namespace LMS.API.Controllers
         }
 
         // GET: api/Publications/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetPublication")]
         public async Task<ActionResult<PublicationWithAuthorsDto>> GetPublication(int id)
         {
             var publicationFromRepo = await _publicationsRepository.GetWithAuthorsAsync(id);
@@ -98,12 +98,18 @@ namespace LMS.API.Controllers
         // POST: api/Publications
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Publication>> PostPublication(Publication publication)
+        public async Task<ActionResult<PublicationDto>> CreatePublication(PublicationCreationDto newPublication)
         {
-            _dbContext.Publications.Add(publication);
-            await _dbContext.SaveChangesAsync();
+            var publicationEntity = _mapper.Map<Publication>(newPublication);
+            // _dbContext.Publications.Add(publication);
+            await _publicationsRepository.AddAsync(publicationEntity);
+            // await _dbContext.SaveChangesAsync();
+            await _publicationsRepository.SaveAsync();
 
-            return CreatedAtAction("GetPublication", new { id = publication.Id }, publication);
+            var publicationToReturn = _mapper.Map<PublicationDto>(publicationEntity);
+
+            // return CreatedAtRoute("GetPublication", new {id = publicationToReturn.Id}, publicationToReturn);
+            return CreatedAtAction("GetPublication", new { id = publicationToReturn.Id }, publicationToReturn);
         }
         
         // PUT: api/Publications/5
