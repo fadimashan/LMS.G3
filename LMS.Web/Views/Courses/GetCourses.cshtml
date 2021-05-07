@@ -3,14 +3,18 @@
 <div class="row">
     <h4>LMS Courses</h4>
     <div class="btn-group">
-        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" font-size:24px">Create</p>
+        <p class="btn btn-outline-secondary" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" font-size:24px">Create</p>
         <div class="dropdown-menu shadow">
             <a asp-controller="Courses" asp-action="Create" type="button" class="dropdown-item">Course</a>
             <a asp-controller="Modules" asp-action="Create" type="button" class="dropdown-item">Module</a>
             <a asp-controller="Activities" asp-action="Create" type="button" class="dropdown-item">Activity</a>
         </div>
+
+        <a class="btn btn-outline-secondary" asp-controller="Courses" asp-action="GetAllStudents" type="button">All Students</a>
+
     </div>
 </div>
+
 
 <table class="table">
     <thead>
@@ -69,7 +73,7 @@
                     @Html.DisplayFor(modelItem => numberOfActivities)
                 </td>
                 <td>
-                    <a class="btn btn-outline-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Students</a>
+                    <a class="btn btn-outline-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Course Students</a>
                     <div class="dropdown-menu ">
 
                         @foreach (var student in item.Students)
@@ -84,7 +88,7 @@
                     <div class="dropdown-menu ">
                         <a asp-controller="Courses" asp-action="Edit" asp-route-id="@item.Id" type="button" class="dropdown-item">Edit</a>
                         <a asp-controller="Courses" asp-action="Delete" asp-route-id="@item.Id" type="button" class="dropdown-item">Delete</a>
-                        <a class="cell-1 dropdown-item" data-toggle="collapse" data-target="#@newId" aria-expanded="false" >Description</a>
+                        <a class="cell-1 dropdown-item" data-toggle="collapse" data-target="#@newId" aria-expanded="false">Description</a>
                     </div>
                 </td>
             </tr>

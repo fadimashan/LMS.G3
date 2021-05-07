@@ -241,30 +241,71 @@ namespace LMS.Web.Controllers
             return View("GetAllStudents", _userManager.Users);
         }
 
-        //public async Task<ActionResult> AddUser([Bind("FirstName,LastName,Email,Password,RoleType")] NewUserViewModule user)
-        //{
-        //    var user1 = new ApplicationUser()
-        //    {
-        //        FirstName = user.FirstName,
-        //        LastName = user.LastName,
-        //        Email = user.Email,
 
-        //    };
+        public IActionResult AddUser()
+        {
+            var model = new NewUserViewModule
+            {
+                GetAllCourses = GetAllCourses()
+            };
+            return View("AddUser",model);
+        }
 
-        //    var addStudentResult = await _userManager.CreateAsync(user1, user.Password);
-        //    if (!addStudentResult.Succeeded) throw new Exception(string.Join("\n", addStudentResult.Errors));
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> AddUser([Bind("FirstName,LastName,Email,Password,RoleType,CourseId")] NewUserViewModule user)
+        {
+            var user1 = new ApplicationUser()
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.FirstName,
+                Email = user.Email,
 
-        //    var newUser = await _userManager.FindByEmailAsync(user1.Email);
+            };
 
-        //    if (newUser is null) return;
-        //    if (await _userManager.IsInRoleAsync(newUser, user.RoleType.ToString())) continue;
+            var addStudentResult = await _userManager.CreateAsync(user1, user.Password);
+            if (!addStudentResult.Succeeded) throw new Exception(string.Join("\n", addStudentResult.Errors));
 
-        //    var addToRoleResult = await _userManager.AddToRoleAsync(newUser, user.RoleType.ToString());
+            var newUser = await _userManager.FindByEmailAsync(user1.Email);
 
-        //    if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+            if (newUser is null) return NotFound();
+            if (await _userManager.IsInRoleAsync(newUser, user.RoleType.ToString())) return NotFound();
 
+            var addToRoleResult = await _userManager.AddToRoleAsync(newUser, user.RoleType.ToString());
 
-        //}
+            if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+
+            var enrol = new ApplicationUserCourse
+            {
+                ApplicationUserId = newUser.Id,
+                CourseId = user.CourseId
+            };
+
+            db.Add(enrol);
+            await db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(GetAllStudents));
+        }
+
+        public IEnumerable<SelectListItem> GetAllCourses()
+        {
+            var courses = new List<SelectListItem>();
+
+            foreach (var course in db.Course.ToList())
+            {
+                var selectListItem = (new SelectListItem
+                {
+                    Text = course.Title,
+                    Value = course.Id.ToString()
+
+                });
+                courses.Add(selectListItem);
+            }
+            return (courses);
+
+        }
 
     }
 }
