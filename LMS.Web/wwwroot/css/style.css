@@ -1846,6 +1846,8 @@ ol {
     width: 90%;
     height: 400px;
     margin: 0 auto;
+   
+    
 }
 
 #content {
@@ -1867,10 +1869,9 @@ ol {
        flex-direction: row;
     }
     }
-}#userPage {
-   /* margin-top: 30px;*/
-   /* padding-left: 5%;
-    padding-right: 5%;*/
+}
+    #userPage {
+   
 }
 
 .table .my-auto tr th {

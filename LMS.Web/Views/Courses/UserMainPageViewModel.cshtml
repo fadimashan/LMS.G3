@@ -1,8 +1,9 @@
 ﻿@model IEnumerable<LMS.Core.Entities.Course>
 
 
-<div class="row text-center mx-auto mb-0"  id="btn-card">
-    <div class="col text-center mx-auto" style="top:-90px;">
+<div class="row text-center mx-auto mb-0 " id="btn-card" style="top:-90px;">
+    @*style="top:-90px;"*@
+    <div class="col text-center mx-auto" style="top:-90px;" >
         <div class="categorie-item">
             <div class="ci-text">
                 <a style="width: 100%;" id="my-btn" class="btn">You are enrolled in: <span class="text-capitalize">@Model.FirstOrDefault().Title</span></a>
@@ -10,8 +11,9 @@
         </div>
     </div>
 </div>
-<div id="course" class="mt-0" style="top:-200px;">
-    <div class="row  mt-0 container-fluid" id="userPage">
+
+<div id="course" class="mt-0" style="top:-90px;">
+    <div class="row  mt-0 container-fluid" id="userPage" style="top:-90px;">
         <div class="col-md">
             <table class="table  table-dark table-striped text-white m-2 overflow-scroll">
                 <thead>
