@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using LMS.API.Models.Entities;
 
 namespace LMS.API.Models.DTO
@@ -15,5 +16,7 @@ namespace LMS.API.Models.DTO
         public string TypeName { get; set; }
         public int SubjectId { get; set; }
         public string SubjectName { get; set; }
+
+        public ICollection<AuthorCreationDto> Authors = new List<AuthorCreationDto>();
     }
 }

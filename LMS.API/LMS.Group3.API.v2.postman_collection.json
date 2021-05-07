@@ -656,6 +656,47 @@
 			"response": []
 		},
 		{
+			"name": "Post Publication with Authors",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Constructing new habitable worlds\",\n  \"description\": \"Some some some moreeee!\",\n  \"publicationDate\": \"2021-05-07T00:00:00\",\n  \"level\": 1,\n  \"typeId\": 3,\n  \"subjectId\": 1,\n  \"authors\": [\n    {\n      \"firstName\": \"Slartibartfast\",\n      \"lastName\": \"The Ancient\",\n      \"dateOfBirth\": \"0001-05-07T00:00:00\"\n    },\n    {\n      \"firstName\": \"Agrajag\",\n      \"lastName\": \"The Unlucky\",\n      \"dateOfBirth\": \"1960-01-01\"\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/publications",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Delete Author",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
@@ -672,7 +713,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/api/authors/28",
+					"raw": "https://localhost:5001/api/authors/30",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -681,7 +722,7 @@
 					"path": [
 						"api",
 						"authors",
-						"28"
+						"30"
 					]
 				},
 				"description": "Delete author created in the first POST request\n"
@@ -705,7 +746,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/api/publications/38",
+					"raw": "https://localhost:5001/api/publications/40",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -714,7 +755,7 @@
 					"path": [
 						"api",
 						"publications",
-						"38"
+						"40"
 					]
 				},
 				"description": "Delete author created in the first POST request\n"
