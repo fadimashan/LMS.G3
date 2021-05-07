@@ -1,10 +1,12 @@
 ﻿using LMS.Core.Entities;
+using LMS.Core.Entities.ViewModels;
 using LMS.Data.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -125,7 +127,7 @@ namespace LMS.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-           return View(course);
+            return View(course);
         }
 
         // GET: Courses/Delete/5
@@ -188,15 +190,12 @@ namespace LMS.Web.Controllers
                 course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
                    .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == firstModuleID.Modules.FirstOrDefault().Id)).ToListAsync();
             }
-            else if(User.IsInRole("Student"))
+            else if (User.IsInRole("Student"))
             {
                 course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
             .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == modID)).ToListAsync();
             }
 
-
-
-          
             if (User.IsInRole("Student"))
             {
                 return View("UserMainPageViewModel", course);
@@ -217,6 +216,55 @@ namespace LMS.Web.Controllers
             return View("GetStudentsForThisCourse", course);
         }
 
+        public async Task<IActionResult> GetAllStudents()
+        {
+            var students = await db.Course
+                .Include(c => c.Students).ToListAsync();
+
+            return View("GetAllStudents", students);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                IdentityResult result = await _userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                    return RedirectToAction("GetAllStudents");
+                else
+                    return NotFound(result);
+            }
+            else
+                ModelState.AddModelError("", "User Not Found");
+            return View("GetAllStudents", _userManager.Users);
+        }
+
+        //public async Task<ActionResult> AddUser([Bind("FirstName,LastName,Email,Password,RoleType")] NewUserViewModule user)
+        //{
+        //    var user1 = new ApplicationUser()
+        //    {
+        //        FirstName = user.FirstName,
+        //        LastName = user.LastName,
+        //        Email = user.Email,
+
+        //    };
+
+        //    var addStudentResult = await _userManager.CreateAsync(user1, user.Password);
+        //    if (!addStudentResult.Succeeded) throw new Exception(string.Join("\n", addStudentResult.Errors));
+
+        //    var newUser = await _userManager.FindByEmailAsync(user1.Email);
+
+        //    if (newUser is null) return;
+        //    if (await _userManager.IsInRoleAsync(newUser, user.RoleType.ToString())) continue;
+
+        //    var addToRoleResult = await _userManager.AddToRoleAsync(newUser, user.RoleType.ToString());
+
+        //    if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+
+
+        //}
 
     }
 }

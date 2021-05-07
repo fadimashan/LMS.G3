@@ -1,0 +1,55 @@
+﻿@model IEnumerable<LMS.Core.Entities.Course>
+
+@{
+    ViewData["Title"] = "GetAllStudents";
+}
+
+<h1>GetAllStudents</h1>
+
+<p>
+    <button asp-controller="Courses" asp-action="AddUser" type="button" class="btn btn-outline-secondary">Add User</button>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Student Name
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Course Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model)
+        {
+            foreach (var student in course.Students)
+            {
+                <tr>
+                    <td>
+                        @{ var fullName = student.FirstName + " " + student.LastName;}
+                        @Html.DisplayFor(modelItem => fullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => student.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => course.Title)
+                    </td>
+                    <td>
+                        <form asp-action="DeleteUser" asp-route-id="@student.Id" method="post">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+
+        }
+    </tbody>
+</table>
