@@ -15,6 +15,7 @@ body {
     height: 100%;
     font-family: 'Raleway', sans-serif;
     -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
 }
 
 h1,
@@ -1895,4 +1896,12 @@ ol {
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s 0.1s ease-in-out;
     transition: all 0.3s ease-in-out
+}
+#btn-card {
+    width: 300px;
+}
+@media (min-width: 700px) {
+    #btn-card {
+        width: 600px;
+    }
 }
