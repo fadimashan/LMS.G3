@@ -15,7 +15,6 @@ namespace LMS.Core.Entities
 
         public ICollection<ApplicationUserCourse> AttendingCourses { get; set; }
         public ICollection<Course> Courses { get; set; }
-
         public ICollection<Document> Documents { get; set; }
 
     }
