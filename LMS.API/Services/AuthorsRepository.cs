@@ -91,11 +91,6 @@ namespace LMS.API.Services
             return author.Publications.FirstOrDefault(p => p.Id == publicationId);
         }
 
-        /* public async Task<Author> GetWithPublicationsAsync(int? id)
-        {
-            throw new System.NotImplementedException();
-        } */
-        
         public async Task AddAsync(Author author)
         {
             if (author is null)
