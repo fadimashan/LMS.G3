@@ -277,13 +277,16 @@ namespace LMS.Web.Controllers
 
             if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
 
-            var enrol = new ApplicationUserCourse
-            {
-                ApplicationUserId = newUser.Id,
-                CourseId = user.CourseId
-            };
 
+            if (user.RoleType.ToString() == RoleType.Student.ToString())
+            {
+                var enrol = new ApplicationUserCourse
+                {
+                    ApplicationUserId = newUser.Id,
+                    CourseId = user.CourseId
+                };
             db.Add(enrol);
+            }
             await db.SaveChangesAsync();
 
             return RedirectToAction(nameof(GetAllStudents));

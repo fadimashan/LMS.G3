@@ -8,3 +8,23 @@ $(document).ready(function () {
 });
 
 
+
+let sel = document.getElementById('select');
+
+sel.addEventListener('change', () => {
+    
+    if (sel.value === "teacher") {
+        sel2.style.display = "none";
+    } else {
+        sel2.style.display = "block";
+    }
+});
+
+let sel2 = document.getElementById('select2');
+//if (sel === "teacher") {
+//    sel2.style.display = "none";
+//} else {
+//    sel2.style.display = "block";
+//}
+
+
