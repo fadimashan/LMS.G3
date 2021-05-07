@@ -11,7 +11,9 @@ namespace LMS.API.Models.DTO
         
         public DifficultyLevel Level { get; set; }
         
-        public int TypeId { get; set; }
+        public int? TypeId { get; set; }
+        public string TypeName { get; set; }
         public int SubjectId { get; set; }
+        public string SubjectName { get; set; }
     }
 }

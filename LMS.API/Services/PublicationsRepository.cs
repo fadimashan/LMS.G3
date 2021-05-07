@@ -95,6 +95,25 @@ namespace LMS.API.Services
             return publication.Authors.FirstOrDefault(a => a.Id == authorId);
         }
 
+        public async Task<PublicationType> GetTypeByIdAsync(int id)
+        {
+            return await _dbContext.PublicationTypes.FirstOrDefaultAsync(t => t.Id == id);
+        }
+        
+        public async Task<PublicationType> GetTypeByNameAsync(string typeName)
+        {
+            return await _dbContext.PublicationTypes.FirstOrDefaultAsync(t => t.Name.ToLower().Equals(typeName.ToLower()));
+        }
+        
+        public async Task<Subject> GetSubjectByIdAsync(int id)
+        {
+            return await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == id);
+        }
+        
+        public async Task<Subject> GetSubjectByNameAsync(string typeName)
+        {
+            return await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Name.ToLower().Equals(typeName.ToLower()));
+        }
         
         public async Task AddAsync(Publication publication)
         {
@@ -102,6 +121,7 @@ namespace LMS.API.Services
             {
                 throw new ArgumentNullException();
             }
+            
             await _dbContext.AddAsync(publication);
         }
 

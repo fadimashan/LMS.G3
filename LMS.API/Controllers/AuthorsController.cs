@@ -85,25 +85,26 @@ namespace LMS.API.Controllers
             return Ok(_mapper.Map<PublicationDto>(publicationForAuthorFromRepo));
         }
 
-/* FIXME: Up to this point everything works properly as expected.
- The rest of the methods work too but must be refactored to utilise Repositories and DTOs*/
-
+        // FIXME: The code from this method should probably be moved to another class
+        // and then called from both this controller and the PublicationsController 
         // POST: api/Authors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<AuthorDto>> CreateAuthor(AuthorCreationDto author)
+        public async Task<ActionResult<AuthorDto>> CreateAuthor(AuthorCreationDto newAuthor)
         {
-            var authorEntity = _mapper.Map<Author>(author);
             // _dbContext.Authors.Add(author);
-            await _authorsRepository.AddAsync(authorEntity);
             // await _dbContext.SaveChangesAsync();
+            var authorEntity = _mapper.Map<Author>(newAuthor);
+            await _authorsRepository.AddAsync(authorEntity);
             await _authorsRepository.SaveAsync();
-
             var authorToReturn = _mapper.Map<AuthorDto>(authorEntity);
             
             return CreatedAtAction("GetAuthor", new { id = authorToReturn.Id }, authorToReturn);
         }
         
+/* FIXME: Up to this point everything works properly as expected.
+ The rest of the methods work too but must be refactored to utilise Repositories and DTOs*/
+ 
         // PUT: api/Authors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -140,6 +141,8 @@ namespace LMS.API.Controllers
         public async Task<IActionResult> DeleteAuthor(int id)
         {
             var author = await _dbContext.Authors.FindAsync(id);
+            // var author = await _authorsRepository.GetAsync(id);
+            
             if (author == null)
             {
                 return NotFound();
@@ -147,7 +150,8 @@ namespace LMS.API.Controllers
 
             _dbContext.Authors.Remove(author);
             await _dbContext.SaveChangesAsync();
-
+            // _authorsRepository.RemoveAsync(author);
+            
             return NoContent();
         }
 

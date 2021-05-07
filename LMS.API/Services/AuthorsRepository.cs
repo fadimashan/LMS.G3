@@ -110,12 +110,12 @@ namespace LMS.API.Services
             throw new NotImplementedException();
         }
 
-        public async void RemoveAsync(Publication publication)
+        public async Task RemoveAsync(Author author)
         {
-            throw new NotImplementedException();
+            _dbContext.Authors.Remove(author);
         }
+*/
 
- */
         public async Task<bool> SaveAsync()
         {
             return (await _dbContext.SaveChangesAsync()) >= 0;

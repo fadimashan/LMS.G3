@@ -18,16 +18,17 @@ namespace LMS.API.Controllers
     public class PublicationsController : ControllerBase
     {
         private readonly IPublicationsRepository _publicationsRepository;
+        private readonly IAuthorsRepository _authorsRepository;
         private readonly IMapper _mapper;
 
         // ToDo: To be removed when all methods are using the Repository
         private readonly ApiDbContext _dbContext;
         
-
-        public PublicationsController(ApiDbContext context, IPublicationsRepository publicationsRepository, IMapper mapper)
+        public PublicationsController(ApiDbContext context, IPublicationsRepository publicationsRepository, IAuthorsRepository authorsRepository, IMapper mapper)
         {
             _dbContext = context;
             _publicationsRepository = publicationsRepository ?? throw new ArgumentNullException(nameof(publicationsRepository));
+            _authorsRepository = authorsRepository ?? throw new ArgumentNullException(nameof(mapper));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -74,7 +75,7 @@ namespace LMS.API.Controllers
         }
         
         // REVIEW: Do we need this?
-        [HttpGet("{publicationId}/authors/{authorId}")]
+        [HttpGet("{publicationId}/authors/{authorId}", Name = "GetAuthorForPublication")]
         public async Task<ActionResult<AuthorDto>> GetAuthorForPublication(int publicationId, int authorId)
         {
             if (!_publicationsRepository.Exists(publicationId))
@@ -91,27 +92,63 @@ namespace LMS.API.Controllers
 
             return Ok(_mapper.Map<AuthorDto>(authorForPublicationFromRepo));
         }
-
-/* FIXME: Up to this point everything works properly as expected.
- The rest of the methods work too but must be refactored to utilise Repositories and DTOs*/
-
+        
         // POST: api/Publications
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<PublicationDto>> CreatePublication(PublicationCreationDto newPublication)
         {
+            // OLD: _dbContext.Publications.Add(publication);
+            // OLD: await _dbContext.SaveChangesAsync();
+            
+            // 1. Test if PublicationType is valid
+            // if (newPublication.TypeId is null && string.IsNullOrWhiteSpace(newPublication.TypeName))
+            // {
+            //     return BadRequest();
+            // }
+            
+            // 1.2 If PublicationType doesn't exist -- crete it
+            // 2. Test if Subject is valid
+            // 2.2 If Subject doesn't exist -- create it
+            
+            // 3. Map the DTO to the Publication Entity
             var publicationEntity = _mapper.Map<Publication>(newPublication);
-            // _dbContext.Publications.Add(publication);
+            // 4. Add the Publication entity to the DB and Save it
             await _publicationsRepository.AddAsync(publicationEntity);
-            // await _dbContext.SaveChangesAsync();
             await _publicationsRepository.SaveAsync();
-
+            
+            // 5. Return the corresponding DTO
             var publicationToReturn = _mapper.Map<PublicationDto>(publicationEntity);
-
-            // return CreatedAtRoute("GetPublication", new {id = publicationToReturn.Id}, publicationToReturn);
+            // OLD: return CreatedAtRoute("GetPublication", new {id = publicationToReturn.Id}, publicationToReturn);
             return CreatedAtAction("GetPublication", new { id = publicationToReturn.Id }, publicationToReturn);
         }
+
+        // FIXME: The code from this method should probably be moved to another class
+        // and then called from both this controller and the AuthorsController 
+        [HttpPost("{publicationId}/authors")]
+        public async Task<ActionResult<AuthorDto>> CreateAuthorForPublication(int publicationId, AuthorCreationDto newAuthor)
+        {
+            if (!_publicationsRepository.Exists(publicationId))
+            {
+                return NotFound();
+            }
+
+            var publicationEntity = await _publicationsRepository.GetWithAuthorsAsync(publicationId);
+            var authorEntity = _mapper.Map<Author>(newAuthor);
+            await _authorsRepository.AddAsync(authorEntity);
+            publicationEntity.Authors.Add(authorEntity);
+            
+            await _publicationsRepository.SaveAsync();
+
+            var authorToReturn = _mapper.Map<AuthorDto>(authorEntity);
+            
+            return CreatedAtAction("GetAuthorForPublication", new { publicationId, authorId = authorToReturn.Id }, authorToReturn);
+        }
+
         
+/* FIXME: Up to this point everything works properly as expected.
+ The rest of the methods work too but must be refactored to utilise Repositories and DTOs*/
+
         // PUT: api/Publications/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "a4e53d00-21f7-46b6-aa01-845884d9ebf2",
-		"name": "LMS Assignment",
+		"name": "LMS.Group3.API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -529,6 +529,92 @@
 			"response": []
 		},
 		{
+			"name": "Post Author for Publication",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstName\": \"Trillian\",\n  \"lastName\": \"McMillan\",\n  \"dateOfBirth\": \"1970-04-14T00:00:00\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/publications/4/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications",
+						"4",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Author for non-existent Publication",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstName\": \"Trillian\",\n  \"lastName\": \"McMillan\",\n  \"dateOfBirth\": \"1970-04-14T00:00:00\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/publications/150/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications",
+						"150",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Post Publication",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
@@ -586,7 +672,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/api/authors/23",
+					"raw": "https://localhost:5001/api/authors/28",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -595,7 +681,7 @@
 					"path": [
 						"api",
 						"authors",
-						"23"
+						"28"
 					]
 				},
 				"description": "Delete author created in the first POST request\n"
@@ -619,7 +705,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/api/publications/37",
+					"raw": "https://localhost:5001/api/publications/38",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -628,7 +714,7 @@
 					"path": [
 						"api",
 						"publications",
-						"37"
+						"38"
 					]
 				},
 				"description": "Delete author created in the first POST request\n"
