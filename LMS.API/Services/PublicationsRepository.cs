@@ -95,16 +95,11 @@ namespace LMS.API.Services
             return publication.Authors.FirstOrDefault(a => a.Id == authorId);
         }
 
-        public async Task<PublicationType> GetTypeByIdAsync(int id)
+        public async Task<IEnumerable<Subject>> GetAllSubjectsAsync()
         {
-            return await _dbContext.PublicationTypes.FirstOrDefaultAsync(t => t.Id == id);
+            return await _dbContext.Subjects.ToListAsync();
         }
-        
-        public async Task<PublicationType> GetTypeByNameAsync(string typeName)
-        {
-            return await _dbContext.PublicationTypes.FirstOrDefaultAsync(t => t.Name.ToLower().Equals(typeName.ToLower()));
-        }
-        
+
         public async Task<Subject> GetSubjectByIdAsync(int id)
         {
             return await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == id);
@@ -115,7 +110,22 @@ namespace LMS.API.Services
             return await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Name.ToLower().Equals(typeName.ToLower()));
         }
         
-        public async Task AddAsync(Publication publication)
+        public async Task<IEnumerable<PublicationType>> GetAllTypesAsync()
+        {
+            return await _dbContext.PublicationTypes.ToListAsync();
+        }
+
+        public async Task<PublicationType> GetTypeByIdAsync(int id)
+        {
+            return await _dbContext.PublicationTypes.FirstOrDefaultAsync(t => t.Id == id);
+        }
+        
+        public async Task<PublicationType> GetTypeByNameAsync(string typeName)
+        {
+            return await _dbContext.PublicationTypes.FirstOrDefaultAsync(t => t.Name.ToLower().Equals(typeName.ToLower()));
+        }
+        
+        public async Task AddPublicationAsync(Publication publication)
         {
             if (publication is null)
             {
@@ -124,17 +134,53 @@ namespace LMS.API.Services
             
             await _dbContext.AddAsync(publication);
         }
+        
+        public async Task AddSubjectAsync(Subject subject)
+        {
+            if (subject is null)
+            {
+                throw new ArgumentNullException();
+            }
+            
+            await _dbContext.Subjects.AddAsync(subject);
+        }
+        
+        public async Task AddTypeAsync(PublicationType type)
+        {
+            if (type is null)
+            {
+                throw new ArgumentNullException();
+            }
 
-        /* 
+            await _dbContext.PublicationTypes.AddAsync(type);
+        }
+
+        
+        
+        
+/* 
         public async void UpdateAsync(Publication publication)
         {
             throw new System.NotImplementedException();
         }
-
-        public async void RemoveAsync(Publication publication)
+*/
+        public async Task RemovePublicationAsync(Publication publication)
         {
-            throw new System.NotImplementedException();
-        } */
+            _dbContext.Publications.Remove(publication);
+            await SaveAsync();
+        }
+        
+        public async Task RemoveSubjectAsync(Subject subject)
+        {
+            _dbContext.Subjects.Remove(subject);
+            await SaveAsync();
+        }
+        
+        public async Task RemoveTypeAsync(PublicationType type)
+        {
+            _dbContext.PublicationTypes.Remove(type);
+            await SaveAsync();
+        }
 
         public async Task<bool> SaveAsync()
         {

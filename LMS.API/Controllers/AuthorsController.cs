@@ -119,11 +119,12 @@ namespace LMS.API.Controllers
 
             try
             {
-                await _dbContext.SaveChangesAsync();
+                // await _dbContext.SaveChangesAsync();
+                await _authorsRepository.SaveAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AuthorExists(id))
+                if (!_authorsRepository.Exists(id))
                 {
                     return NotFound();
                 }
@@ -140,25 +141,25 @@ namespace LMS.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
-            var author = await _dbContext.Authors.FindAsync(id);
-            // var author = await _authorsRepository.GetAsync(id);
+            // var author = await _dbContext.Authors.FindAsync(id);
+            var author = await _authorsRepository.GetAsync(id);
             
-            if (author == null)
+            if (author is null)
             {
                 return NotFound();
             }
 
-            _dbContext.Authors.Remove(author);
-            await _dbContext.SaveChangesAsync();
-            // _authorsRepository.RemoveAsync(author);
+            // _dbContext.Authors.Remove(author);
+            // await _dbContext.SaveChangesAsync();
+            await _authorsRepository.RemoveAsync(author);
             
             return NoContent();
         }
 
         // This method will be removed when PUT is implemented properly
-        private bool AuthorExists(int id)
+        /*private bool AuthorExists(int id)
         {
             return _dbContext.Authors.Any(e => e.Id == id);
-        }
+        }*/
     }
 }

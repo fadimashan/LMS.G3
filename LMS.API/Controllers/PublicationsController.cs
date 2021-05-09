@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -92,6 +91,36 @@ namespace LMS.API.Controllers
 
             return Ok(_mapper.Map<AuthorDto>(authorForPublicationFromRepo));
         }
+
+        [HttpGet("subjects")]
+        public async Task<ActionResult<IEnumerable<SubjectDto>>> GetSubjects()
+        {
+            var subjects = await _publicationsRepository.GetAllSubjectsAsync();
+
+            return Ok(_mapper.Map<IEnumerable<SubjectDto>>(subjects));
+        }
+
+        [HttpGet("subjects/{id}", Name = "GetSubject")]
+        public async Task<ActionResult<SubjectDto>> GetSubject(int id)
+        {
+            var subject = await _publicationsRepository.GetSubjectByIdAsync(id);
+            return Ok(_mapper.Map<SubjectDto>(subject));
+        }
+        
+        [HttpGet("types")]
+        public async Task<ActionResult<IEnumerable<PublicationTypeDto>>> GetTypes()
+        {
+            var types = await _publicationsRepository.GetAllTypesAsync();
+
+            return Ok(_mapper.Map<IEnumerable<PublicationTypeDto>>(types));
+        }
+
+        [HttpGet("types/{id}", Name = "GetType")]
+        public async Task<ActionResult<SubjectDto>> GetType(int id)
+        {
+            var types = await _publicationsRepository.GetTypeByIdAsync(id);
+            return Ok(_mapper.Map<PublicationTypeDto>(types));
+        }
         
         // POST: api/Publications
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -107,20 +136,50 @@ namespace LMS.API.Controllers
             //     return BadRequest();
             // }
             
-            // 1.2 If PublicationType doesn't exist -- crete it
+            // 1.2 If PublicationType doesn't exist -- create it
             // 2. Test if Subject is valid
             // 2.2 If Subject doesn't exist -- create it
             
             // 3. Map the DTO to the Publication Entity
             var publicationEntity = _mapper.Map<Publication>(newPublication);
             // 4. Add the Publication entity to the DB and Save it
-            await _publicationsRepository.AddAsync(publicationEntity);
+            await _publicationsRepository.AddPublicationAsync(publicationEntity);
             await _publicationsRepository.SaveAsync();
             
             // 5. Return the corresponding DTO
             var publicationToReturn = _mapper.Map<PublicationDto>(publicationEntity);
             // OLD: return CreatedAtRoute("GetPublication", new {id = publicationToReturn.Id}, publicationToReturn);
             return CreatedAtAction("GetPublication", new { id = publicationToReturn.Id }, publicationToReturn);
+        }
+
+        [HttpPost("subjects")]
+        public async Task<ActionResult<SubjectDto>> CreateSubject(SubjectDto newSubject)
+        {
+            if (newSubject.Id is not null)
+            {
+                return BadRequest();
+            }
+
+            var subjectEntity = _mapper.Map<Subject>(newSubject);
+            await _publicationsRepository.AddSubjectAsync(subjectEntity);
+            await _publicationsRepository.SaveAsync();
+            var subjectToReturn = _mapper.Map<SubjectDto>(subjectEntity);
+            return CreatedAtAction("GetSubject", new {id = subjectToReturn.Id}, subjectToReturn);
+        }
+        
+        [HttpPost("types")]
+        public async Task<ActionResult<SubjectDto>> CreateType(PublicationTypeDto newType)
+        {
+            if (newType.Id is not null)
+            {
+                return BadRequest();
+            }
+
+            var typeEntity = _mapper.Map<PublicationType>(newType);
+            await _publicationsRepository.AddTypeAsync(typeEntity);
+            await _publicationsRepository.SaveAsync();
+            var publicationTypeToReturn = _mapper.Map<PublicationTypeDto>(typeEntity);
+            return CreatedAtAction("GetType", new {id = publicationTypeToReturn.Id}, publicationTypeToReturn);
         }
 
         // FIXME: The code from this method should probably be moved to another class
@@ -163,11 +222,12 @@ namespace LMS.API.Controllers
 
             try
             {
-                await _dbContext.SaveChangesAsync();
+                // await _dbContext.SaveChangesAsync();
+                await _publicationsRepository.SaveAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PublicationExists(id))
+                if (!_publicationsRepository.Exists(id))
                 {
                     return NotFound();
                 }
@@ -184,22 +244,53 @@ namespace LMS.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePublication(int id)
         {
-            var publication = await _dbContext.Publications.FindAsync(id);
+            // var publication = await _dbContext.Publications.FindAsync(id);
+            var publication = await _publicationsRepository.GetAsync(id);
             if (publication == null)
             {
                 return NotFound();
             }
 
-            _dbContext.Publications.Remove(publication);
-            await _dbContext.SaveChangesAsync();
+            // _dbContext.Publications.Remove(publication);
+            await _publicationsRepository.RemovePublicationAsync(publication);
+            // await _dbContext.SaveChangesAsync();
+            // await _publicationsRepository.SaveAsync();
 
+            return NoContent();
+        }
+        
+        [HttpDelete("subjects/{id}")]
+        public async Task<IActionResult> DeleteSubject(int id)
+        {
+            var subject = await _publicationsRepository.GetSubjectByIdAsync(id);
+            if (subject == null)
+            {
+                return NotFound();
+            }
+
+            await _publicationsRepository.RemoveSubjectAsync(subject);
+            
+            return NoContent();
+        }
+
+        [HttpDelete("types/{id}")]
+        public async Task<IActionResult> DeleteType(int id)
+        {
+            var publicationType = await _publicationsRepository.GetTypeByIdAsync(id);
+            if (publicationType == null)
+            {
+                return NotFound();
+            }
+
+            await _publicationsRepository.RemoveTypeAsync(publicationType);
+            
             return NoContent();
         }
 
         // This method will be removed when PUT is implemented properly
-        private bool PublicationExists(int id)
+        /*private bool PublicationExists(int id)
         {
             return _dbContext.Publications.Any(e => e.Id == id);
-        }
+        }*/
     }
 }

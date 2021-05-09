@@ -15,8 +15,8 @@ namespace LMS.API.Services
         Task<Publication> GetPublicationAsync(int authorId, int publicationId);
         
         Task AddAsync(Author author);
-        // void UpdateAsync(Publication publication);
-        // void RemoveAsync(Publication publication);
+        // void UpdateAsync(Author author);
+        Task RemoveAsync(Author author);
 
         Task<bool> SaveAsync();
         
