@@ -36,6 +36,8 @@ namespace LMS.API
                 options.ReturnHttpNotAcceptable = true;
             }).AddXmlDataContractSerializerFormatters();
 
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddScoped<IPublicationsRepository, PublicationsRepository>();
             services.AddScoped<IAuthorsRepository, AuthorsRepository>();
 

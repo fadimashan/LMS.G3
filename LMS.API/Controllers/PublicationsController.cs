@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using LMS.API.Data;
 using LMS.API.Models.Entities;
 using LMS.API.Services;
+using AutoMapper;
 
 namespace LMS.API.Controllers
 {
@@ -17,11 +18,16 @@ namespace LMS.API.Controllers
     {
         private readonly ApiDbContext _dbContext;
         private readonly IPublicationsRepository _publicationsRepository;
+        private readonly IMapper _mapper;
 
         public PublicationsController(ApiDbContext context, IPublicationsRepository publicationsRepository)
         {
             _dbContext = context;
-            _publicationsRepository = publicationsRepository ?? throw new ArgumentNullException(nameof(publicationsRepository));
+            _publicationsRepository = publicationsRepository ?? 
+                throw new ArgumentNullException(nameof(publicationsRepository));
+            _mapper = mapper ?? 
+                throw new ArgumentNullException(nameof(mapper));
+
         }
 
         // GET: api/Publications
@@ -51,12 +57,21 @@ namespace LMS.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPublication(int id, Publication publication)
         {
-            if (id != publication.Id)
-            {
-                return BadRequest();
-            }
+            //if (id != publication.Id)
+            //{
+            //    return BadRequest();
+            //}
 
-            _dbContext.Entry(publication).State = EntityState.Modified;
+            var publicationFromRepo = await _publicationsRepository.GetAsync(id);
+
+            if (publicationFromRepo is null) return StatusCode(StatusCodes.Status404NotFound);
+
+            //_dbContext.Entry(publication).State = EntityState.Modified;
+            publicationFromRepo = new Publication()
+            {
+                Id = publication.Id,
+                Title = publication.Title,
+            };
 
             try
             {
