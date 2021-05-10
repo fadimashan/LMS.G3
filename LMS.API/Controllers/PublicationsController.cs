@@ -25,8 +25,8 @@ namespace LMS.API.Controllers
             _dbContext = context;
             _publicationsRepository = publicationsRepository ?? 
                 throw new ArgumentNullException(nameof(publicationsRepository));
-            _mapper = mapper ?? 
-                throw new ArgumentNullException(nameof(mapper));
+            //_mapper = mapper ?? 
+            //    throw new ArgumentNullException(nameof(mapper));
 
         }
 

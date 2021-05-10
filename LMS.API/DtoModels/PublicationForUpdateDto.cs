@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LMS.API.DtoModels
 {
-    public class PublicationForUpdate
+    public class PublicationForUpdateDto
     {
         public string Title { get; set; }
         public string Description { get; set; }

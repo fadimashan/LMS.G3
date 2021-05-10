@@ -12,6 +12,7 @@ namespace LMS.API.Services
         Task<Author> GetWithPublicationsAsync(int? id);
         void Add(Publication publication);
         void Update(Publication publication);
+
         void Remove(Publication publication);
         public bool Any(int id);
     }

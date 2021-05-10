@@ -14,5 +14,7 @@ namespace LMS.API.Services
         void UpdateAsync(Publication publication);
         void RemoveAsync(Publication publication);
         public bool Any(int id);
+        void Save();
+        bool AuthorExists(int authorId);
     }
 }
