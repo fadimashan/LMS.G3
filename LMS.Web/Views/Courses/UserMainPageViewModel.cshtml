@@ -13,6 +13,15 @@
 </div>
 
 <div id="course" class="mt-0" style="top:-90px;">
+    <div class="btn-group">
+        <p class="btn btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Course participants</p>
+        <div class="dropdown-menu ">
+            @foreach (var student in Model.FirstOrDefault().Students)
+            {
+                <a class="dropdown-item">Name: @student.FirstName @student.LastName <br />Email: @student.Email <hr /> </a>
+            }
+        </div>
+    </div>
     <div class="row  mt-0 container-fluid" id="userPage" style="top:-90px;">
         <div class="col-md">
             <table class="table  table-dark table-striped text-white m-2 overflow-scroll">
@@ -61,14 +70,15 @@
                                 @Html.DisplayNameFor(modelItem => item.Description):
                                 @Html.DisplayFor(modelItem => item.Description)
                             </td>
-                        </tr>}
+                        </tr>
+                    }
 
                 </tbody>
             </table>
         </div>
-       
+
         <div class="text-center  col-md" id="activity">
-            <h3 class="text-center site-btn ml-1 w-auto" id="activity-title">  <i class="fas fa-list"></i> Activity List for : @Model.FirstOrDefault().Modules.FirstOrDefault().Title</h3>
+            <h3 class="text-center site-btn ml-1 w-auto" id="activity-title">  <i class="fas fa-list"></i> Activity List for : @Model.FirstOrDefault().Modules.Where(m => m.Activities.Any()).FirstOrDefault().Title</h3>
             <div id="my-div">
                 <section class="categories-section justify-content-center">
                     <div class="">
