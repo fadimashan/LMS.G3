@@ -108,15 +108,38 @@ namespace LMS.API.Controllers
         // PUT: api/Authors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        public async Task<ActionResult<AuthorDto>> UpdateAuthor(int id, AuthorCreationDto authorDto)
+        {
+            var authorFromRepo = await _authorsRepository.GetAsync(id);
+
+            if (authorFromRepo is null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(authorDto, authorFromRepo);
+
+            if (await _authorsRepository.SaveAsync())
+            {
+                return Ok(_mapper.Map<AuthorDto>(authorFromRepo));
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+        }
+        
+/* 
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutAuthor(int id, Author author)
         {
             if (id != author.Id)
             {
                 return BadRequest();
             }
-
+        
             _dbContext.Entry(author).State = EntityState.Modified;
-
+        
             try
             {
                 // await _dbContext.SaveChangesAsync();
@@ -133,9 +156,10 @@ namespace LMS.API.Controllers
                     throw;
                 }
             }
-
+        
             return NoContent();
         }
+ */
 
         // DELETE: api/Authors/5
         [HttpDelete("{id}")]

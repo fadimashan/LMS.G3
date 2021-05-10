@@ -234,15 +234,38 @@ namespace LMS.API.Controllers
         // PUT: api/Publications/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        public async Task<ActionResult<PublicationDto>> UpdatePublication(int id, PublicationCreationDto publicationDto)
+        {
+            var publicationFromRepo = await _publicationsRepository.GetAsync(id);
+
+            if (publicationFromRepo is null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(publicationDto, publicationFromRepo);
+
+            if (await _publicationsRepository.SaveAsync())
+            {
+                return Ok(_mapper.Map<PublicationDto>(publicationFromRepo));
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+        }
+
+/*         
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutPublication(int id, Publication publication)
         {
             if (id != publication.Id)
             {
                 return BadRequest();
             }
-
+        
             _dbContext.Entry(publication).State = EntityState.Modified;
-
+        
             try
             {
                 // await _dbContext.SaveChangesAsync();
@@ -259,9 +282,10 @@ namespace LMS.API.Controllers
                     throw;
                 }
             }
-
+        
             return NoContent();
         }
+ */
 
         // DELETE: api/Publications/5
         [HttpDelete("{id}")]
