@@ -87,6 +87,9 @@ namespace LMS.Web.Controllers
             {
                 return NotFound();
             }
+
+            activity.GetModulesSelectListItem = GetModulesSelectListItem();
+            
             return View(activity);
         }
 
@@ -127,7 +130,8 @@ namespace LMS.Web.Controllers
                         throw;
                     }
                 }
-                return Redirect($"/courses?moduleID={activityOne.ModuleId}");
+                return Redirect($"/modules/details/{activityOne.ModuleId}");
+               
             }
             //return View(activity);
             return Redirect("/courses");

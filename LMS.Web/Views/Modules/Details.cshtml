@@ -3,46 +3,6 @@
 @{
     ViewData["Title"] = "Details";
 }
-
-@*<h1>Details</h1>
-
-    <div>
-        <h4>Module</h4>
-        <hr />
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Title)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Title)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Description)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Description)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.StartDate)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.StartDate)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.EndDate)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.EndDate)
-            </dd>
-        </dl>
-    </div>
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-        <a asp-action="Index">Back to List</a>
-    </div>*@
-
-
-
 <div class="content justify-content-center">
     <div class="row m-3">
         <div class="col-1"></div>
@@ -70,14 +30,20 @@
             <button class="site-btn">Delete</button>
         </div>
         <div class="col-5 text-center">
-            <h3 id="activiy_view" class="text-black-50 m-2">Module's Activities</h3>
+            <div class="row justify-content-center">
+                <h3 id="activiy_view" class="text-black-50 m-2">Module's Activities</h3>
+                <p>
+                    <a class="btn btn-outline-secondary" asp-controller="Activities" asp-action="Create">Create an activity</a>
+                </p>
+            </div>
+            @* Add activity *@
             <div class="row justify-content-center" id="f-container">
                 <div id="list-items" class="row no-gutters">
 
                     @foreach (var activity in Model.Activities)
                     {
                         var activityIs = activity.ActivityType.ToString();
-                        var link = $"/img/activity/{activityIs}.jpg";
+                        var link = $"/img/activity-c/{activityIs}.jfif";
                         <div class="col-sd-2" id="img-container">
                             <a data-toggle="dropdown" href="#coffe-1"><img id="img-circle" class="rounded-circle" src="@link" alt="@activity.Name"></a>
                             <div class="dropdown-menu shadow">
