@@ -4,27 +4,33 @@
     ViewData["Title"] = "GetAllStudents";
 }
 
-<h4>GetAllStudents</h4>
- 
-<p>
-    <a class="btn btn-outline-secondary" asp-action="AddUser">Add User</a>
-</p>
-<table class="table">
-    <thead>
+<h3 class="text-center text-black-50 m-3">LMS Students</h3>
+
+<hr />
+    <form class="course-search-form w-75 justify-content-center container-fluid m-auto" style="left:100px;">
+        <input type="text" placeholder="Students" class="w-75 m-1">
+        <button class="site-btn m-1">Search Student</button>
+    </form>
+
+<hr />
+<a class="btn btn-outline-secondary" asp-action="AddUser">Add User</a>
+
+<table class="table table-striped text-muted">
+    <thead class="text-muted">
         <tr>
             <th>
-                <h5> Student Name</h5>
+                <h5 class="text-muted"> Student Name</h5>
             </th>
             <th>
-                <h5> Email</h5>
+                <h5 class="text-muted"> Email</h5>
             </th>
             <th>
-                <h5> Course Name</h5>
+                <h5 class="text-muted"> Course Name</h5>
             </th>
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="table table-striped">
         @foreach (var course in Model)
         {
             foreach (var student in course.Students)

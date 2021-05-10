@@ -12,24 +12,24 @@
             <a asp-controller="Activities" asp-action="Create" type="button" class="dropdown-item">Activity</a>
         </div>
 
-        <a class="site-btn m-2 " asp-controller="Courses" asp-action="GetAllStudents" type="button">All Students</a>
+        <a type="button" class="site-btn m-2 text-center" asp-controller="Courses" asp-action="GetAllStudents" style="width:max-content;">All Students</a>
 
     </div>
 </div>
 
-<table class="table table-striped overflow-auto">
+<table class="table table-striped">
     <thead>
         <tr class="text-muted fs-3">
             <th> <h5>Title </h5></th>
-            <th class="text-center"> <h5>Period </h5></th>
-            <th class="text-center"> <h5>Start Date </h5></th>
-            <th class="text-center"> <h5>Modules No.</h5></th>
-            <th class="text-center"> <h5>Activities No.</h5> </th>
+            <th class="text-center text-muted"> <h5>Period </h5></th>
+            <th class="text-center text-muted"> <h5>Start Date </h5></th>
+            <th class="text-center text-muted"> <h5>Modules No.</h5></th>
+            <th class="text-center text-muted"> <h5>Activities No.</h5> </th>
             <th> </th>
         </tr>
     </thead>
 
-    <tbody class="table-body">
+    <tbody class="table-body table table-striped">
         @foreach (var item in Model)
         {
             var itemID = @item.Id;
