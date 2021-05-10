@@ -73,7 +73,7 @@ namespace LMS.Data.Data
                 var courses = new List<Course>();
                 for (int i = 0; i < 5; i++)
                 {
-                    var date = DateTime.Now;
+                    var date = DateTime.Now.AddDays(fake.Random.Int(-22, 0));
                     var course = new Course
                     {
                         Title = fake.Company.CatchPhrase(),
@@ -81,7 +81,6 @@ namespace LMS.Data.Data
                         StartDate = date,
                         EndDate = date.AddMonths(6),
                         Modules = GetModules(10),
-                        //Students = GetStudents(30)
                     };
                     courses.Add(course);
                 }
@@ -121,20 +120,9 @@ namespace LMS.Data.Data
                 }
                 context.AddRange(enrollist);
                 context.SaveChanges();
-                //var newStudentList = new List<ApplicationUser>();
                 var randomInt = fake.Random.Int(1, 5);
                 foreach (var c in courses)
                 {
-                    //for (int i = 0; i < 20; i++)
-                    //{
-                    //    var student1 = students[fake.Random.Int(0, 49)];
-                    //    if (c.Students is null || !c.Students.Contains(student1))
-                    //    {
-                    //        newStudentList.Add(student1);
-                    //    }
-                    //}
-                    //c.Students = newStudentList;
-                    //c.Documents = GetDocuments(randomInt, c.Students.ToList());
                     c.Documents = GetDocuments(randomInt, students);
                     foreach (var m in c.Modules)
                     {
@@ -148,8 +136,6 @@ namespace LMS.Data.Data
                 }
                 context.SaveChanges();
                 await context.SaveChangesAsync();
-
-
             }
         }
 
@@ -159,8 +145,7 @@ namespace LMS.Data.Data
             var modules = new List<Module>();
             for (int i = 0; i < count; i++)
             {
-                var date = DateTime.Now.AddDays(fake.Random.Int(-2, 2));
-
+                var date = DateTime.Now.AddDays(fake.Random.Int(-12, 2));
                 var module = new Module
                 {
                     Title = fake.Company.CatchPhrase(),

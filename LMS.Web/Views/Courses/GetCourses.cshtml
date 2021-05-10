@@ -1,0 +1,106 @@
+﻿@model IEnumerable<LMS.Core.Entities.Course>
+
+<div class="text-center justify-content-center">
+    <h2 class="m-2 text-center text-muted">LMS Courses</h2>
+    <hr />
+    <br />
+    <div class="btn-group text-center m-2">
+        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  class="site-btn m-2 text-center">Create</p>
+        <div class="dropdown-menu shadow">
+            <a asp-controller="Courses" asp-action="Create" type="button" class="dropdown-item">Course</a>
+            <a asp-controller="Modules" asp-action="Create" type="button" class="dropdown-item">Module</a>
+            <a asp-controller="Activities" asp-action="Create" type="button" class="dropdown-item">Activity</a>
+        </div>
+
+        <a type="button" class="site-btn m-2 text-center" asp-controller="Courses" asp-action="GetAllStudents" style="width:max-content;">All Students</a>
+
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr class="text-muted fs-3">
+            <th> <h5>Title </h5></th>
+            <th class="text-center text-muted"> <h5>Period </h5></th>
+            <th class="text-center text-muted"> <h5>Start Date </h5></th>
+            <th class="text-center text-muted"> <h5>Modules No.</h5></th>
+            <th class="text-center text-muted"> <h5>Activities No.</h5> </th>
+            <th> </th>
+        </tr>
+    </thead>
+
+    <tbody class="table-body table table-striped">
+        @foreach (var item in Model)
+        {
+            var itemID = @item.Id;
+            var newId = "test" + item.Id.ToString();
+
+            <tr>
+                <td class="text-left">
+                    <div class="btn-group">
+                        <p class="btn btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@item.Title</p>
+                        <div class="dropdown-menu ">
+                            @foreach (var mod in item.Modules)
+                            {
+                                <a asp-controller="Modules" asp-action="Details" asp-route-id="@mod.Id" type="button" class="dropdown-item">@mod.Title</a>
+                            }
+                        </div>
+                    </div>
+                </td>
+                <td class="text-center">
+                    @{ var period = (int)(item.EndDate - item.StartDate).TotalDays / 30;}
+                    <button disabled="" class="btn btn-light ">@period Month</button>
+                </td>
+                <td class="text-center">
+                    @{ string date = $"{item.StartDate.ToString("dd/MMM/yyyy")}";}
+                    <button disabled="" class="btn btn-light ">@date</button>
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Modules.Count)
+                </td>
+                <td class="text-center">
+                    @{ var numberOfActivities = 0; }
+
+                    @foreach (var oneModule in item.Modules)
+                    {
+                        if (oneModule.Activities != null)
+                        {
+
+                            numberOfActivities += oneModule.Activities.Count;
+
+                        }
+                    }
+
+                    @Html.DisplayFor(modelItem => numberOfActivities)
+                </td>
+                <td>
+                    <a class="btn btn-outline-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Course Students</a>
+                    <div class="dropdown-menu ">
+
+                        @foreach (var student in item.Students)
+                        {
+                            <a class="dropdown-item">Name: @student.FirstName @student.LastName <br/>Email: @student.Email <hr/></a>
+                        }
+                    </div>
+
+                </td>
+                <td>
+                    <button type="button" class="btn btn-outline-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
+                    <div class="dropdown-menu ">
+                        <a asp-controller="Courses" asp-action="Edit" asp-route-id="@item.Id" type="button" class="dropdown-item">Edit</a>
+                        <a asp-controller="Courses" asp-action="Delete" asp-route-id="@item.Id" type="button" class="dropdown-item">Delete</a>
+                        <a class="cell-1 dropdown-item" data-toggle="collapse" data-target="#@newId" aria-expanded="false">Description</a>
+                    </div>
+                </td>
+            </tr>
+            <tr id="@newId" class="collapse desc-text" aria-expanded="false">
+                <td colspan="7" class="desc-text">
+                    @Html.DisplayNameFor(modelItem => item.Description):
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+

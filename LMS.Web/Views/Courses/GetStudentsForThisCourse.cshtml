@@ -1,0 +1,51 @@
+﻿@model LMS.Core.Entities.Course
+
+@{
+    ViewData["Title"] = "Course Students";
+}
+
+<div class="row" id="userPage" style="margin-top:150px">
+    <div class="col-6">
+        <table class="table my-auto" >
+            <thead>
+                <tr>
+                    <th>
+                        <h2>Name</h2>
+                    </th>
+                    <th>
+                        <h2>Email</h2>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Students)
+                {
+                    <tr>
+                        <td>
+                            @{ var fullNAme = item.FirstName + " " + item.LastName;}
+                            @Html.DisplayFor(modelItem => fullNAme)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">
+                            </a>
+                            @if (User.IsInRole("Teacher"))
+                            {
+                                <div class="btn-group">
+                                    <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" font-size:24px"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></p>
+                                    <div class="dropdown-menu shadow">
+                                        <a asp-controller="Modules" asp-action="Details" asp-route-id="@item.Id" type="button" class="dropdown-item">Details</a>
+                                        <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.Id" type="button" class="dropdown-item">Edit</a>
+                                    </div>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

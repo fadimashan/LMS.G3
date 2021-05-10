@@ -43,5 +43,7 @@ namespace LMS.Web
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+
     }
 }

@@ -1,0 +1,133 @@
+﻿@model IEnumerable<LMS.Core.Entities.Course>
+
+
+<div class="row text-center mx-auto mb-0 " id="btn-card" style="top:-90px;">
+    @*style="top:-90px;"*@
+    <div class="col text-center mx-auto" style="top:-90px;" >
+        <div class="categorie-item">
+            <div class="ci-text">
+                <a style="width: 100%;" id="my-btn" class="btn">You are enrolled in: <span class="text-capitalize">@Model.FirstOrDefault().Title</span></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="course" class="mt-0" style="top:-90px;">
+    <div class="row  mt-0 container-fluid" id="userPage" style="top:-90px;">
+        <div class="col-md">
+            <table class="table  table-dark table-striped text-white m-2 overflow-scroll">
+                <thead>
+                    <tr class="text-start">
+                        <th class="text-start">
+                            Module Title
+                        </th>
+                        <th class="text-start" colspan="2">
+                            Start Date
+                        </th>
+                        <th></th>
+                        <th class="text-start">
+                            Period
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="table-body">
+                    @foreach (var item in Model.FirstOrDefault().Modules)
+                    {
+                        var newId = "test" + item.Id.ToString();
+                        <tr class="cell-1" data-toggle="collapse" data-target="#@newId" aria-expanded="false">
+                            <td>
+                                @{ var startModule = item.StartDate.ToString("yyyy-MM-dd"); var endModule = item.EndDate.ToString("yyyy-MM-dd"); }
+
+                                @{ var moduleId = item.Id; }
+                                <a class="btn text-white text-start" href="@Url.Action("Index", new { moduleID = moduleId })" style="width: 100%;">
+                                    @Html.DisplayFor(modelItem => item.Title)
+                                </a>
+
+                            </td>
+                            <td colspan="2">
+                                <a class="btn text-white text-start">
+                                    @Html.DisplayFor(modelItem => startModule)
+                                </a>
+                            </td>
+                            <td></td>
+                            <td colspan="2">
+                                @{ var period = (int)(item.EndDate - item.StartDate).TotalDays / 30;}
+                                <a class="btn text-white text-start">@period Month</a>
+                            </td>
+                        </tr>
+                        <tr id="@newId" class="collapse desc-text" aria-expanded="false">
+                            <td colspan="3" class="desc-text">
+                                @Html.DisplayNameFor(modelItem => item.Description):
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                        </tr>}
+
+                </tbody>
+            </table>
+        </div>
+       
+        <div class="text-center  col-md" id="activity">
+            <h3 class="text-center site-btn ml-1 w-auto" id="activity-title">  <i class="fas fa-list"></i> Activity List for : @Model.FirstOrDefault().Modules.FirstOrDefault().Title</h3>
+            <div id="my-div">
+                <section class="categories-section justify-content-center">
+                    <div class="">
+                        <div class="row justify-content-center overflow-scroll" id="check-item">
+
+                            @foreach (var items in Model.FirstOrDefault().Modules)
+                            {
+                                foreach (var item in items.Activities)
+                                {
+                                    <div class="col-sd-2">
+                                        <div class="categorie-item" id="card-main-item ">
+                                            @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
+                                                var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg"; }
+                                            <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
+                                                <div class="ci-thumb set-bg" data-setbg=@link></div>
+                                                <div class="ci-text">
+
+                                                    <h5>@Html.DisplayFor(modelItem => item.Name)</h5>
+                                                    <p>@Html.DisplayFor(modelItem => item.ActivityType)</p>
+                                                    <span>@Html.DisplayFor(modelItem => start) -  @Html.DisplayFor(modelItem => end)</span>
+                                                </div>
+                                            </a>
+
+                                        </div>
+                                    </div>}
+                            }
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let userPage = document.getElementById("userPage");
+    let activity = document.getElementById("activity");
+    let course = document.getElementById("course");
+
+    let el = document.getElementById("my-btn");
+
+    el.addEventListener("click", () => {
+        if (course.style.display == "none") {
+            el.setAttribute("href", "@Url.Action("Index", new { })");
+
+            course.style.display = "block";
+            /* userPage.stye.width = "50%";*/
+            userPage.style.display = "block";
+            activity.style.display = "block";
+        }
+        else {
+             el.setAttribute("href", "#");
+            course.style.display = "none";
+            userPage.style.display = "none";
+            activity.style.display = "none";
+        }
+
+    })
+
+
+</script>

@@ -34,5 +34,6 @@ namespace LMS.Core.Entities
         public ICollection<Document> Documents { get; set; }
 
 
+
     }
 }
