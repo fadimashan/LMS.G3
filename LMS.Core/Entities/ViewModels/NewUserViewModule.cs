@@ -12,7 +12,7 @@ namespace LMS.Core.Entities.ViewModels
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        public RoleType RoleType { get; set; }
+        public string RoleType { get; set; }
 
         public string Email { get; set; }
 

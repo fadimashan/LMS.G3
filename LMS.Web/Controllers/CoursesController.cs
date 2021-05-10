@@ -187,12 +187,12 @@ namespace LMS.Web.Controllers
             {
                 var firstModuleID = db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
                 .Include(c => c.Modules).FirstOrDefault();
-                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser)).Include(s=> s.Students)
                    .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == firstModuleID.Modules.FirstOrDefault().Id)).ToListAsync();
             }
             else if (User.IsInRole("Student"))
             {
-                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser)).Include(s => s.Students)
             .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == modID)).ToListAsync();
             }
 
@@ -264,6 +264,7 @@ namespace LMS.Web.Controllers
                 Email = user.Email,
 
             };
+            var type = user.RoleType.ToString() == "A" ? "Student" : "Teacher"; 
 
             var addStudentResult = await _userManager.CreateAsync(user1, user.Password);
             if (!addStudentResult.Succeeded) throw new Exception(string.Join("\n", addStudentResult.Errors));

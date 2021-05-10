@@ -33,7 +33,7 @@
             <div class="row justify-content-center">
                 <h3 id="activiy_view" class="text-black-50 m-2">Module's Activities</h3>
                 <p>
-                    <a class="btn btn-outline-secondary" asp-controller="Activities" asp-action="Create">Create an activity</a>
+                    <a class="btn btn-outline-secondary" asp-controller="Modules" asp-route-id="@Model.Id" asp-action="CreateFromModule">Create an activity</a>
                 </p>
             </div>
             @* Add activity *@
