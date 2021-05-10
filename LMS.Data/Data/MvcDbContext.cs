@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using LMS.Core.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using LMS.Core.Entities;
 
 namespace LMS.Data.Data
 {
@@ -21,6 +16,7 @@ namespace LMS.Data.Data
           : base(options)
         {
         }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -38,8 +34,7 @@ namespace LMS.Data.Data
             //    .HasMany(m => m.Activities)
             //    .WithOne(m => m.Module)
             //    .OnDelete(DeleteBehavior.NoAction);
-              
-         
+
         }
     }
 }
