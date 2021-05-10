@@ -1,0 +1,67 @@
+﻿@model LMS.Core.Entities.ViewModels.FilesViewModel
+
+@{
+    ViewData["Title"] = "Upload and download files";
+}
+
+<div class="container-fluid padding mt-5">
+    <div class="row">
+        <div class="col-md-12 col-lg-6">
+            <aside class="accordion">
+                <h1>Upload & download files</h1>
+                <div class="opened-for-codepen">
+                    <h2><i class="fas fa-folder">  Course </i></h2>
+                    <div class="opened-for-codepen">
+                        <h2><i class="fas fa-folder">  Module </i></h2>
+                        <div>
+                            <h2><i class="fas fa-folder">  Activity </i></h2>
+                            <p>Assignment</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            <br>
+        </div>
+        <div class="col-md-12 col-lg-6">
+            <div class="container-fluid mt-4">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <input type="file" name="files" value="Upload" class="btn btn-outline-info" data-toggle="tooltip" data-placement="bottom" title="Upload new file" multiple="multiple" />
+                                    <button type="submit" value="upload" class="btn btn-primary">Upload</button>
+                                    <div class="clear"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-success" style="margin-top:50px">
+                        @ViewBag.Message
+                    </div>
+                }
+
+                <h6 style="margin-top: 50px">List of downloaded files: </h6>
+
+                <ul>
+                    @foreach (var item in Model.Files)
+                    {
+                        <li>
+                            <a asp-action="Download"
+                               asp-route-filename="@item.Name">
+                                @item.Name
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
