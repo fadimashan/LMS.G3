@@ -69,12 +69,14 @@ namespace LMS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _dbContext.Add(module);
+                await _dbContext.AddAsync(module);
                 await _dbContext.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return Redirect("/courses");
             }
-            return View(module);
+            //return View(module);
+            return Redirect("/courses");
         }
 
         // GET: Modules/Edit/5
@@ -129,7 +131,8 @@ namespace LMS.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return Redirect($"/modules/details/{id}");
             }
             return View(module);
         }
@@ -185,6 +188,44 @@ namespace LMS.Web.Controllers
                 courses.Add(selectListItem);
             }
             return (courses);
+        }
+
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> CreateFromModule(int id)
+        {
+            var module = await _dbContext.Module.FindAsync(id);
+            
+            if (module is null)
+            {
+                return NotFound();
+            }
+
+            var activity = new Activity()
+            {
+                ModuleId = id
+            };
+            return View(activity);
+        }
+
+        // POST: Activities/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateFromModule(int id, [Bind("Name,ActivityType,StartDate,EndDate,Description,ModuleId")] Activity activity)
+        {
+            // Variable `module` is never used
+            var module = _dbContext.Module.Find(id);
+            if (ModelState.IsValid)
+            {
+                // module.Activities.Add(activity);
+                await _dbContext.AddAsync(activity);
+                await _dbContext.SaveChangesAsync();
+                //return RedirectToAction(nameof(Index));
+                return Redirect($"/modules/details/{activity.ModuleId}");
+            }
+            //return View(activity);
+            return Redirect("/courses");
         }
     }
 }

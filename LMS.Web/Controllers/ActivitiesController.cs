@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Data.Data;
-using Microsoft.AspNetCore.Authorization;
 
 namespace LMS.Web.Controllers
 {
@@ -68,7 +67,6 @@ namespace LMS.Web.Controllers
                 await _dbContext.SaveChangesAsync();
                 //return RedirectToAction(nameof(Index));
                 return Redirect("/courses");
-
             }
             //return View(activity);
             return Redirect("/courses");
@@ -132,11 +130,9 @@ namespace LMS.Web.Controllers
                     }
                 }
                 return Redirect($"/modules/details/{activityOne.ModuleId}");
-               
             }
             //return View(activity);
             return Redirect("/courses");
-
         }
 
         // GET: Activities/Delete/5
@@ -173,8 +169,7 @@ namespace LMS.Web.Controllers
         {
             return _dbContext.Activity.Any(e => e.Id == id);
         }
-
-
+        
         private IEnumerable<SelectListItem> GetModulesSelectListItem()
         {
             var modules = _dbContext.Module.OrderBy(m=>m.Title);

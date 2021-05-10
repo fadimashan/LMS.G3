@@ -1,15 +1,15 @@
-﻿using LMS.Core.Entities;
-using LMS.Core.Entities.ViewModels;
-using LMS.Data.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using LMS.Core.Entities;
+using LMS.Core.Entities.ViewModels;
+using LMS.Data.Data;
 
 namespace LMS.Web.Controllers
 {
@@ -76,7 +76,6 @@ namespace LMS.Web.Controllers
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            
             // return View("GetCourses", course);
             return View("Details", course);
         }
@@ -168,7 +167,7 @@ namespace LMS.Web.Controllers
 
         private bool CourseExists(int id)
         {
-            return _dbContext.Course.Any(e => e.Id == id);
+            return _dbContext.Course.Any(c => c.Id == id);
         }
 
         // public async Task<IActionResult> UserMainPageViewModel()
@@ -187,6 +186,7 @@ namespace LMS.Web.Controllers
                     .Include(c => c.Modules)
                     .ThenInclude(m => m.Activities)
                     .ToListAsync();
+                
                 return View("GetCourses", modules);
                 // return Redirect("/courses/GetCourses);
             }
@@ -194,22 +194,25 @@ namespace LMS.Web.Controllers
             if (moduleID is null && User.IsInRole("Student"))
             {
                 var firstCourseID = _dbContext.Course
-                    .Where(c => c.Students.Any(a => a.Id == currentUser))
+                    .Where(c => c.Students.Any(au => au.Id == currentUser))
                     .Include(c => c.Modules)
                     .FirstOrDefault();
                 course = await _dbContext.Course
-                    .Where(c => c.Students.Any(a => a.Id == currentUser))
+                    .Where(c => c.Students.Any(au => au.Id == currentUser))
+                    .Include(s=> s.Students)
                     .Include(c => c.Modules)
-                    .ThenInclude(m => m.Activities
-                        .Where(a => a.ModuleId == firstCourseID.Modules.FirstOrDefault().Id))
+                    .ThenInclude(m => 
+                        m.Activities.Where(a => a.ModuleId == firstCourseID.Modules.FirstOrDefault().Id))
                     .ToListAsync();
             }
             else if (User.IsInRole("Student"))
             {
                 course = await _dbContext.Course
-                    .Where(c => c.Students.Any(a => a.Id == currentUser))
+                    .Where(c => c.Students.Any(e => e.Id == currentUser))
+                    .Include(s => s.Students)
                     .Include(c => c.Modules)
-                    .ThenInclude(m => m.Activities.Where(a => a.ModuleId == modID))
+                    .ThenInclude(m => 
+                        m.Activities.Where(a => a.ModuleId == modID))
                     .ToListAsync();
             }
 
@@ -263,9 +266,9 @@ namespace LMS.Web.Controllers
             {
                 ModelState.AddModelError("", "User Not Found");
             }
+            // FIXME: Value `_userManager.Users` is not assignable to model `IEnumerable<Course>`
             return View("GetAllStudents", _userManager.Users);
         }
-
 
         public IActionResult AddUser()
         {
@@ -281,36 +284,50 @@ namespace LMS.Web.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> AddUser([Bind("FirstName,LastName,Email,Password,RoleType,CourseId")] NewUserViewModule user)
         {
-            var user1 = new ApplicationUser()
+            var newUser = new ApplicationUser()
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 UserName = user.FirstName,
                 Email = user.Email,
-
             };
+            var type = user.RoleType.ToString() == "A" ? "Student" : "Teacher"; 
 
-            var addStudentResult = await _userManager.CreateAsync(user1, user.Password);
-            if (!addStudentResult.Succeeded) throw new Exception(string.Join("\n", addStudentResult.Errors));
+            var addStudentResult = await _userManager.CreateAsync(newUser, user.Password);
 
-            var newUser = await _userManager.FindByEmailAsync(user1.Email);
+            if (!addStudentResult.Succeeded)
+            {
+                throw new Exception(string.Join("\n", addStudentResult.Errors));
+            }
 
-            if (newUser is null) return NotFound();
-            if (await _userManager.IsInRoleAsync(newUser, user.RoleType.ToString())) return NotFound();
+            var userFromManager = await _userManager.FindByEmailAsync(newUser.Email);
 
-            var addToRoleResult = await _userManager.AddToRoleAsync(newUser, user.RoleType.ToString());
+            if (userFromManager is null)
+            {
+                return NotFound();
+            }
 
-            if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+            if (await _userManager.IsInRoleAsync(userFromManager, user.RoleType.ToString()))
+            {
+                return NotFound();
+            }
+
+            var addToRoleResult = await _userManager.AddToRoleAsync(userFromManager, user.RoleType.ToString());
+
+            if (!addToRoleResult.Succeeded)
+            {
+                throw new Exception(string.Join("\n", addToRoleResult.Errors));
+            }
 
 
             if (user.RoleType.ToString() == RoleType.Student.ToString())
             {
                 var enrol = new ApplicationUserCourse
                 {
-                    ApplicationUserId = newUser.Id,
+                    ApplicationUserId = userFromManager.Id,
                     CourseId = user.CourseId
                 };
-            _dbContext.Add(enrol);
+            await _dbContext.AddAsync(enrol);
             }
             await _dbContext.SaveChangesAsync();
 
@@ -327,13 +344,10 @@ namespace LMS.Web.Controllers
                 {
                     Text = course.Title,
                     Value = course.Id.ToString()
-
                 });
                 courses.Add(selectListItem);
             }
             return (courses);
-
         }
-
     }
 }
