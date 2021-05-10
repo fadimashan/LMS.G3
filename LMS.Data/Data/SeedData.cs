@@ -19,7 +19,7 @@ namespace LMS.Data.Data
 
         public static async Task InitAsync(IServiceProvider services, string adminPW, string studentPW)
         {
-            using (var context = new LMSWebContext(services.GetRequiredService<DbContextOptions<LMSWebContext>>()))
+            using (var context = new MvcDbContext(services.GetRequiredService<DbContextOptions<MvcDbContext>>()))
             {
 
                 userManager = services.GetRequiredService<UserManager<ApplicationUser>>();

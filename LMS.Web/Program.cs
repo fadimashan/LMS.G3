@@ -1,6 +1,5 @@
 using LMS.Data.Data;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,7 +13,6 @@ namespace LMS.Web
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-
 
             using (var scope = host.Services.CreateScope())
             {
@@ -34,7 +32,7 @@ namespace LMS.Web
                 }
             }
 
-                host.Run();
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -43,7 +41,5 @@ namespace LMS.Web
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-
-
     }
 }

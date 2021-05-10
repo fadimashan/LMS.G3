@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LMS.Data.Data
 {
-    public class LMSWebContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
+    public class MvcDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
         public DbSet<Course> Course { get; set; }
         public DbSet<Module> Module { get; set; }
         public DbSet<Activity> Activity { get; set; }
         public DbSet<Document> Document { get; set; }
 
-        public LMSWebContext(DbContextOptions<LMSWebContext> options)
+        public MvcDbContext(DbContextOptions<MvcDbContext> options)
           : base(options)
         {
         }

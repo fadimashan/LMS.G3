@@ -16,33 +16,34 @@ namespace LMS.Web.Controllers
     [Authorize]
     public class CoursesController : Controller
     {
-        private readonly LMSWebContext db;
+        private readonly MvcDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public CoursesController(LMSWebContext context, UserManager<ApplicationUser> userManager)
+        public CoursesController(MvcDbContext context, UserManager<ApplicationUser> userManager)
         {
-            db = context;
+            _dbContext = context;
             _userManager = userManager;
         }
 
         // GET: Courses
         public async Task<IActionResult> GetCourses()
         {
-            var module = await db.Course.Include(c => c.Modules).ToListAsync();
+            var module = await _dbContext.Course.Include(c => c.Modules).ToListAsync();
             return View("GetCourses", module);
         }
 
         // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var course = await db.Course
+            var course = await _dbContext.Course
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (course == null)
+            
+            if (course is null)
             {
                 return NotFound();
             }
@@ -71,23 +72,26 @@ namespace LMS.Web.Controllers
                 newMod.Add(module);
                 var co = course;
                 co.Modules = newMod;
-                db.Add(co);
-                await db.SaveChangesAsync();
+                _dbContext.Add(co);
+                await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View("GetCourses", course);
+            
+            // return View("GetCourses", course);
+            return View("Details", course);
         }
 
         // GET: Courses/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var course = await db.Course.FindAsync(id);
-            if (course == null)
+            var course = await _dbContext.Course.FindAsync(id);
+
+            if (course is null)
             {
                 return NotFound();
             }
@@ -111,8 +115,8 @@ namespace LMS.Web.Controllers
             {
                 try
                 {
-                    db.Update(course);
-                    await db.SaveChangesAsync();
+                    _dbContext.Update(course);
+                    await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -134,14 +138,15 @@ namespace LMS.Web.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var course = await db.Course
+            var course = await _dbContext.Course
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (course == null)
+            
+            if (course is null)
             {
                 return NotFound();
             }
@@ -155,17 +160,16 @@ namespace LMS.Web.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var course = await db.Course.FindAsync(id);
-            db.Course.Remove(course);
-            await db.SaveChangesAsync();
+            var course = await _dbContext.Course.FindAsync(id);
+            _dbContext.Course.Remove(course);
+            await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CourseExists(int id)
         {
-            return db.Course.Any(e => e.Id == id);
+            return _dbContext.Course.Any(e => e.Id == id);
         }
-
 
         // public async Task<IActionResult> UserMainPageViewModel()
         public async Task<IActionResult> Index(string moduleID)
@@ -178,22 +182,35 @@ namespace LMS.Web.Controllers
 
             if (User.IsInRole("Teacher"))
             {
-                var module = await db.Course.Include(c => c.Students).Include(c => c.Modules).ThenInclude(m => m.Activities).ToListAsync();
-                return View("GetCourses", module);
+                var modules = await _dbContext.Course
+                    .Include(c => c.Students)
+                    .Include(c => c.Modules)
+                    .ThenInclude(m => m.Activities)
+                    .ToListAsync();
+                return View("GetCourses", modules);
                 // return Redirect("/courses/GetCourses);
             }
 
             if (moduleID is null && User.IsInRole("Student"))
             {
-                var firstModuleID = db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
-                .Include(c => c.Modules).FirstOrDefault();
-                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
-                   .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == firstModuleID.Modules.FirstOrDefault().Id)).ToListAsync();
+                var firstCourseID = _dbContext.Course
+                    .Where(c => c.Students.Any(a => a.Id == currentUser))
+                    .Include(c => c.Modules)
+                    .FirstOrDefault();
+                course = await _dbContext.Course
+                    .Where(c => c.Students.Any(a => a.Id == currentUser))
+                    .Include(c => c.Modules)
+                    .ThenInclude(m => m.Activities
+                        .Where(a => a.ModuleId == firstCourseID.Modules.FirstOrDefault().Id))
+                    .ToListAsync();
             }
             else if (User.IsInRole("Student"))
             {
-                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
-            .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == modID)).ToListAsync();
+                course = await _dbContext.Course
+                    .Where(c => c.Students.Any(a => a.Id == currentUser))
+                    .Include(c => c.Modules)
+                    .ThenInclude(m => m.Activities.Where(a => a.ModuleId == modID))
+                    .ToListAsync();
             }
 
             if (User.IsInRole("Student"))
@@ -204,22 +221,24 @@ namespace LMS.Web.Controllers
             {
                 return NotFound();
             }
-
         }
 
         public async Task<IActionResult> GetStudents()
         {
             var currentUser = _userManager.GetUserId(User);
-            var course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
-                .Include(c => c.Students).FirstOrDefaultAsync();
+            var course = await _dbContext.Course
+                .Where(c => c.Students.Any(e => e.Id == currentUser))
+                .Include(c => c.Students)
+                .FirstOrDefaultAsync();
 
             return View("GetStudentsForThisCourse", course);
         }
 
         public async Task<IActionResult> GetAllStudents()
         {
-            var students = await db.Course
-                .Include(c => c.Students).ToListAsync();
+            var students = await _dbContext.Course
+                .Include(c => c.Students)
+                .ToListAsync();
 
             return View("GetAllStudents", students);
         }
@@ -228,16 +247,22 @@ namespace LMS.Web.Controllers
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user != null)
+            if (user is not null)
             {
                 IdentityResult result = await _userManager.DeleteAsync(user);
                 if (result.Succeeded)
+                {
                     return RedirectToAction("GetAllStudents");
+                }
                 else
+                {
                     return NotFound(result);
+                }
             }
             else
+            {
                 ModelState.AddModelError("", "User Not Found");
+            }
             return View("GetAllStudents", _userManager.Users);
         }
 
@@ -285,9 +310,9 @@ namespace LMS.Web.Controllers
                     ApplicationUserId = newUser.Id,
                     CourseId = user.CourseId
                 };
-            db.Add(enrol);
+            _dbContext.Add(enrol);
             }
-            await db.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             return RedirectToAction(nameof(GetAllStudents));
         }
@@ -296,7 +321,7 @@ namespace LMS.Web.Controllers
         {
             var courses = new List<SelectListItem>();
 
-            foreach (var course in db.Course.ToList())
+            foreach (var course in _dbContext.Course.ToList())
             {
                 var selectListItem = (new SelectListItem
                 {

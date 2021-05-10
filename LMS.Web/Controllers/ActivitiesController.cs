@@ -14,30 +14,30 @@ namespace LMS.Web.Controllers
     [Authorize]
     public class ActivitiesController : Controller
     {
-        private readonly LMSWebContext db;
+        private readonly MvcDbContext _dbContext;
 
-        public ActivitiesController(LMSWebContext context)
+        public ActivitiesController(MvcDbContext context)
         {
-            db = context;
+            _dbContext = context;
         }
 
         // GET: Activities
         public async Task<IActionResult> Index()
         {
-            return View(await db.Activity.ToListAsync());
+            return View(await _dbContext.Activity.ToListAsync());
         }
 
         // GET: Activities/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var activity = await db.Activity
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (activity == null)
+            var activity = await _dbContext.Activity.FirstOrDefaultAsync(m => m.Id == id);
+
+            if (activity is null)
             {
                 return NotFound();
             }
@@ -64,8 +64,8 @@ namespace LMS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Add(activity);
-                await db.SaveChangesAsync();
+                _dbContext.Add(activity);
+                await _dbContext.SaveChangesAsync();
                 //return RedirectToAction(nameof(Index));
                 return Redirect("/courses");
 
@@ -77,13 +77,14 @@ namespace LMS.Web.Controllers
         // GET: Activities/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var activity = await db.Activity.FindAsync(id);
-            if (activity == null)
+            var activity = await _dbContext.Activity.FindAsync(id);
+
+            if (activity is null)
             {
                 return NotFound();
             }
@@ -107,7 +108,7 @@ namespace LMS.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var activityOne = db.Activity.Find(id);
+                var activityOne = _dbContext.Activity.Find(id);
                 try
                 {
                     activityOne.Module = activity.Module;
@@ -116,8 +117,8 @@ namespace LMS.Web.Controllers
                     activityOne.StartDate = activity.StartDate;
                     activityOne.EndDate = activity.EndDate;
                     activityOne.ActivityType = activity.ActivityType;
-                    db.Update(activityOne);
-                    await db.SaveChangesAsync();
+                    _dbContext.Update(activityOne);
+                    await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -141,14 +142,14 @@ namespace LMS.Web.Controllers
         // GET: Activities/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var activity = await db.Activity
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (activity == null)
+            var activity = await _dbContext.Activity.FirstOrDefaultAsync(m => m.Id == id);
+
+            if (activity is null)
             {
                 return NotFound();
             }
@@ -161,23 +162,22 @@ namespace LMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var activity = await db.Activity.FindAsync(id);
-            db.Activity.Remove(activity);
-            await db.SaveChangesAsync();
+            var activity = await _dbContext.Activity.FindAsync(id);
+            _dbContext.Activity.Remove(activity);
+            await _dbContext.SaveChangesAsync();
             //return RedirectToAction(nameof(Index));
             return Redirect("/courses");
-
         }
 
         private bool ActivityExists(int id)
         {
-            return db.Activity.Any(e => e.Id == id);
+            return _dbContext.Activity.Any(e => e.Id == id);
         }
 
 
         private IEnumerable<SelectListItem> GetModulesSelectListItem()
         {
-            var modules = db.Module.OrderBy(m=>m.Title);
+            var modules = _dbContext.Module.OrderBy(m=>m.Title);
             var GetModules = new List<SelectListItem>();
             foreach (var mod in modules)
             {
