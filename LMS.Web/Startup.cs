@@ -30,13 +30,13 @@ namespace LMS.Web
                 {
                     options.UseSqlServer(
                         Configuration.GetConnectionString("SQLServerConnectionMvc") //  DefaultConnection    
-                    );
+                    ).LogTo(System.Console.WriteLine, LogLevel.Information);
                 }
                 else
                 {
                     options.UseSqlite(
                         Configuration.GetConnectionString("SQLiteConnectionMvc")
-                    );
+                    ).LogTo(System.Console.WriteLine, LogLevel.Information);
                 }
             });
 
@@ -53,8 +53,8 @@ namespace LMS.Web
 
             services.AddControllersWithViews();
 
-            services.AddDbContext<MvcDbContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("LMSWebContext")).LogTo(System.Console.WriteLine, LogLevel.Information));
+            // services.AddDbContext<MvcDbContext>(options =>
+            //         options.UseSqlServer(Configuration.GetConnectionString("LMSWebContext")).LogTo(System.Console.WriteLine, LogLevel.Information));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
