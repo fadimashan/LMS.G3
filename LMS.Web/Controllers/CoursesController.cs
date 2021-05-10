@@ -1,8 +1,13 @@
 ﻿using LMS.Core.Entities;
+using LMS.Core.Entities.ViewModels;
 using LMS.Data.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,22 +17,19 @@ namespace LMS.Web.Controllers
     public class CoursesController : Controller
     {
         private readonly LMSWebContext db;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CoursesController(LMSWebContext context)
+        public CoursesController(LMSWebContext context, UserManager<ApplicationUser> userManager)
         {
             db = context;
-
+            _userManager = userManager;
         }
 
         // GET: Courses
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> GetCourses()
         {
-            //List of Users
-            var users = db.Users.ToList();
-
-          
-
-            return View(await db.Course.ToListAsync());
+            var module = await db.Course.Include(c => c.Modules).ToListAsync();
+            return View("GetCourses", module);
         }
 
         // GET: Courses/Details/5
@@ -49,6 +51,7 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Courses/Create
+        [Authorize(Roles = "Teacher")]
         public IActionResult Create()
         {
             return View();
@@ -59,15 +62,20 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate")] Course course)
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate")] Course course, [Bind("Id,Title,Description,StartDate,EndDate")] Module @module)
         {
             if (ModelState.IsValid)
             {
-                db.Add(course);
+                List<Module> newMod = new List<Module>();
+                newMod.Add(module);
+                var co = course;
+                co.Modules = newMod;
+                db.Add(co);
                 await db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            return View("GetCourses", course);
         }
 
         // GET: Courses/Edit/5
@@ -91,6 +99,7 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,StartDate,EndDate")] Course course)
         {
             if (id != course.Id)
@@ -122,6 +131,7 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Courses/Delete/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -142,6 +152,7 @@ namespace LMS.Web.Controllers
         // POST: Courses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var course = await db.Course.FindAsync(id);
@@ -154,5 +165,150 @@ namespace LMS.Web.Controllers
         {
             return db.Course.Any(e => e.Id == id);
         }
+
+
+        // public async Task<IActionResult> UserMainPageViewModel()
+        public async Task<IActionResult> Index(string moduleID)
+        {
+            var currentUser = _userManager.GetUserId(User);
+            ViewBag.CurrentModule = moduleID;
+            int modID = 1;
+            var ne = int.TryParse(moduleID, out modID);
+            var course = new List<Course>();
+
+            if (User.IsInRole("Teacher"))
+            {
+                var module = await db.Course.Include(c => c.Students).Include(c => c.Modules).ThenInclude(m => m.Activities).ToListAsync();
+                return View("GetCourses", module);
+                // return Redirect("/courses/GetCourses);
+            }
+
+            if (moduleID is null && User.IsInRole("Student"))
+            {
+                var firstModuleID = db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+                .Include(c => c.Modules).FirstOrDefault();
+                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+                   .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == firstModuleID.Modules.FirstOrDefault().Id)).ToListAsync();
+            }
+            else if (User.IsInRole("Student"))
+            {
+                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+            .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == modID)).ToListAsync();
+            }
+
+            if (User.IsInRole("Student"))
+            {
+                return View("UserMainPageViewModel", course);
+            }
+            else
+            {
+                return NotFound();
+            }
+
+        }
+
+        public async Task<IActionResult> GetStudents()
+        {
+            var currentUser = _userManager.GetUserId(User);
+            var course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
+                .Include(c => c.Students).FirstOrDefaultAsync();
+
+            return View("GetStudentsForThisCourse", course);
+        }
+
+        public async Task<IActionResult> GetAllStudents()
+        {
+            var students = await db.Course
+                .Include(c => c.Students).ToListAsync();
+
+            return View("GetAllStudents", students);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                IdentityResult result = await _userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                    return RedirectToAction("GetAllStudents");
+                else
+                    return NotFound(result);
+            }
+            else
+                ModelState.AddModelError("", "User Not Found");
+            return View("GetAllStudents", _userManager.Users);
+        }
+
+
+        public IActionResult AddUser()
+        {
+            var model = new NewUserViewModule
+            {
+                GetAllCourses = GetAllCourses()
+            };
+            return View("AddUser",model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> AddUser([Bind("FirstName,LastName,Email,Password,RoleType,CourseId")] NewUserViewModule user)
+        {
+            var user1 = new ApplicationUser()
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.FirstName,
+                Email = user.Email,
+
+            };
+
+            var addStudentResult = await _userManager.CreateAsync(user1, user.Password);
+            if (!addStudentResult.Succeeded) throw new Exception(string.Join("\n", addStudentResult.Errors));
+
+            var newUser = await _userManager.FindByEmailAsync(user1.Email);
+
+            if (newUser is null) return NotFound();
+            if (await _userManager.IsInRoleAsync(newUser, user.RoleType.ToString())) return NotFound();
+
+            var addToRoleResult = await _userManager.AddToRoleAsync(newUser, user.RoleType.ToString());
+
+            if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+
+
+            if (user.RoleType.ToString() == RoleType.Student.ToString())
+            {
+                var enrol = new ApplicationUserCourse
+                {
+                    ApplicationUserId = newUser.Id,
+                    CourseId = user.CourseId
+                };
+            db.Add(enrol);
+            }
+            await db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(GetAllStudents));
+        }
+
+        public IEnumerable<SelectListItem> GetAllCourses()
+        {
+            var courses = new List<SelectListItem>();
+
+            foreach (var course in db.Course.ToList())
+            {
+                var selectListItem = (new SelectListItem
+                {
+                    Text = course.Title,
+                    Value = course.Id.ToString()
+
+                });
+                courses.Add(selectListItem);
+            }
+            return (courses);
+
+        }
+
     }
 }

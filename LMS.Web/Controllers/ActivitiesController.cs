@@ -14,17 +14,17 @@ namespace LMS.Web.Controllers
     [Authorize]
     public class ActivitiesController : Controller
     {
-        private readonly LMSWebContext _context;
+        private readonly LMSWebContext db;
 
         public ActivitiesController(LMSWebContext context)
         {
-            _context = context;
+            db = context;
         }
 
         // GET: Activities
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Activity.ToListAsync());
+            return View(await db.Activity.ToListAsync());
         }
 
         // GET: Activities/Details/5
@@ -35,7 +35,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var activity = await _context.Activity
+            var activity = await db.Activity
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (activity == null)
             {
@@ -48,7 +48,11 @@ namespace LMS.Web.Controllers
         // GET: Activities/Create
         public IActionResult Create()
         {
-            return View();
+            var module = new Activity
+            {
+                GetModulesSelectListItem = GetModulesSelectListItem()
+            };
+            return View(module);
         }
 
         // POST: Activities/Create
@@ -56,15 +60,18 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ActivityType,StartDate,EndDate,Description")] Activity activity)
+        public async Task<IActionResult> Create([Bind("Id,Name,ActivityType,StartDate,EndDate,Description,ModuleId")] Activity activity)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(activity);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                db.Add(activity);
+                await db.SaveChangesAsync();
+                //return RedirectToAction(nameof(Index));
+                return Redirect("/courses");
+
             }
-            return View(activity);
+            //return View(activity);
+            return Redirect("/courses");
         }
 
         // GET: Activities/Edit/5
@@ -75,11 +82,14 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var activity = await _context.Activity.FindAsync(id);
+            var activity = await db.Activity.FindAsync(id);
             if (activity == null)
             {
                 return NotFound();
             }
+
+            activity.GetModulesSelectListItem = GetModulesSelectListItem();
+            
             return View(activity);
         }
 
@@ -97,10 +107,17 @@ namespace LMS.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                var activityOne = db.Activity.Find(id);
                 try
                 {
-                    _context.Update(activity);
-                    await _context.SaveChangesAsync();
+                    activityOne.Module = activity.Module;
+                    activityOne.ModuleId = activityOne.ModuleId;
+                    activityOne.Name = activity.Name;
+                    activityOne.StartDate = activity.StartDate;
+                    activityOne.EndDate = activity.EndDate;
+                    activityOne.ActivityType = activity.ActivityType;
+                    db.Update(activityOne);
+                    await db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -113,9 +130,12 @@ namespace LMS.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Redirect($"/modules/details/{activityOne.ModuleId}");
+               
             }
-            return View(activity);
+            //return View(activity);
+            return Redirect("/courses");
+
         }
 
         // GET: Activities/Delete/5
@@ -126,7 +146,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var activity = await _context.Activity
+            var activity = await db.Activity
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (activity == null)
             {
@@ -141,15 +161,34 @@ namespace LMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var activity = await _context.Activity.FindAsync(id);
-            _context.Activity.Remove(activity);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var activity = await db.Activity.FindAsync(id);
+            db.Activity.Remove(activity);
+            await db.SaveChangesAsync();
+            //return RedirectToAction(nameof(Index));
+            return Redirect("/courses");
+
         }
 
         private bool ActivityExists(int id)
         {
-            return _context.Activity.Any(e => e.Id == id);
+            return db.Activity.Any(e => e.Id == id);
+        }
+
+
+        private IEnumerable<SelectListItem> GetModulesSelectListItem()
+        {
+            var modules = db.Module.OrderBy(m=>m.Title);
+            var GetModules = new List<SelectListItem>();
+            foreach (var mod in modules)
+            {
+                var newType = (new SelectListItem
+                {
+                    Text = mod.Title,
+                    Value = mod.Id.ToString(),
+                });
+                GetModules.Add(newType);
+            }
+            return (GetModules);
         }
     }
 }

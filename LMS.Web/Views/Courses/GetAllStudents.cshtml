@@ -1,0 +1,61 @@
+﻿@model IEnumerable<LMS.Core.Entities.Course>
+
+@{
+    ViewData["Title"] = "GetAllStudents";
+}
+
+<h3 class="text-center text-black-50 m-3">LMS Students</h3>
+
+<hr />
+    <form class="course-search-form w-75 justify-content-center container-fluid m-auto" style="left:100px;">
+        <input type="text" placeholder="Students" class="w-75 m-1">
+        <button class="site-btn m-1">Search Student</button>
+    </form>
+
+<hr />
+<a class="btn btn-outline-secondary" asp-action="AddUser">Add User</a>
+
+<table class="table table-striped text-muted">
+    <thead class="text-muted">
+        <tr>
+            <th>
+                <h5 class="text-muted"> Student Name</h5>
+            </th>
+            <th>
+                <h5 class="text-muted"> Email</h5>
+            </th>
+            <th>
+                <h5 class="text-muted"> Course Name</h5>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody class="table table-striped">
+        @foreach (var course in Model)
+        {
+            foreach (var student in course.Students)
+            {
+                <tr>
+                    <td>
+                        @{ var fullName = student.FirstName + " " + student.LastName;}
+                        @Html.DisplayFor(modelItem => fullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => student.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => course.Title)
+                    </td>
+                    <td>
+                        <form asp-action="DeleteUser" asp-route-id="@student.Id" method="post">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+
+        }
+    </tbody>
+</table>

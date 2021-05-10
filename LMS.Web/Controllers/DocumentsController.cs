@@ -7,23 +7,135 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Data.Data;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using LMS.Core.Entities.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace LMS.Web.Controllers
 {
     public class DocumentsController : Controller
     {
-        private readonly LMSWebContext _context;
+        private readonly LMSWebContext db;
 
         public DocumentsController(LMSWebContext context)
         {
-            _context = context;
+            db = context;
         }
 
-        // GET: Documents
+        //GET: Documents
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Document.ToListAsync());
+            return View(await db.Document.ToListAsync());
         }
+
+
+        //GET: UploadedFiles
+        public IActionResult Files()
+        {
+            // Get files from the server
+            var model = new FilesViewModel();
+            foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
+            {
+                model.Files.Add(
+                    new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
+            }
+            return View(model);
+        }
+
+
+        /// <summary>
+        /// Uploaded files
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult Files(IFormFile[] files)
+        {
+            if (files != null && files.Length > 0)
+            {
+                foreach (var file in files)
+                {
+
+                    var fileName = System.IO.Path.GetFileName(file.FileName);
+
+
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+
+                    using (var localFile = System.IO.File.OpenWrite(filePath))
+                    using (var uploadedFile = file.OpenReadStream())
+                    {
+                        uploadedFile.CopyTo(localFile);
+                    }
+                }
+
+                ViewBag.Message = "Files are successfully uploaded";
+            }
+
+
+
+            var model = new FilesViewModel();
+            foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
+            {
+                model.Files.Add(
+                    new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
+            }
+            return View(model);
+        }
+
+
+        /// <summary>
+        /// Downlaod Files
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Download(string filename)
+        {
+            if (filename == null)
+                return Content("filename is not availble");
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", filename);
+
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, GetContentType(path), Path.GetFileName(path));
+        }
+
+        private string GetContentType(string path)
+        {
+            var types = GetMimeTypes();
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            return types[ext];
+        }
+
+        private Dictionary<string, string> GetMimeTypes()
+        {
+            return new Dictionary<string, string>
+            {
+                {".txt", "text/plain"},
+                {".pdf", "application/pdf"},
+                {".doc", "application/vnd.ms-word"},
+                {".docx", "application/vnd.ms-word"},
+                {".xls", "application/vnd.ms-excel"},
+                {".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
+                {".png", "image/png"},
+                {".jpg", "image/jpeg"},
+                {".jpeg", "image/jpeg"},
+                {".gif", "image/gif"},
+                {".csv", "text/csv"}
+            };
+        }
+
 
         // GET: Documents/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -33,7 +145,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Document
+            var document = await db.Document
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (document == null)
             {
@@ -44,6 +156,7 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Documents/Create
+
         public IActionResult Create()
         {
             return View();
@@ -54,12 +167,13 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> Create([Bind("Id,Name,Description,UploadTime")] Document document)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(document);
-                await _context.SaveChangesAsync();
+                db.Add(document);
+                await db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(document);
@@ -73,7 +187,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Document.FindAsync(id);
+            var document = await db.Document.FindAsync(id);
             if (document == null)
             {
                 return NotFound();
@@ -97,8 +211,8 @@ namespace LMS.Web.Controllers
             {
                 try
                 {
-                    _context.Update(document);
-                    await _context.SaveChangesAsync();
+                    db.Update(document);
+                    await db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,7 +238,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Document
+            var document = await db.Document
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (document == null)
             {
@@ -139,15 +253,15 @@ namespace LMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var document = await _context.Document.FindAsync(id);
-            _context.Document.Remove(document);
-            await _context.SaveChangesAsync();
+            var document = await db.Document.FindAsync(id);
+            db.Document.Remove(document);
+            await db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool DocumentExists(int id)
         {
-            return _context.Document.Any(e => e.Id == id);
+            return db.Document.Any(e => e.Id == id);
         }
     }
 }
