@@ -33,4 +33,8 @@
     <ProjectReference Include="..\LMS.Core\LMS.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\files\" />
+  </ItemGroup>
+
 </Project>
