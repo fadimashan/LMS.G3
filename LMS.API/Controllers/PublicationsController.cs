@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using LMS.API.Data;
 using LMS.API.Models.DTO;
@@ -21,11 +20,10 @@ namespace LMS.API.Controllers
         private readonly IMapper _mapper;
 
         // ToDo: To be removed when all methods are using the Repository
-        private readonly ApiDbContext _dbContext;
+        // private readonly ApiDbContext _dbContext;
         
-        public PublicationsController(ApiDbContext context, IPublicationsRepository publicationsRepository, IAuthorsRepository authorsRepository, IMapper mapper)
+        public PublicationsController(IPublicationsRepository publicationsRepository, IAuthorsRepository authorsRepository, IMapper mapper)
         {
-            _dbContext = context;
             _publicationsRepository = publicationsRepository ?? throw new ArgumentNullException(nameof(publicationsRepository));
             _authorsRepository = authorsRepository ?? throw new ArgumentNullException(nameof(mapper));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

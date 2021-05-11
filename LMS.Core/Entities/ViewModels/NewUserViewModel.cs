@@ -10,11 +10,9 @@ namespace LMS.Core.Entities.ViewModels
 
         public string RoleType { get; set; }
         public string Email { get; set; }
-        
         public string Password { get; set; }
 
         public int CourseId { get; set; }
-
         public IEnumerable<SelectListItem> GetAllCourses { get; set; }
     }
 }

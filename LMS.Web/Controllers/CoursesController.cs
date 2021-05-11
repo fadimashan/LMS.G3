@@ -204,7 +204,7 @@ namespace LMS.Web.Controllers
                     .Where(c => c.Students.Any(au => au.Id == currentUser))
                     .Include(c => c.Modules)
                     .FirstOrDefault();
-                course = await _dbContext.Course
+                courses = await _dbContext.Course
                     .Where(c => c.Students.Any(au => au.Id == currentUser))
                     .Include(c => c.Students)
                     .Include(c => c.Modules)
@@ -360,6 +360,7 @@ namespace LMS.Web.Controllers
         [HttpPost]
         public IActionResult UploadCourseDocument(int id, IFormFile[] files)
         {
+            // Variable `course` is never used
             var course = _dbContext.Course.Find(id);
             var userId = _userManager.GetUserId(User);
             if (files is not null && files.Length > 0)
