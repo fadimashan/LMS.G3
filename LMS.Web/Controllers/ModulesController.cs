@@ -1,6 +1,8 @@
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
@@ -8,10 +10,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
-using LMS.Data.Data;
-
-using System.IO;
 using LMS.Core.Entities.ViewModels;
+using LMS.Data.Data;
 
 namespace LMS.Web.Controllers
 {
