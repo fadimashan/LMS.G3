@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,6 +33,7 @@ namespace LMS.Web.Controllers
             var module = await _dbContext.Course
                 .Include(c => c.Modules)
                 .ToListAsync();
+
             return View("GetCourses", module);
         }
 
@@ -46,6 +47,7 @@ namespace LMS.Web.Controllers
 
             var course = await _dbContext.Course
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (course is null)
             {
                 return NotFound();
@@ -91,6 +93,7 @@ namespace LMS.Web.Controllers
             }
 
             var course = await _dbContext.Course.FindAsync(id);
+
             if (course is null)
             {
                 return NotFound();
@@ -145,6 +148,7 @@ namespace LMS.Web.Controllers
 
             var course = await _dbContext.Course
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (course is null)
             {
                 return NotFound();
@@ -181,7 +185,7 @@ namespace LMS.Web.Controllers
 
             if (User.IsInRole("Teacher"))
             {
-                var module = await _dbContext.Course
+                var modules = await _dbContext.Course
                     .Include(c => c.Documents)
                     .Include(c => c.Students)
                     .Include(c => c.Modules)
@@ -191,28 +195,28 @@ namespace LMS.Web.Controllers
                     .ThenInclude(a => a.Documents)
                     .ToListAsync();
                 
-                return View("GetCourses", module);
+                return View("GetCourses", modules);
             }
 
             if (moduleID is null && User.IsInRole("Student"))
             {
-                var firstModuleID = _dbContext.Course
-                    .Where(c => c.Students.Any(e => e.Id == currentUser))
+                var firstCourseID = _dbContext.Course
+                    .Where(c => c.Students.Any(au => au.Id == currentUser))
                     .Include(c => c.Modules)
                     .FirstOrDefault();
-                courses = await _dbContext.Course
-                    .Where(c => c.Students.Any(e => e.Id == currentUser))
-                    .Include(s => s.Students)
+                course = await _dbContext.Course
+                    .Where(c => c.Students.Any(au => au.Id == currentUser))
+                    .Include(c => c.Students)
                     .Include(c => c.Modules)
                     .ThenInclude(m => m.Activities
-                        .Where(a => a.ModuleId == firstModuleID.Modules.FirstOrDefault().Id))
+                        .Where(a => a.ModuleId == firstCourseID.Modules.FirstOrDefault().Id))
                     .ToListAsync();
             }
             else if (User.IsInRole("Student"))
             {
                 courses = await _dbContext.Course
-                    .Where(c => c.Students.Any(e => e.Id == currentUser))
-                    .Include(s => s.Students)
+                    .Where(c => c.Students.Any(au => au.Id == currentUser))
+                    .Include(c => c.Students)
                     .Include(c => c.Modules)
                     .ThenInclude(m => m.Activities
                         .Where(a => a.ModuleId == modID))
@@ -227,14 +231,13 @@ namespace LMS.Web.Controllers
             {
                 return NotFound();
             }
-
         }
 
         public async Task<IActionResult> GetStudents()
         {
             var currentUserId = _userManager.GetUserId(User);
             var course = await _dbContext.Course
-                .Where(c => c.Students.Any(e => e.Id == currentUserId))
+                .Where(c => c.Students.Any(au => au.Id == currentUserId))
                 .Include(c => c.Students)
                 .FirstOrDefaultAsync();
 
@@ -270,6 +273,7 @@ namespace LMS.Web.Controllers
             {
                 ModelState.AddModelError("", "User Not Found");
             }
+            // FIXME: Value `_userManager.Users` is not assignable to model `IEnumerable<Course>`
             return View("GetAllStudents", _userManager.Users);
         }
 
@@ -293,12 +297,12 @@ namespace LMS.Web.Controllers
                 LastName = userVM.LastName,
                 UserName = userVM.FirstName,
                 Email = userVM.Email,
-
             };
             
             var type = userVM.RoleType == "A" ? "Student" : "Teacher";
 
             var addStudentResult = await _userManager.CreateAsync(newUser, userVM.Password);
+
             if (!addStudentResult.Succeeded)
             {
                 throw new Exception(string.Join("\n", addStudentResult.Errors));
@@ -392,6 +396,7 @@ namespace LMS.Web.Controllers
             }
 
             var model = new FilesViewModel();
+            
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
             {
                 model.Files.Add(
@@ -405,9 +410,8 @@ namespace LMS.Web.Controllers
                         Path = item
                     });
             }
-
+            
             return Redirect("/courses");
         }
-
     }
 }

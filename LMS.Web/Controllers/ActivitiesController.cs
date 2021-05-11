@@ -1,17 +1,17 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
-using LMS.Data.Data;
 using LMS.Core.Entities.ViewModels;
+using LMS.Data.Data;
 
 namespace LMS.Web.Controllers
 {
@@ -76,7 +76,6 @@ namespace LMS.Web.Controllers
                 await _dbContext.SaveChangesAsync();
                 //return RedirectToAction(nameof(Index));
                 return Redirect("/courses");
-
             }
             //return View(activity);
             return Redirect("/courses");
@@ -91,7 +90,7 @@ namespace LMS.Web.Controllers
             }
 
             var activity = await _dbContext.Activity.FindAsync(id);
-            
+
             if (activity is null)
             {
                 return NotFound();
@@ -140,11 +139,9 @@ namespace LMS.Web.Controllers
                     }
                 }
                 return Redirect($"/modules/details/{activityFromContext.ModuleId}");
-
             }
             //return View(activity);
             return Redirect("/courses");
-
         }
 
         // GET: Activities/Delete/5
@@ -198,7 +195,6 @@ namespace LMS.Web.Controllers
             }
             return (GetModules);
         }
-
         
         //// POST: Activities/Create
         //// To protect from overposting attacks, enable the specific properties you want to bind to.

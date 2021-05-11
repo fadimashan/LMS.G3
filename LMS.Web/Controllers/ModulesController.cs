@@ -1,4 +1,3 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -53,7 +52,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            return View(@module);
+            return View(module);
         }
 
         // GET: Modules/Create
@@ -84,7 +83,7 @@ namespace LMS.Web.Controllers
                 //return RedirectToAction(nameof(Index));
                 return Redirect("/courses");
             }
-            //return View(@module);
+            //return View(module);
             return Redirect("/courses");
         }
 
@@ -103,7 +102,7 @@ namespace LMS.Web.Controllers
             {
                 return NotFound();
             }
-            return View(@module);
+            return View(module);
         }
 
         // POST: Modules/Edit/5
@@ -145,9 +144,8 @@ namespace LMS.Web.Controllers
                 }
                 //return RedirectToAction(nameof(Index));
                 return Redirect($"/modules/details/{id}");
-
             }
-            return View(@module);
+            return View(module);
         }
 
         // GET: Modules/Delete/5
@@ -167,7 +165,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            return View(@module);
+            return View(module);
         }
 
         // POST: Modules/Delete/5
@@ -177,7 +175,7 @@ namespace LMS.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var module = await _dbContext.Module.FindAsync(id);
-            _dbContext.Module.Remove(@module);
+            _dbContext.Module.Remove(module);
             await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -227,6 +225,7 @@ namespace LMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateFromModule(int id, [Bind("Name,ActivityType,StartDate,EndDate,Description,ModuleId")] Activity activity)
         {
+            // Variable `moduleFromContext` is never used
             var moduleFromContext = _dbContext.Module.Find(id);
             if (ModelState.IsValid)
             {

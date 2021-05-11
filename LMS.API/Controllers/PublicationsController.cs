@@ -55,7 +55,7 @@ namespace LMS.API.Controllers
             return Ok(_mapper.Map<PublicationWithAuthorsDto>(publicationFromRepo));
         }
         
-        [HttpGet("{id}/authors")]
+        [HttpGet("{id}/authors", Name = "GetAuthorsForPublication")]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthorsForPublication(int id)
         {
             if (!_publicationsRepository.Exists(id))
@@ -185,6 +185,29 @@ namespace LMS.API.Controllers
         // FIXME: The code from this method should probably be moved to another class
         // and then called from both this controller and the AuthorsController 
         [HttpPost("{publicationId}/authors")]
+        public async Task<ActionResult<IEnumerable<AuthorDto>>> CreateAuthorsForPublication(int publicationId, IEnumerable<AuthorCreationDto> newAuthors)
+        {
+            if (!_publicationsRepository.Exists(publicationId))
+            {
+                return NotFound();
+            }
+
+            var publicationEntity = await _publicationsRepository.GetWithAuthorsAsync(publicationId);
+            var authors = _mapper.Map<IEnumerable<Author>>(newAuthors);
+            foreach (var author in authors)
+            {
+                await _authorsRepository.AddAsync(author);
+                publicationEntity.Authors.Add(author);
+            }
+
+            await _publicationsRepository.SaveAsync();
+
+            var authorsToReturn = _mapper.Map<IEnumerable<AuthorDto>>(authors);
+            
+            return CreatedAtAction("GetAuthorsForPublication", new { id = publicationId }, authorsToReturn);
+        }
+
+        /*[HttpPost("{publicationId}/authors")]
         public async Task<ActionResult<AuthorDto>> CreateAuthorForPublication(int publicationId, AuthorCreationDto newAuthor)
         {
             if (!_publicationsRepository.Exists(publicationId))
@@ -202,7 +225,7 @@ namespace LMS.API.Controllers
             var authorToReturn = _mapper.Map<AuthorDto>(authorEntity);
             
             return CreatedAtAction("GetAuthorForPublication", new { publicationId, authorId = authorToReturn.Id }, authorToReturn);
-        }
+        }*/
 
         
 /* FIXME: Up to this point everything works properly as expected.
@@ -211,15 +234,38 @@ namespace LMS.API.Controllers
         // PUT: api/Publications/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        public async Task<ActionResult<PublicationDto>> UpdatePublication(int id, PublicationCreationDto publicationDto)
+        {
+            var publicationFromRepo = await _publicationsRepository.GetAsync(id);
+
+            if (publicationFromRepo is null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(publicationDto, publicationFromRepo);
+
+            if (await _publicationsRepository.SaveAsync())
+            {
+                return Ok(_mapper.Map<PublicationDto>(publicationFromRepo));
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+        }
+
+/*         
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutPublication(int id, Publication publication)
         {
             if (id != publication.Id)
             {
                 return BadRequest();
             }
-
+        
             _dbContext.Entry(publication).State = EntityState.Modified;
-
+        
             try
             {
                 // await _dbContext.SaveChangesAsync();
@@ -236,9 +282,10 @@ namespace LMS.API.Controllers
                     throw;
                 }
             }
-
+        
             return NoContent();
         }
+ */
 
         // DELETE: api/Publications/5
         [HttpDelete("{id}")]
