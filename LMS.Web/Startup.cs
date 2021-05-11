@@ -1,5 +1,4 @@
-using LMS.Core.Entities;
-using LMS.Data.Data;
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -8,18 +7,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Runtime.InteropServices;
+using LMS.Core.Entities;
+using LMS.Data.Data;
 
 namespace LMS.Web
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -28,7 +28,6 @@ namespace LMS.Web
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-
                     options.UseSqlServer(
                         Configuration.GetConnectionString("SQLServerConnectionMvc")    
                     ).LogTo(System.Console.WriteLine, LogLevel.Information);

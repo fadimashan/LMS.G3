@@ -33,6 +33,7 @@ namespace LMS.Web.Controllers
             var module = await _dbContext.Course
                 .Include(c => c.Modules)
                 .ToListAsync();
+
             return View("GetCourses", module);
         }
 
@@ -46,6 +47,7 @@ namespace LMS.Web.Controllers
 
             var course = await _dbContext.Course
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (course is null)
             {
                 return NotFound();
@@ -91,6 +93,7 @@ namespace LMS.Web.Controllers
             }
 
             var course = await _dbContext.Course.FindAsync(id);
+
             if (course is null)
             {
                 return NotFound();
@@ -145,6 +148,7 @@ namespace LMS.Web.Controllers
 
             var course = await _dbContext.Course
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (course is null)
             {
                 return NotFound();
@@ -227,7 +231,6 @@ namespace LMS.Web.Controllers
             {
                 return NotFound();
             }
-
         }
 
         public async Task<IActionResult> GetStudents()
@@ -270,6 +273,7 @@ namespace LMS.Web.Controllers
             {
                 ModelState.AddModelError("", "User Not Found");
             }
+            // FIXME: Value `_userManager.Users` is not assignable to model `IEnumerable<Course>`
             return View("GetAllStudents", _userManager.Users);
         }
 
@@ -293,12 +297,12 @@ namespace LMS.Web.Controllers
                 LastName = userVM.LastName,
                 UserName = userVM.FirstName,
                 Email = userVM.Email,
-
             };
             
             var type = userVM.RoleType == "A" ? "Student" : "Teacher";
 
             var addStudentResult = await _userManager.CreateAsync(newUser, userVM.Password);
+
             if (!addStudentResult.Succeeded)
             {
                 throw new Exception(string.Join("\n", addStudentResult.Errors));
@@ -392,6 +396,7 @@ namespace LMS.Web.Controllers
             }
 
             var model = new FilesViewModel();
+            
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
             {
                 model.Files.Add(
@@ -405,9 +410,8 @@ namespace LMS.Web.Controllers
                         Path = item
                     });
             }
-
+            
             return Redirect("/courses");
         }
-
     }
 }

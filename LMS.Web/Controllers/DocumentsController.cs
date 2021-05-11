@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,6 +55,7 @@ namespace LMS.Web.Controllers
                         Path = item 
                     }) ;
             }
+
             return View(model);
         }
 
@@ -89,6 +90,7 @@ namespace LMS.Web.Controllers
             }
 
             var model = new FilesViewModel();
+
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
             {
                 model.Files.Add(
@@ -200,7 +202,7 @@ namespace LMS.Web.Controllers
             }
 
             var document = await _dbContext.Document.FindAsync(id);
-            
+
             if (document is null)
             {
                 return NotFound();
@@ -250,7 +252,7 @@ namespace LMS.Web.Controllers
             {
                 return NotFound();
             }
-
+            
             var document = await _dbContext.Document
                 .FirstOrDefaultAsync(m => m.Id == id);
             
