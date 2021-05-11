@@ -181,7 +181,7 @@ namespace LMS.Web.Controllers
 
             if (User.IsInRole("Teacher"))
             {
-                var module = await _dbContext.Course
+                var modules = await _dbContext.Course
                     .Include(c => c.Documents)
                     .Include(c => c.Students)
                     .Include(c => c.Modules)
@@ -191,28 +191,28 @@ namespace LMS.Web.Controllers
                     .ThenInclude(a => a.Documents)
                     .ToListAsync();
                 
-                return View("GetCourses", module);
+                return View("GetCourses", modules);
             }
 
             if (moduleID is null && User.IsInRole("Student"))
             {
-                var firstModuleID = _dbContext.Course
-                    .Where(c => c.Students.Any(e => e.Id == currentUser))
+                var firstCourseID = _dbContext.Course
+                    .Where(c => c.Students.Any(au => au.Id == currentUser))
                     .Include(c => c.Modules)
                     .FirstOrDefault();
                 courses = await _dbContext.Course
-                    .Where(c => c.Students.Any(e => e.Id == currentUser))
-                    .Include(s => s.Students)
+                    .Where(c => c.Students.Any(au => au.Id == currentUser))
+                    .Include(c => c.Students)
                     .Include(c => c.Modules)
                     .ThenInclude(m => m.Activities
-                        .Where(a => a.ModuleId == firstModuleID.Modules.FirstOrDefault().Id))
+                        .Where(a => a.ModuleId == firstCourseID.Modules.FirstOrDefault().Id))
                     .ToListAsync();
             }
             else if (User.IsInRole("Student"))
             {
                 courses = await _dbContext.Course
-                    .Where(c => c.Students.Any(e => e.Id == currentUser))
-                    .Include(s => s.Students)
+                    .Where(c => c.Students.Any(au => au.Id == currentUser))
+                    .Include(c => c.Students)
                     .Include(c => c.Modules)
                     .ThenInclude(m => m.Activities
                         .Where(a => a.ModuleId == modID))
@@ -234,7 +234,7 @@ namespace LMS.Web.Controllers
         {
             var currentUserId = _userManager.GetUserId(User);
             var course = await _dbContext.Course
-                .Where(c => c.Students.Any(e => e.Id == currentUserId))
+                .Where(c => c.Students.Any(au => au.Id == currentUserId))
                 .Include(c => c.Students)
                 .FirstOrDefaultAsync();
 
