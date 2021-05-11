@@ -2,12 +2,14 @@
 using LMS.Core.Entities.ViewModels;
 using LMS.Data.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -178,16 +180,15 @@ namespace LMS.Web.Controllers
 
             if (User.IsInRole("Teacher"))
             {
-                var module = await db.Course.Include(c => c.Students).Include(c => c.Modules).ThenInclude(m => m.Activities).ToListAsync();
+                var module = await db.Course.Include(c => c.Documents).Include(c => c.Students).Include(c => c.Modules).ThenInclude(m=>m.Documents).Include(m=> m.Modules).ThenInclude(m => m.Activities).ThenInclude(a => a.Documents).ToListAsync();
                 return View("GetCourses", module);
-                // return Redirect("/courses/GetCourses);
             }
 
             if (moduleID is null && User.IsInRole("Student"))
             {
                 var firstModuleID = db.Course.Where(c => c.Students.Any(e => e.Id == currentUser))
                 .Include(c => c.Modules).FirstOrDefault();
-                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser)).Include(s=> s.Students)
+                course = await db.Course.Where(c => c.Students.Any(e => e.Id == currentUser)).Include(s => s.Students)
                    .Include(c => c.Modules).ThenInclude(m => m.Activities.Where(a => a.ModuleId == firstModuleID.Modules.FirstOrDefault().Id)).ToListAsync();
             }
             else if (User.IsInRole("Student"))
@@ -248,7 +249,7 @@ namespace LMS.Web.Controllers
             {
                 GetAllCourses = GetAllCourses()
             };
-            return View("AddUser",model);
+            return View("AddUser", model);
         }
 
         [HttpPost]
@@ -264,7 +265,7 @@ namespace LMS.Web.Controllers
                 Email = user.Email,
 
             };
-            var type = user.RoleType.ToString() == "A" ? "Student" : "Teacher"; 
+            var type = user.RoleType.ToString() == "A" ? "Student" : "Teacher";
 
             var addStudentResult = await _userManager.CreateAsync(user1, user.Password);
             if (!addStudentResult.Succeeded) throw new Exception(string.Join("\n", addStudentResult.Errors));
@@ -286,7 +287,7 @@ namespace LMS.Web.Controllers
                     ApplicationUserId = newUser.Id,
                     CourseId = user.CourseId
                 };
-            db.Add(enrol);
+                db.Add(enrol);
             }
             await db.SaveChangesAsync();
 
@@ -308,6 +309,66 @@ namespace LMS.Web.Controllers
                 courses.Add(selectListItem);
             }
             return (courses);
+
+        }
+
+
+        [HttpPost]
+        public IActionResult UploadCourseDocument(int id, IFormFile[] files)
+        {
+            var course = db.Course.Find(id);
+            var userId = _userManager.GetUserId(User);
+            if (files != null && files.Length > 0)
+            {
+                foreach (var file in files)
+                {
+
+                    var fileName = System.IO.Path.GetFileName(file.FileName);
+
+
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+
+                    using (var localFile = System.IO.File.OpenWrite(filePath))
+                    using (var uploadedFile = file.OpenReadStream())
+                    {
+                        uploadedFile.CopyTo(localFile);
+                    }
+
+                    var doc = new Document()
+                    {
+                        Name = fileName,
+                        CourseId = id,
+                        UploadTime = DateTime.Now,
+                        Description = filePath,
+                        UserId = userId
+                    };
+                    db.Document.Add(doc);
+
+                }
+                db.SaveChanges();
+            }
+
+            var model = new FilesViewModel();
+            foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
+            {
+                model.Files.Add(
+                    new FileDetails
+                    {
+                        Name = System.IO.Path.GetFileName(item),
+                        UserName = User.Identity.Name,
+                        UploadTime = DateTime.Now,
+                        CourseId = id,
+                        UserId = userId,
+                        Path = item
+                    });
+            }
+
+            return Redirect("/courses");
 
         }
 

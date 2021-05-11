@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Data.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using System.IO;
+using LMS.Core.Entities.ViewModels;
 
 namespace LMS.Web.Controllers
 {
@@ -15,10 +19,12 @@ namespace LMS.Web.Controllers
     public class ModulesController : Controller
     {
         private readonly LMSWebContext db;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ModulesController(LMSWebContext context)
+        public ModulesController(LMSWebContext context, UserManager<ApplicationUser> userManager)
         {
             db = context;
+           _userManager = userManager;
         }
 
         // GET: Modules
@@ -36,7 +42,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var @module = await db.Module.Include(m=> m.Activities)
+            var @module = await db.Module.Include(m=> m.Documents).Include(m=> m.Activities)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@module == null)
             {
@@ -222,15 +228,73 @@ namespace LMS.Web.Controllers
             var mod = db.Module.Find(id);
             if (ModelState.IsValid)
             {
-               // mod.Activities.Add(activity);
                 db.Add(activity);
                 await db.SaveChangesAsync();
-                //return RedirectToAction(nameof(Index));
                 return Redirect($"/modules/details/{activity.ModuleId}");
 
             }
-            //return View(activity);
             return Redirect("/courses");
+        }
+
+        [HttpPost]
+        public IActionResult UploadModuleDocument(int id, IFormFile[] files)
+        {
+            var mod = db.Module.Find(id);
+            var userId = _userManager.GetUserId(User);
+            if (files != null && files.Length > 0)
+            {
+                foreach (var file in files)
+                {
+
+                    var fileName = System.IO.Path.GetFileName(file.FileName);
+
+
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+
+                    using (var localFile = System.IO.File.OpenWrite(filePath))
+                    using (var uploadedFile = file.OpenReadStream())
+                    {
+                        uploadedFile.CopyTo(localFile);
+                    }
+
+                    var doc = new Document()
+                    {
+                        Name = fileName,
+                        ModuleId = id,
+                        UploadTime = DateTime.Now,
+                        Description = filePath,
+                        UserId = userId
+                    };
+                    db.Document.Add(doc);
+
+                }
+                db.SaveChanges();
+            }
+
+            foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
+            {
+
+                var model = new FilesViewModel();
+                model.Files.Add(
+                    new FileDetails
+                    {
+                        Name = System.IO.Path.GetFileName(item),
+                        UserName = User.Identity.Name,
+                        UploadTime = DateTime.Now,
+                        ModuleId = id,
+                        UserId = userId,
+                        Path = item
+                    });
+            }
+
+            //return View(model);
+            return Redirect($"/Modules/details/{mod.Id}");
+
         }
 
     }

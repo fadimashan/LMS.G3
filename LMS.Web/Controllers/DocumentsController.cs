@@ -11,35 +11,49 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using LMS.Core.Entities.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace LMS.Web.Controllers
 {
     public class DocumentsController : Controller
     {
         private readonly LMSWebContext db;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DocumentsController(LMSWebContext context)
+
+        public DocumentsController(LMSWebContext context, UserManager<ApplicationUser> userManager)
         {
             db = context;
+            _userManager = userManager;
         }
 
         //GET: Documents
         public async Task<IActionResult> Index()
         {
-            return View(await db.Document.ToListAsync());
+            return View(await db.Document.OrderBy(d => d.Name).ToListAsync());
         }
 
 
-        //GET: UploadedFiles
-        public IActionResult Files()
+        //GET: Read exist Files
+        public IActionResult Files(int? courseId , int? moduleId, int? activityId)
         {
             // Get files from the server
             var model = new FilesViewModel();
+            var userId = _userManager.GetUserId(User);
+
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
             {
+
                 model.Files.Add(
-                    new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
+                    new FileDetails {
+                        Name = System.IO.Path.GetFileName(item),
+                        UserName = User.Identity.Name,
+                        UploadTime = DateTime.Now,
+                        CourseId = courseId,
+                        ModuleId = moduleId,
+                        ActivityId = activityId,
+                        UserId = userId,
+                        Path = item }) ;
             }
             return View(model);
         }

@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Data.Data;
 using Microsoft.AspNetCore.Authorization;
+using LMS.Core.Entities.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace LMS.Web.Controllers
 {
@@ -15,10 +19,12 @@ namespace LMS.Web.Controllers
     public class ActivitiesController : Controller
     {
         private readonly LMSWebContext db;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public ActivitiesController(LMSWebContext context)
+        public ActivitiesController(LMSWebContext context, UserManager<ApplicationUser> UserManager)
         {
             db = context;
+            userManager = UserManager;
         }
 
         // GET: Activities
@@ -35,7 +41,7 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var activity = await db.Activity
+            var activity = await db.Activity.Include(a => a.Documents)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (activity == null)
             {
@@ -89,7 +95,7 @@ namespace LMS.Web.Controllers
             }
 
             activity.GetModulesSelectListItem = GetModulesSelectListItem();
-            
+
             return View(activity);
         }
 
@@ -131,7 +137,7 @@ namespace LMS.Web.Controllers
                     }
                 }
                 return Redirect($"/modules/details/{activityOne.ModuleId}");
-               
+
             }
             //return View(activity);
             return Redirect("/courses");
@@ -177,7 +183,7 @@ namespace LMS.Web.Controllers
 
         private IEnumerable<SelectListItem> GetModulesSelectListItem()
         {
-            var modules = db.Module.OrderBy(m=>m.Title);
+            var modules = db.Module.OrderBy(m => m.Title);
             var GetModules = new List<SelectListItem>();
             foreach (var mod in modules)
             {
@@ -191,5 +197,96 @@ namespace LMS.Web.Controllers
             return (GetModules);
         }
 
+
+
+
+        //// POST: Activities/Create
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //public IActionResult UploadActivity(int id)
+        //{
+
+        //    var model = new FilesViewModel();
+        //    var userId = userManager.GetUserId(User);
+
+        //    foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
+        //    {
+
+        //        model.Files.Add(
+        //            new FileDetails
+        //            {
+        //                Name = System.IO.Path.GetFileName(item),
+        //                UserName = User.Identity.Name,
+        //                UploadTime = DateTime.Now,
+        //                ActivityId = id,
+        //                UserId = userId,
+        //                Path = item
+        //            });
+        //    }
+
+        //    return View(model);
+
+        //}
+
+        [HttpPost]
+        public IActionResult UploadActivity(int id, IFormFile[] files)
+        {
+            var activity = db.Activity.Find(id);
+            var userId = userManager.GetUserId(User);
+            if (files != null && files.Length > 0)
+            {
+                foreach (var file in files)
+                {
+
+                    var fileName = System.IO.Path.GetFileName(file.FileName);
+
+
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+
+                    using (var localFile = System.IO.File.OpenWrite(filePath))
+                    using (var uploadedFile = file.OpenReadStream())
+                    {
+                        uploadedFile.CopyTo(localFile);
+                    }
+
+
+                    var doc = new Document()
+                    {
+                        Name = fileName,
+                        ActivityId = id,
+                        UploadTime = DateTime.Now,
+                        Description = filePath,
+                        UserId = userId
+                    };
+                    db.Document.Add(doc);
+
+                }
+                db.SaveChanges();
+                ViewBag.Message = "Files are successfully uploaded";
+            }
+
+            var model = new FilesViewModel();
+            foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
+            {
+                model.Files.Add(
+                    new FileDetails
+                    {
+                        Name = System.IO.Path.GetFileName(item),
+                        UserName = User.Identity.Name,
+                        UploadTime = DateTime.Now,
+                        ActivityId = id,
+                        UserId = userId,
+                        Path = item
+                    });
+            }
+
+            return Redirect($"/Activities/Details/{activity.Id}");
+
+        }
     }
 }

@@ -3,66 +3,125 @@
 @{
     ViewData["Title"] = "Details";
 }
-<div class="text-center">
+
+<div class="content justify-content-center">
+    <div class="row m-3">
+        <div class="col-1"></div>
+        <div class="col-5  align-content-center mt-3 p-5">
+            <h4 class="text-start  text-muted">
+                <span class="mr-auto"> Title:</span>  <small class="ml-auto"> @Html.DisplayFor(model => model.Name)</small>
+            </h4>
+            <hr />
+            <h4 class="text-start  text-muted">
+                @{ var startD = @Model.StartDate.ToString("M"); var period = (int)(Model.EndDate - Model.StartDate).TotalDays / 30; }
+                Start date: <small> @startD</small>
+
+            </h4>
+            <hr />
+            <h4 class="text-start  text-muted">
+                Period: <small> @period Month</small>
+            </h4>
+            <hr />
+            <h4 class="text-start  text-muted">
+                @Html.DisplayNameFor(model => model.Description) : <small>@Html.DisplayFor(model => model.Description) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</small>
+            </h4>
 
 
-    <h3  class="mt-3  site-btn">Activity Details</h3>
-
-    <div class="justify-content-center m-auto ">
-       
-        <hr />
-        <dl class="row table table-striped w-25 m-auto bg-secondary">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Name)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Name)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.ActivityType)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.ActivityType)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.StartDate)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.StartDate)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.EndDate)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.EndDate)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Description)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Description)
-            </dd>
-        </dl>
-    </div>
-    <div>
-        @{ var show = Model.ActivityType.ToString() == "Assignments" ? false : true;
-
-            <form method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-xs-4">
-                                <input type="file" name="files" value="Upload" class="btn btn-outline-secondary" data-toggle="tooltip" data-placement="bottom" title="Upload new file" multiple="multiple" />
-                                <button type="submit" value="upload" class="btn btn-outline-secondary">Upload</button>
-                                <div class="clear"></div>
+            <hr />
+            <button class="site-btn">Delete</button>
+        </div>
+        <div class="col-5 justify-content-center mt-5">
+            @{ var activityIs = Model.ActivityType.ToString(); var link = $"/img/activity-c/{activityIs}.jfif";}
+            <div class="row justify-content-center mt-2" id="f-container">
+                <div id="list-items" class="row no-gutters ">
+                    <img src="@link" style="width:auto; height:fit-content();" />
+                </div>
+                @if (User.IsInRole("Student"))
+                {
+                    var show = Model.ActivityType.ToString() == "Assignments" ? false : true;
+                    <form method="post" enctype="multipart/form-data" hidden="@show">
+                        <div class="form-group">
+                            <div class="container">
+                                <div class="row ">
+                                    <div class="col-xs-4">
+                                        <input type="file" name="files" value="Upload" class="btn btn-outline-secondary" data-toggle="tooltip" data-placement="bottom" title="Upload new file" multiple="multiple" />
+                                        <button asp-controller="Activities" asp-action="UploadActivity" asp-route-id="@Model.Id" value="upload" class="btn btn-outline-secondary">Upload</button>
+                                        <div class="clear"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </form>
+                    </form>
+                }
+                @if (User.IsInRole("Teatcher"))
+                {
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <div class="container">
+                                <div class="row ">
+                                    <div class="col-xs-4">
+                                        <input type="file" name="files" value="Upload" class="btn btn-outline-secondary" data-toggle="tooltip" data-placement="bottom" title="Upload new file" multiple="multiple" />
+                                        <button asp-controller="Activities" asp-action="UploadActivity" asp-route-id="@Model.Id" value="upload" class="btn btn-outline-secondary">Upload</button>
+                                        <div class="clear"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                }
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div col-5 align-content-center>
+        <h6 style="margin-top: 50px">List of downloaded files: </h6>
+        <table class="table ">
+            <thead>
+                <tr>
+                    <th>
+                        File Name
+                    </th>
+                    <th>
+                        Uploaded Time
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model.Documents)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UploadTime)
+                        </td>
+                        <td>
+                            <a class="btn btn-info" asp-controller="Documents" asp-action="Download"
+                               asp-route-filename="@item.Name">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+        @if (User.IsInRole("Teacher"))
+        {
+            <a asp-controller="modules" asp-action="Details" asp-route-id="@Model.ModuleId" class="btn btn-danger m-2">Back</a>
+        }
+        @if (User.IsInRole("Student"))
+        {
+            <a asp-controller="courses" asp-action="Index" class="btn btn-danger m-2">Back</a>
 
         }
-
-        <a asp-controller="courses" asp-action="Index" class="site-btn m-2">Back to List</a>
     </div>
 </div>

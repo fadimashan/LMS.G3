@@ -17,7 +17,6 @@ namespace LMS.Core.Entities
 
         public DateTime UploadTime { get; set; }
 
-
         public ApplicationUser ApplicationUser { get; set; }
 
         public int? CourseId { get; set; }
