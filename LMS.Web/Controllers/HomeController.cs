@@ -1,12 +1,7 @@
-﻿using LMS.Web.Models;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using LMS.Web.Models;
 
 namespace LMS.Web.Controllers
 {
@@ -16,7 +11,6 @@ namespace LMS.Web.Controllers
 
         public HomeController(ILogger<HomeController> logger)
         {
-
             _logger = logger;
         }
 
@@ -35,7 +29,5 @@ namespace LMS.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-     
     }
 }

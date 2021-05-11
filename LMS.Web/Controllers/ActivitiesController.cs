@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+using System;
+using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
+using LMS.Core.Entities.ViewModels;
 using LMS.Data.Data;
 
 namespace LMS.Web.Controllers
@@ -14,10 +19,12 @@ namespace LMS.Web.Controllers
     public class ActivitiesController : Controller
     {
         private readonly MvcDbContext _dbContext;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public ActivitiesController(MvcDbContext context)
+        public ActivitiesController(MvcDbContext context, UserManager<ApplicationUser> UserManager)
         {
             _dbContext = context;
+            userManager = UserManager;
         }
 
         // GET: Activities
@@ -34,8 +41,10 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var activity = await _dbContext.Activity.FirstOrDefaultAsync(m => m.Id == id);
-
+            var activity = await _dbContext.Activity
+                .Include(a => a.Documents)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (activity is null)
             {
                 return NotFound();
@@ -63,7 +72,7 @@ namespace LMS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _dbContext.Add(activity);
+                await _dbContext.AddAsync(activity);
                 await _dbContext.SaveChangesAsync();
                 //return RedirectToAction(nameof(Index));
                 return Redirect("/courses");
@@ -88,7 +97,7 @@ namespace LMS.Web.Controllers
             }
 
             activity.GetModulesSelectListItem = GetModulesSelectListItem();
-            
+
             return View(activity);
         }
 
@@ -106,16 +115,16 @@ namespace LMS.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var activityOne = _dbContext.Activity.Find(id);
+                var activityFromContext = _dbContext.Activity.Find(id);
                 try
                 {
-                    activityOne.Module = activity.Module;
-                    activityOne.ModuleId = activityOne.ModuleId;
-                    activityOne.Name = activity.Name;
-                    activityOne.StartDate = activity.StartDate;
-                    activityOne.EndDate = activity.EndDate;
-                    activityOne.ActivityType = activity.ActivityType;
-                    _dbContext.Update(activityOne);
+                    activityFromContext.Module = activity.Module;
+                    activityFromContext.ModuleId = activityFromContext.ModuleId;
+                    activityFromContext.Name = activity.Name;
+                    activityFromContext.StartDate = activity.StartDate;
+                    activityFromContext.EndDate = activity.EndDate;
+                    activityFromContext.ActivityType = activity.ActivityType;
+                    _dbContext.Update(activityFromContext);
                     await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -129,7 +138,7 @@ namespace LMS.Web.Controllers
                         throw;
                     }
                 }
-                return Redirect($"/modules/details/{activityOne.ModuleId}");
+                return Redirect($"/modules/details/{activityFromContext.ModuleId}");
             }
             //return View(activity);
             return Redirect("/courses");
@@ -143,8 +152,9 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            var activity = await _dbContext.Activity.FirstOrDefaultAsync(m => m.Id == id);
-
+            var activity = await _dbContext.Activity
+                .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (activity is null)
             {
                 return NotFound();
@@ -172,18 +182,101 @@ namespace LMS.Web.Controllers
         
         private IEnumerable<SelectListItem> GetModulesSelectListItem()
         {
-            var modules = _dbContext.Module.OrderBy(m=>m.Title);
+            var modules = _dbContext.Module.OrderBy(m => m.Title);
             var GetModules = new List<SelectListItem>();
-            foreach (var mod in modules)
+            foreach (var module in modules)
             {
                 var newType = (new SelectListItem
                 {
-                    Text = mod.Title,
-                    Value = mod.Id.ToString(),
+                    Text = module.Title,
+                    Value = module.Id.ToString(),
                 });
                 GetModules.Add(newType);
             }
             return (GetModules);
+        }
+        
+        //// POST: Activities/Create
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //public IActionResult UploadActivity(int id)
+        //{
+        //    var model = new FilesViewModel();
+        //    var userId = userManager.GetUserId(User);
+
+        //    foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
+        //    {
+        //        model.Files.Add(
+        //            new FileDetails
+        //            {
+        //                Name = System.IO.Path.GetFileName(item),
+        //                UserName = User.Identity.Name,
+        //                UploadTime = DateTime.Now,
+        //                ActivityId = id,
+        //                UserId = userId,
+        //                Path = item
+        //            });
+        //    }
+
+        //    return View(model);
+        //}
+
+        [HttpPost]
+        public IActionResult UploadActivity(int id, IFormFile[] files)
+        {
+            var activity = _dbContext.Activity.Find(id);
+            var userId = userManager.GetUserId(User);
+            if (files is not null && files.Length > 0)
+            {
+                foreach (var file in files)
+                {
+                    var fileName = System.IO.Path.GetFileName(file.FileName);
+
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+
+                    using (var localFile = System.IO.File.OpenWrite(filePath))
+                    using (var uploadedFile = file.OpenReadStream())
+                    {
+                        uploadedFile.CopyTo(localFile);
+                    }
+
+                    var doc = new Document()
+                    {
+                        Name = fileName,
+                        ActivityId = id,
+                        UploadTime = DateTime.Now,
+                        Description = filePath,
+                        UserId = userId
+                    };
+                    _dbContext.Document.Add(doc);
+
+                }
+                _dbContext.SaveChanges();
+                ViewBag.Message = "Files are successfully uploaded";
+            }
+
+            var model = new FilesViewModel();
+            // TODO: The path string "wwwroot/files" should be moved to properties and retrieved from there when needed
+            foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
+            {
+                model.Files.Add(
+                    new FileDetails
+                    {
+                        Name = System.IO.Path.GetFileName(item),
+                        UserName = User.Identity.Name,
+                        UploadTime = DateTime.Now,
+                        ActivityId = id,
+                        UserId = userId,
+                        Path = item
+                    });
+            }
+
+            return Redirect($"/Activities/Details/{activity.Id}");
         }
     }
 }

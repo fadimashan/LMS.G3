@@ -1,12 +1,17 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Data.Data;
-using Microsoft.AspNetCore.Authorization;
+
+using System.IO;
+using LMS.Core.Entities.ViewModels;
 
 namespace LMS.Web.Controllers
 {
@@ -14,10 +19,12 @@ namespace LMS.Web.Controllers
     public class ModulesController : Controller
     {
         private readonly MvcDbContext _dbContext;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ModulesController(MvcDbContext context)
+        public ModulesController(MvcDbContext context, UserManager<ApplicationUser> userManager)
         {
             _dbContext = context;
+           _userManager = userManager;
         }
 
         // GET: Modules
@@ -36,6 +43,7 @@ namespace LMS.Web.Controllers
             }
 
             var module = await _dbContext.Module
+                .Include(m=> m.Documents)
                 .Include(m=> m.Activities)
                 .FirstOrDefaultAsync(m => m.Id == id);
             
@@ -105,19 +113,22 @@ namespace LMS.Web.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int id, [Bind("Title,Description,StartDate,EndDate")] Module module)
         {
-            var moduleEntity = _dbContext.Module.Find(id);
+            var moduleFromContext = _dbContext.Module.Find(id);
 
-            if (moduleEntity is null) { return NotFound(); }
+            if (moduleFromContext is null)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    moduleEntity.Title = module.Title;
-                    moduleEntity.StartDate = module.StartDate;
-                    moduleEntity.EndDate = module.EndDate;
-                    moduleEntity.Description = module.Description;
-                    _dbContext.Update(moduleEntity);
+                    moduleFromContext.Title = module.Title;
+                    moduleFromContext.StartDate = module.StartDate;
+                    moduleFromContext.EndDate = module.EndDate;
+                    moduleFromContext.Description = module.Description;
+                    _dbContext.Update(moduleFromContext);
                     await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -214,18 +225,72 @@ namespace LMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateFromModule(int id, [Bind("Name,ActivityType,StartDate,EndDate,Description,ModuleId")] Activity activity)
         {
-            // Variable `module` is never used
-            var module = _dbContext.Module.Find(id);
+            // Variable `moduleFromContext` is never used
+            var moduleFromContext = _dbContext.Module.Find(id);
             if (ModelState.IsValid)
             {
-                // module.Activities.Add(activity);
                 await _dbContext.AddAsync(activity);
                 await _dbContext.SaveChangesAsync();
-                //return RedirectToAction(nameof(Index));
                 return Redirect($"/modules/details/{activity.ModuleId}");
             }
-            //return View(activity);
             return Redirect("/courses");
         }
+
+        [HttpPost]
+        public IActionResult UploadModuleDocument(int id, IFormFile[] files)
+        {
+            var moduleFromContext = _dbContext.Module.Find(id);
+            var userId = _userManager.GetUserId(User);
+            if (files is not null && files.Length > 0)
+            {
+                foreach (var file in files)
+                {
+                    var fileName = System.IO.Path.GetFileName(file.FileName);
+
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+
+                    using (var localFile = System.IO.File.OpenWrite(filePath))
+                    using (var uploadedFile = file.OpenReadStream())
+                    {
+                        uploadedFile.CopyTo(localFile);
+                    }
+
+                    var doc = new Document()
+                    {
+                        Name = fileName,
+                        ModuleId = id,
+                        UploadTime = DateTime.Now,
+                        Description = filePath,
+                        UserId = userId
+                    };
+                    _dbContext.Document.Add(doc);
+                }
+                _dbContext.SaveChanges();
+            }
+
+            foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
+            {
+                var model = new FilesViewModel();
+                model.Files.Add(
+                    new FileDetails
+                    {
+                        Name = System.IO.Path.GetFileName(item),
+                        UserName = User.Identity.Name,
+                        UploadTime = DateTime.Now,
+                        ModuleId = id,
+                        UserId = userId,
+                        Path = item
+                    });
+            }
+
+            //return View(model);
+            return Redirect($"/Modules/details/{moduleFromContext.Id}");
+        }
+
     }
 }
