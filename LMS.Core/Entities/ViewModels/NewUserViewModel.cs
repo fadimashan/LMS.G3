@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LMS.Core.Entities.ViewModels
 {
-    public class NewUserViewModule
+    public class NewUserViewModel
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

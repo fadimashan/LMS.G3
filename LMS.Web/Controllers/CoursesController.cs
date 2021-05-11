@@ -272,7 +272,7 @@ namespace LMS.Web.Controllers
 
         public IActionResult AddUser()
         {
-            var model = new NewUserViewModule
+            var model = new NewUserViewModel
             {
                 GetAllCourses = GetAllCourses()
             };
@@ -282,7 +282,7 @@ namespace LMS.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> AddUser([Bind("FirstName,LastName,Email,Password,RoleType,CourseId")] NewUserViewModule user)
+        public async Task<IActionResult> AddUser([Bind("FirstName,LastName,Email,Password,RoleType,CourseId")] NewUserViewModel user)
         {
             var newUser = new ApplicationUser()
             {
@@ -291,7 +291,7 @@ namespace LMS.Web.Controllers
                 UserName = user.FirstName,
                 Email = user.Email,
             };
-            var type = user.RoleType.ToString() == "A" ? "Student" : "Teacher"; 
+            var type = user.RoleType == "A" ? "Student" : "Teacher"; 
 
             var addStudentResult = await _userManager.CreateAsync(newUser, user.Password);
 
@@ -307,12 +307,12 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            if (await _userManager.IsInRoleAsync(userFromManager, user.RoleType.ToString()))
+            if (await _userManager.IsInRoleAsync(userFromManager, user.RoleType))
             {
                 return NotFound();
             }
 
-            var addToRoleResult = await _userManager.AddToRoleAsync(userFromManager, user.RoleType.ToString());
+            var addToRoleResult = await _userManager.AddToRoleAsync(userFromManager, user.RoleType);
 
             if (!addToRoleResult.Succeeded)
             {
@@ -320,7 +320,7 @@ namespace LMS.Web.Controllers
             }
 
 
-            if (user.RoleType.ToString() == RoleType.Student.ToString())
+            if (user.RoleType == RoleType.Student.ToString())
             {
                 var enrol = new ApplicationUserCourse
                 {
