@@ -4,12 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Data.Data;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+
 using System.IO;
 using LMS.Core.Entities.ViewModels;
 
@@ -18,33 +19,36 @@ namespace LMS.Web.Controllers
     [Authorize]
     public class ModulesController : Controller
     {
-        private readonly LMSWebContext db;
+        private readonly MvcDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ModulesController(LMSWebContext context, UserManager<ApplicationUser> userManager)
+        public ModulesController(MvcDbContext context, UserManager<ApplicationUser> userManager)
         {
-            db = context;
+            _dbContext = context;
            _userManager = userManager;
         }
 
         // GET: Modules
         public async Task<IActionResult> Index()
         {
-            return View(await db.Module.ToListAsync());
+            return View(await _dbContext.Module.ToListAsync());
         }
 
         // GET: Modules/Details/5
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (!db.Module.Any(m => m.Id == id))
+            if (!_dbContext.Module.Any(m => m.Id == id))
             {
                 return NotFound();
             }
 
-            var @module = await db.Module.Include(m=> m.Documents).Include(m=> m.Activities)
+            var module = await _dbContext.Module
+                .Include(m=> m.Documents)
+                .Include(m=> m.Activities)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@module == null)
+            
+            if (module is null)
             {
                 return NotFound();
             }
@@ -70,16 +74,15 @@ namespace LMS.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate,CourseId")] Module @module)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate,CourseId")] Module module)
         {
             if (ModelState.IsValid)
             {
-                db.Add(@module);
-                await db.SaveChangesAsync();
+                await _dbContext.AddAsync(module);
+                await _dbContext.SaveChangesAsync();
 
                 //return RedirectToAction(nameof(Index));
                 return Redirect("/courses");
-
             }
             //return View(@module);
             return Redirect("/courses");
@@ -89,13 +92,14 @@ namespace LMS.Web.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var @module = await db.Module.FindAsync(id);
-            if (@module == null)
+            var module = await _dbContext.Module.FindAsync(id);
+            
+            if (module is null)
             {
                 return NotFound();
             }
@@ -108,26 +112,29 @@ namespace LMS.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> Edit(int id, [Bind("Title,Description,StartDate,EndDate")] Module @module)
+        public async Task<IActionResult> Edit(int id, [Bind("Title,Description,StartDate,EndDate")] Module module)
         {
-            var mod = db.Module.Find(id);
+            var moduleFromContext = _dbContext.Module.Find(id);
 
-            if (mod == null) { return NotFound(); }
+            if (moduleFromContext is null)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    mod.Title = module.Title;
-                    mod.StartDate = module.StartDate;
-                    mod.EndDate = module.EndDate;
-                    mod.Description = module.Description;
-                    db.Update(mod);
-                    await db.SaveChangesAsync();
+                    moduleFromContext.Title = module.Title;
+                    moduleFromContext.StartDate = module.StartDate;
+                    moduleFromContext.EndDate = module.EndDate;
+                    moduleFromContext.Description = module.Description;
+                    _dbContext.Update(moduleFromContext);
+                    await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ModuleExists(@module.Id))
+                    if (!ModuleExists(module.Id))
                     {
                         return NotFound();
                     }
@@ -147,14 +154,15 @@ namespace LMS.Web.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var @module = await db.Module
+            var module = await _dbContext.Module
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@module == null)
+            
+            if (module is null)
             {
                 return NotFound();
             }
@@ -168,44 +176,39 @@ namespace LMS.Web.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @module = await db.Module.FindAsync(id);
-            db.Module.Remove(@module);
-            await db.SaveChangesAsync();
+            var module = await _dbContext.Module.FindAsync(id);
+            _dbContext.Module.Remove(@module);
+            await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ModuleExists(int id)
         {
-            return db.Module.Any(e => e.Id == id);
+            return _dbContext.Module.Any(e => e.Id == id);
         }
-
-
 
         public IEnumerable<SelectListItem> GetAllCourses()
         {
             var courses = new List<SelectListItem>();
 
-            foreach (var course in db.Course.ToList())
+            foreach (var course in _dbContext.Course.ToList())
             {
                 var selectListItem = (new SelectListItem
                 {
                     Text = course.Title,
                     Value = course.Id.ToString()
-
                 });
                 courses.Add(selectListItem);
             }
             return (courses);
-
         }
-
 
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> CreateFromModule(int id)
         {
-           
-            var @module = await db.Module.FindAsync(id);
-            if (@module == null)
+            var module = await _dbContext.Module.FindAsync(id);
+            
+            if (module is null)
             {
                 return NotFound();
             }
@@ -222,16 +225,14 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateFromModule(int id,[Bind("Name,ActivityType,StartDate,EndDate,Description,ModuleId")] Activity activity)
+        public async Task<IActionResult> CreateFromModule(int id, [Bind("Name,ActivityType,StartDate,EndDate,Description,ModuleId")] Activity activity)
         {
-
-            var mod = db.Module.Find(id);
+            var moduleFromContext = _dbContext.Module.Find(id);
             if (ModelState.IsValid)
             {
-                db.Add(activity);
-                await db.SaveChangesAsync();
+                await _dbContext.AddAsync(activity);
+                await _dbContext.SaveChangesAsync();
                 return Redirect($"/modules/details/{activity.ModuleId}");
-
             }
             return Redirect("/courses");
         }
@@ -239,15 +240,13 @@ namespace LMS.Web.Controllers
         [HttpPost]
         public IActionResult UploadModuleDocument(int id, IFormFile[] files)
         {
-            var mod = db.Module.Find(id);
+            var moduleFromContext = _dbContext.Module.Find(id);
             var userId = _userManager.GetUserId(User);
-            if (files != null && files.Length > 0)
+            if (files is not null && files.Length > 0)
             {
                 foreach (var file in files)
                 {
-
                     var fileName = System.IO.Path.GetFileName(file.FileName);
-
 
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
 
@@ -270,15 +269,13 @@ namespace LMS.Web.Controllers
                         Description = filePath,
                         UserId = userId
                     };
-                    db.Document.Add(doc);
-
+                    _dbContext.Document.Add(doc);
                 }
-                db.SaveChanges();
+                _dbContext.SaveChanges();
             }
 
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
             {
-
                 var model = new FilesViewModel();
                 model.Files.Add(
                     new FileDetails
@@ -293,8 +290,7 @@ namespace LMS.Web.Controllers
             }
 
             //return View(model);
-            return Redirect($"/Modules/details/{mod.Id}");
-
+            return Redirect($"/Modules/details/{moduleFromContext.Id}");
         }
 
     }

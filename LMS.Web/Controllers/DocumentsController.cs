@@ -2,38 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using LMS.Core.Entities.ViewModels;
 using LMS.Core.Entities;
 using LMS.Data.Data;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using LMS.Core.Entities.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 
 namespace LMS.Web.Controllers
 {
     public class DocumentsController : Controller
     {
-        private readonly LMSWebContext db;
+        private readonly MvcDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
 
-
-        public DocumentsController(LMSWebContext context, UserManager<ApplicationUser> userManager)
+        public DocumentsController(MvcDbContext context, UserManager<ApplicationUser> userManager)
         {
-            db = context;
+            _dbContext = context;
             _userManager = userManager;
         }
 
         //GET: Documents
         public async Task<IActionResult> Index()
         {
-            return View(await db.Document.OrderBy(d => d.Name).ToListAsync());
+            return View(await _dbContext.Document
+                .OrderBy(d => d.Name)
+                .ToListAsync());
         }
-
-
+        
         //GET: Read exist Files
         public IActionResult Files(int? courseId , int? moduleId, int? activityId)
         {
@@ -45,7 +43,8 @@ namespace LMS.Web.Controllers
             {
 
                 model.Files.Add(
-                    new FileDetails {
+                    new FileDetails 
+                    {
                         Name = System.IO.Path.GetFileName(item),
                         UserName = User.Identity.Name,
                         UploadTime = DateTime.Now,
@@ -53,11 +52,11 @@ namespace LMS.Web.Controllers
                         ModuleId = moduleId,
                         ActivityId = activityId,
                         UserId = userId,
-                        Path = item }) ;
+                        Path = item 
+                    }) ;
             }
             return View(model);
         }
-
 
         /// <summary>
         /// Uploaded files
@@ -67,13 +66,11 @@ namespace LMS.Web.Controllers
         [HttpPost]
         public IActionResult Files(IFormFile[] files)
         {
-            if (files != null && files.Length > 0)
+            if (files is not null && files.Length > 0)
             {
                 foreach (var file in files)
                 {
-
                     var fileName = System.IO.Path.GetFileName(file.FileName);
-
 
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
 
@@ -88,22 +85,22 @@ namespace LMS.Web.Controllers
                         uploadedFile.CopyTo(localFile);
                     }
                 }
-
                 ViewBag.Message = "Files are successfully uploaded";
             }
-
-
 
             var model = new FilesViewModel();
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
             {
                 model.Files.Add(
-                    new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
+                    new FileDetails
+                    {
+                        Name = System.IO.Path.GetFileName(item), 
+                        Path = item
+                    });
             }
             return View(model);
         }
-
-
+        
         /// <summary>
         /// Downlaod Files
         /// </summary>
@@ -111,12 +108,15 @@ namespace LMS.Web.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Download(string filename)
         {
-            if (filename == null)
+            if (filename is null)
+            {
                 return Content("filename is not availble");
+            }
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", filename);
 
             var memory = new MemoryStream();
+            
             using (var stream = new FileStream(path, FileMode.Open))
             {
                 await stream.CopyToAsync(memory);
@@ -150,18 +150,18 @@ namespace LMS.Web.Controllers
             };
         }
 
-
         // GET: Documents/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var document = await db.Document
+            var document = await _dbContext.Document
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (document == null)
+            
+            if (document is null)
             {
                 return NotFound();
             }
@@ -170,7 +170,6 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Documents/Create
-
         public IActionResult Create()
         {
             return View();
@@ -181,13 +180,12 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> Create([Bind("Id,Name,Description,UploadTime")] Document document)
         {
             if (ModelState.IsValid)
             {
-                db.Add(document);
-                await db.SaveChangesAsync();
+                await _dbContext.AddAsync(document);
+                await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(document);
@@ -196,13 +194,14 @@ namespace LMS.Web.Controllers
         // GET: Documents/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var document = await db.Document.FindAsync(id);
-            if (document == null)
+            var document = await _dbContext.Document.FindAsync(id);
+            
+            if (document is null)
             {
                 return NotFound();
             }
@@ -225,8 +224,8 @@ namespace LMS.Web.Controllers
             {
                 try
                 {
-                    db.Update(document);
-                    await db.SaveChangesAsync();
+                    _dbContext.Update(document);
+                    await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -247,14 +246,15 @@ namespace LMS.Web.Controllers
         // GET: Documents/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var document = await db.Document
+            var document = await _dbContext.Document
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (document == null)
+            
+            if (document is null)
             {
                 return NotFound();
             }
@@ -267,15 +267,15 @@ namespace LMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var document = await db.Document.FindAsync(id);
-            db.Document.Remove(document);
-            await db.SaveChangesAsync();
+            var document = await _dbContext.Document.FindAsync(id);
+            _dbContext.Document.Remove(document);
+            await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool DocumentExists(int id)
         {
-            return db.Document.Any(e => e.Id == id);
+            return _dbContext.Document.Any(e => e.Id == id);
         }
     }
 }

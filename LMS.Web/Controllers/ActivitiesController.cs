@@ -1,49 +1,51 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Data.Data;
-using Microsoft.AspNetCore.Authorization;
 using LMS.Core.Entities.ViewModels;
-using Microsoft.AspNetCore.Identity;
-using System.IO;
-using Microsoft.AspNetCore.Http;
 
 namespace LMS.Web.Controllers
 {
     [Authorize]
     public class ActivitiesController : Controller
     {
-        private readonly LMSWebContext db;
+        private readonly MvcDbContext _dbContext;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public ActivitiesController(LMSWebContext context, UserManager<ApplicationUser> UserManager)
+        public ActivitiesController(MvcDbContext context, UserManager<ApplicationUser> UserManager)
         {
-            db = context;
+            _dbContext = context;
             userManager = UserManager;
         }
 
         // GET: Activities
         public async Task<IActionResult> Index()
         {
-            return View(await db.Activity.ToListAsync());
+            return View(await _dbContext.Activity.ToListAsync());
         }
 
         // GET: Activities/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var activity = await db.Activity.Include(a => a.Documents)
+            var activity = await _dbContext.Activity
+                .Include(a => a.Documents)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (activity == null)
+            
+            if (activity is null)
             {
                 return NotFound();
             }
@@ -70,8 +72,8 @@ namespace LMS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Add(activity);
-                await db.SaveChangesAsync();
+                await _dbContext.AddAsync(activity);
+                await _dbContext.SaveChangesAsync();
                 //return RedirectToAction(nameof(Index));
                 return Redirect("/courses");
 
@@ -83,13 +85,14 @@ namespace LMS.Web.Controllers
         // GET: Activities/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var activity = await db.Activity.FindAsync(id);
-            if (activity == null)
+            var activity = await _dbContext.Activity.FindAsync(id);
+            
+            if (activity is null)
             {
                 return NotFound();
             }
@@ -113,17 +116,17 @@ namespace LMS.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var activityOne = db.Activity.Find(id);
+                var activityFromContext = _dbContext.Activity.Find(id);
                 try
                 {
-                    activityOne.Module = activity.Module;
-                    activityOne.ModuleId = activityOne.ModuleId;
-                    activityOne.Name = activity.Name;
-                    activityOne.StartDate = activity.StartDate;
-                    activityOne.EndDate = activity.EndDate;
-                    activityOne.ActivityType = activity.ActivityType;
-                    db.Update(activityOne);
-                    await db.SaveChangesAsync();
+                    activityFromContext.Module = activity.Module;
+                    activityFromContext.ModuleId = activityFromContext.ModuleId;
+                    activityFromContext.Name = activity.Name;
+                    activityFromContext.StartDate = activity.StartDate;
+                    activityFromContext.EndDate = activity.EndDate;
+                    activityFromContext.ActivityType = activity.ActivityType;
+                    _dbContext.Update(activityFromContext);
+                    await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -136,7 +139,7 @@ namespace LMS.Web.Controllers
                         throw;
                     }
                 }
-                return Redirect($"/modules/details/{activityOne.ModuleId}");
+                return Redirect($"/modules/details/{activityFromContext.ModuleId}");
 
             }
             //return View(activity);
@@ -147,14 +150,15 @@ namespace LMS.Web.Controllers
         // GET: Activities/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var activity = await db.Activity
+            var activity = await _dbContext.Activity
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (activity == null)
+            
+            if (activity is null)
             {
                 return NotFound();
             }
@@ -167,51 +171,45 @@ namespace LMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var activity = await db.Activity.FindAsync(id);
-            db.Activity.Remove(activity);
-            await db.SaveChangesAsync();
+            var activity = await _dbContext.Activity.FindAsync(id);
+            _dbContext.Activity.Remove(activity);
+            await _dbContext.SaveChangesAsync();
             //return RedirectToAction(nameof(Index));
             return Redirect("/courses");
-
         }
 
         private bool ActivityExists(int id)
         {
-            return db.Activity.Any(e => e.Id == id);
+            return _dbContext.Activity.Any(e => e.Id == id);
         }
-
-
+        
         private IEnumerable<SelectListItem> GetModulesSelectListItem()
         {
-            var modules = db.Module.OrderBy(m => m.Title);
+            var modules = _dbContext.Module.OrderBy(m => m.Title);
             var GetModules = new List<SelectListItem>();
-            foreach (var mod in modules)
+            foreach (var module in modules)
             {
                 var newType = (new SelectListItem
                 {
-                    Text = mod.Title,
-                    Value = mod.Id.ToString(),
+                    Text = module.Title,
+                    Value = module.Id.ToString(),
                 });
                 GetModules.Add(newType);
             }
             return (GetModules);
         }
 
-
-
-
+        
         //// POST: Activities/Create
         //// To protect from overposting attacks, enable the specific properties you want to bind to.
         //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //public IActionResult UploadActivity(int id)
         //{
-
         //    var model = new FilesViewModel();
         //    var userId = userManager.GetUserId(User);
 
         //    foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
         //    {
-
         //        model.Files.Add(
         //            new FileDetails
         //            {
@@ -225,21 +223,18 @@ namespace LMS.Web.Controllers
         //    }
 
         //    return View(model);
-
         //}
 
         [HttpPost]
         public IActionResult UploadActivity(int id, IFormFile[] files)
         {
-            var activity = db.Activity.Find(id);
+            var activity = _dbContext.Activity.Find(id);
             var userId = userManager.GetUserId(User);
-            if (files != null && files.Length > 0)
+            if (files is not null && files.Length > 0)
             {
                 foreach (var file in files)
                 {
-
                     var fileName = System.IO.Path.GetFileName(file.FileName);
-
 
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
 
@@ -254,7 +249,6 @@ namespace LMS.Web.Controllers
                         uploadedFile.CopyTo(localFile);
                     }
 
-
                     var doc = new Document()
                     {
                         Name = fileName,
@@ -263,14 +257,15 @@ namespace LMS.Web.Controllers
                         Description = filePath,
                         UserId = userId
                     };
-                    db.Document.Add(doc);
+                    _dbContext.Document.Add(doc);
 
                 }
-                db.SaveChanges();
+                _dbContext.SaveChanges();
                 ViewBag.Message = "Files are successfully uploaded";
             }
 
             var model = new FilesViewModel();
+            // TODO: The path string "wwwroot/files" should be moved to properties and retrieved from there when needed
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
             {
                 model.Files.Add(
@@ -286,7 +281,6 @@ namespace LMS.Web.Controllers
             }
 
             return Redirect($"/Activities/Details/{activity.Id}");
-
         }
     }
 }
