@@ -5,7 +5,7 @@
     <hr />
     <br />
     <div class="btn-group text-center m-2">
-        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  class="site-btn m-2 text-center">Create</p>
+        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="site-btn m-2 text-center">Create</p>
         <div class="dropdown-menu shadow">
             <a asp-controller="Courses" asp-action="Create" type="button" class="dropdown-item">Course</a>
             <a asp-controller="Modules" asp-action="Create" type="button" class="dropdown-item">Module</a>
@@ -79,7 +79,7 @@
 
                         @foreach (var student in item.Students)
                         {
-                            <a class="dropdown-item">Name: @student.FirstName @student.LastName <br/>Email: @student.Email <hr/></a>
+                            <a class="dropdown-item">Name: @student.FirstName @student.LastName <br />Email: @student.Email <hr /></a>
                         }
                     </div>
 
@@ -103,4 +103,192 @@
         }
     </tbody>
 </table>
+@*<hr />
+<div  class="row border border-secondary ml-2 mr-2"> <p>Courses</p></div>
+
+<div class="row border border-secondary ml-2 mr-2">
+
+    <div class="col-4 border border-secondary border-top-0">
+
+
+        @foreach (var item in Model)
+        {
+            var id = @item.Id;
+            var courseId = "c" + id.ToString();
+        <ul id="myUL">
+            <li class="course" id="courseId">
+                <span class="caret"> <i class="fa fa-folder" aria-hidden="true" style="color:bisque"></i>Course: @item.Title</span>
+                <ul class="nested ml-2">
+                    @foreach (var module in item.Modules)
+                    {
+                        <li class="module">
+
+
+                            <span class="caret ml-5"><i class="fa fa-folder" aria-hidden="true" style="color:bisque"> </i>Module: @module.Title</span>
+                            <ul class="nested ml-5">
+                                @foreach (var activity in module.Activities)
+                                {
+
+                                    <li class="activity">
+                                        <span class="caret ml-5"> <i class="fa fa-folder" aria-hidden="true" style="color:bisque"></i>Activity: @activity.Name</span>
+                                        <ul class="nested ml-5">
+                                            @foreach (var doc in activity.Documents)
+                                            {
+                                                
+
+                                                <li class="ml-5">@doc.Name</li>
+
+
+                                            }
+                                        </ul>
+                                    </li>
+
+                                }
+                            <li>
+                                <span class="caret ml-5"> <i class="fas fa-file-alt"></i>Additional Documents</span>
+                                <ul class="nested ml-5">
+                                    @foreach (var doc in module.Documents)
+                                    {
+                                   
+                                        <li class="ml-5">@doc.Name</li>
+
+                                   
+                                            }
+                                        </ul>
+</li>
+                            </ul>
+
+                        </li>
+                        
+
+                    }
+
+                    <li>
+                        <span class="caret ml-5"> <i class="fas fa-file-alt"></i>Additional Documents</span>
+                        @foreach (var doc in item.Documents)
+                        {
+                            <ul class="nested ml-5">
+                                <li  class="ml-5">@doc.Name</li>
+
+                            </ul>
+                        }
+
+                    </li>
+
+                </ul>
+            </li>
+        
+            
+        </ul>
+        }
+    </div>
+    <div class="col-8 border border-secondary border-top-0"  >
+        <ul id="rp" >
+            
+        </ul>
+     
+        </div>
+</div>*@
+
+
+
+
+
+
+<!--<style>
+    /* Remove default bullets */
+    ul, #myUL,#rp {
+        list-style-type: none;
+    }
+
+    /* Remove margins and padding from the parent ul */
+    #myUL,#rp {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Style the caret/arrow */
+    .caret {
+        cursor: pointer;
+        user-select: none; /* Prevent text selection */
+    }
+
+        /* Create the caret/arrow with a unicode, and style it */
+        .caret::before {
+            content: "\25B6";
+            color: black;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+    /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+    .caret-down::before {
+        transform: rotate(90deg);
+    }
+
+
+    /* Hide the nested list */
+    .nested {
+        display: none;
+    }
+
+    /* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+    .active {
+        display: block;
+    }
+</style>
+<script>-->
+@*const { right } = require("@popperjs/core");*@
+
+    <!--var toggler = document.getElementsByClassName("caret");
+    var i;
+
+    for (i = 0; i < toggler.length; i++) {
+        toggler[i].addEventListener("click", function () {
+            this.parentElement.querySelector(".nested").classList.toggle("active");
+            this.classList.toggle("caret-down");
+        });
+    }
+
+    let id = document.getElementById("courseId");
+    let textNode = id.innerText;
+    let rightPanel = document.getElementById("rp");
+    let listItems = document.querySelectorAll("ul li");
+    listItems.forEach(function (item) {
+        item.onclick = function (e) {
+            let newItem = item.cloneNode(true);
+            let children = newItem.children;
+            if (rightPanel.hasChildNodes()) {
+                rightPanel.removeChild(rightPanel.childNodes[0]);
+                rightPanel.appendChild(newItem);
+            } else {
+                
+                rightPanel.appendChild(newItem);
+            }
+   
+           
+        }
+    });
+    //function getEventTarget(e) {
+    //    e = e || window.event;
+    //    return e.target || e.srcElement;
+    //}
+
+    //var ul = document.getElementById('myUL');
+    //ul.onclick = function (event) {
+    //    var target = event.target;
+    //    alert(event.target.innerHTML);
+    //};
+    //id.addEventListener("click", () => {
+    //    let listItem = this.parentElement.innerHTML;
+    //    rightPanel.appendChild(listItem);
+    //    console.log("click");
+       
+    //});
+   
+</script>-->
+
+
+
+
 

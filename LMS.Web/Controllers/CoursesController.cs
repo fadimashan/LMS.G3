@@ -178,7 +178,8 @@ namespace LMS.Web.Controllers
 
             if (User.IsInRole("Teacher"))
             {
-                var module = await db.Course.Include(c => c.Students).Include(c => c.Modules).ThenInclude(m => m.Activities).ToListAsync();
+                var module = await db.Course.Include(c => c.Documents).Include(c => c.Students).Include(c => c.Modules).ThenInclude(m => m.Documents).Include(m => m.Modules).ThenInclude(m => m.Activities).ThenInclude(a => a.Documents).ToListAsync();
+               
                 return View("GetCourses", module);
                 // return Redirect("/courses/GetCourses);
             }
@@ -278,21 +279,39 @@ namespace LMS.Web.Controllers
             if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
 
 
-            if (user.RoleType.ToString() == RoleType.Student.ToString())
-            {
+             //(user.RoleType.ToString() == RoleType.Student.ToString())
+            //{
                 var enrol = new ApplicationUserCourse
                 {
                     ApplicationUserId = newUser.Id,
                     CourseId = user.CourseId
                 };
             db.Add(enrol);
-            }
+            //}
             await db.SaveChangesAsync();
 
             return RedirectToAction(nameof(GetAllStudents));
         }
 
         public IEnumerable<SelectListItem> GetAllCourses()
+        {
+            var courses = new List<SelectListItem>();
+
+            foreach (var course in db.Course.ToList())
+            {
+                var selectListItem = (new SelectListItem
+                {
+                    Text = course.Title,
+                    Value = course.Id.ToString()
+
+                });
+                courses.Add(selectListItem);
+            }
+            return (courses);
+
+        }
+
+        public IEnumerable<SelectListItem> CourseTree()
         {
             var courses = new List<SelectListItem>();
 
