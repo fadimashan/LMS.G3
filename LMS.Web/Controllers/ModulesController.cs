@@ -289,7 +289,7 @@ namespace LMS.Web.Controllers
                     });
             }
 
-            //return View(model);
+            //return View();
             return Redirect($"/Modules/details/{moduleFromContext.Id}");
         }
 

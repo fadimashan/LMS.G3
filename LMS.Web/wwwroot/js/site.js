@@ -49,3 +49,38 @@ $(".accordion").click(function (e) {
         $(target).css({ "border-bottom-right-radius": "0", "border-bottom-left-radius": "0" });
     }
 });
+
+let table = document.getElementById("test22");
+let table2 = table.cloneNode(table);
+let uploadBtn = document.getElementById("uploadBtn");
+
+
+uploadBtn.addEventListener("click", () => {
+    console.log("click");
+    let courseId = uploadBtn.getAttribute("data-target");
+    let updatedView = document.querySelectorAll("TR");
+    updatedView.forEach(row => {
+        if (row.classList.contains("collapse")) {
+            row.classList.remove("collapse");
+        }
+    })
+
+});
+
+var target = document.querySelector('#drop2');
+
+// create an observer instance
+var observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+        console.log(mutation.type);
+    });
+});
+
+// configuration of the observer:
+var config = { attributes: true, childList: true, characterData: true }
+
+// pass in the target node, as well as the observer options
+observer.observe(target, config);
+
+// later, you can stop observing
+observer.disconnect();

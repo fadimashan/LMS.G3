@@ -411,8 +411,17 @@ namespace LMS.Web.Controllers
                         Path = item
                     });
             }
-            
-            return Redirect("/courses");
+
+            var courses = _dbContext.Course
+                    .Include(c => c.Modules)
+                    .Include(s => s.Students)
+                    .Include(d => d.Documents)
+                    .ToList();
+
+            return View("GetCourses", courses);
+
+            //return Redirect("/Courses/GetCourses");
+           
         }
     }
 }
