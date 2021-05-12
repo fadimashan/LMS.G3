@@ -360,6 +360,12 @@ namespace LMS.Web.Controllers
         [HttpPost]
         public IActionResult UploadCourseDocument(int id, IFormFile[] files)
         {
+
+            var courses = _dbContext.Course
+                    .Include(c => c.Modules)
+                    .Include(s => s.Students)
+                    .Include(d => d.Documents)
+                    .ToList();
             // Variable `course` is never used
             var course = _dbContext.Course.Find(id);
             var userId = _userManager.GetUserId(User);
@@ -394,6 +400,10 @@ namespace LMS.Web.Controllers
 
                 }
                 _dbContext.SaveChanges();
+            }else
+            {
+                ViewBag.Message = "Please select a doc.";
+                return View("GetCourses", courses);
             }
 
             var model = new FilesViewModel();
@@ -412,16 +422,12 @@ namespace LMS.Web.Controllers
                     });
             }
 
-            var courses = _dbContext.Course
-                    .Include(c => c.Modules)
-                    .Include(s => s.Students)
-                    .Include(d => d.Documents)
-                    .ToList();
+            
 
             return View("GetCourses", courses);
 
-            //return Redirect("/Courses/GetCourses");
-           
+            //return Redirect("/Courses");
+
         }
     }
 }
