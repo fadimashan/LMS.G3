@@ -267,7 +267,7 @@ namespace LMS.Web.Controllers
                 ModelState.AddModelError("", "User Not Found");
             }
             // FIXME: Value `_userManager.Users` is not assignable to model `IEnumerable<Course>`
-            return View("GetAllStudents", _userManager.Users);
+            return View("GetAllStudents");
         }
 
         public IActionResult AddUser()

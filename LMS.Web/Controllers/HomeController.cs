@@ -24,7 +24,6 @@ namespace LMS.Web.Controllers
 
         public HomeController(ILogger<HomeController> logger)
         {
-
             _logger = logger;
 
             httpClient = new HttpClient();
@@ -56,7 +55,6 @@ namespace LMS.Web.Controllers
             }
             return View(authors);
         }
-
 
         public async Task<IActionResult> GetAuthor(int id)
         {
