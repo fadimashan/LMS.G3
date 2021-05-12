@@ -71,9 +71,12 @@ namespace LMS.Web.Controllers
                 db.Add(@module);
                 await db.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return Redirect("/courses");
+
             }
-            return View(@module);
+            //return View(@module);
+            return Redirect("/courses");
         }
 
         // GET: Modules/Edit/5
@@ -127,7 +130,9 @@ namespace LMS.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return Redirect($"/modules/details/{id}");
+
             }
             return View(@module);
         }
@@ -186,6 +191,46 @@ namespace LMS.Web.Controllers
             }
             return (courses);
 
+        }
+
+
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> CreateFromModule(int id)
+        {
+           
+            var @module = await db.Module.FindAsync(id);
+            if (@module == null)
+            {
+                return NotFound();
+            }
+
+            var activity = new Activity()
+            {
+                ModuleId = id
+            };
+            return View(activity);
+        }
+
+        // POST: Activities/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateFromModule(int id,[Bind("Name,ActivityType,StartDate,EndDate,Description,ModuleId")] Activity activity)
+        {
+
+            var mod = db.Module.Find(id);
+            if (ModelState.IsValid)
+            {
+               // mod.Activities.Add(activity);
+                db.Add(activity);
+                await db.SaveChangesAsync();
+                //return RedirectToAction(nameof(Index));
+                return Redirect($"/modules/details/{activity.ModuleId}");
+
+            }
+            //return View(activity);
+            return Redirect("/courses");
         }
 
     }

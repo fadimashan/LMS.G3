@@ -1,30 +1,27 @@
 ﻿@model LMS.Core.Entities.Activity
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "CreateFromModule";
 }
 
-<h1>Edit</h1>
+<h1>Create</h1>
 
 <h4>Activity</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="CreateFromModule">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
-                <label class="control-label"> Belongs to Module </label>
-                <select id="select" asp-for="ModuleId" asp-items="@Model.GetModulesSelectListItem" class="form-control">
-                    <option value="0">Select</option>
-                </select>
+            <div class="form-group" hidden="hidden">
+                <label asp-for="ModuleId" class="control-label"></label>
+                <input asp-for="ModuleId" class="form-control" />
                 <span asp-validation-for="ModuleId" class="text-danger"></span>
-            </div>*@
+            </div>
             <div class="form-group">
                 <label asp-for="ActivityType" class="control-label"></label>
                 <select asp-for="ActivityType" asp-items="@Html.GetEnumSelectList<ActivityType>()" class="form-control"></select>
@@ -32,12 +29,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
+                <input asp-for="StartDate" class="form-control" value="@DateTime.Now" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
+                <input asp-for="EndDate" class="form-control" value="@DateTime.Now" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -46,7 +43,7 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="CreateFromModule" class="btn btn-primary" />
             </div>
         </form>
     </div>

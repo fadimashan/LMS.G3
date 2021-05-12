@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace LMS.Core.Entities
         public string Description { get; set; }
 
         public DateTime UploadTime { get; set; }
+
 
         public ApplicationUser ApplicationUser { get; set; }
 
