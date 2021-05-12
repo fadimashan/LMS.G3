@@ -39,7 +39,7 @@ namespace LMS.API.Controllers
             return Ok(_mapper.Map<IEnumerable<AuthorWithPublicationsDto>>(authorsFromRepo));
         }
 
-        // GET: api/Authors/5
+        //GET: api/Authors/5
         [HttpGet("{id}", Name = "GetAuthor")]
         public async Task<ActionResult<AuthorWithPublicationsDto>> GetAuthor(int id)
         {
@@ -65,7 +65,9 @@ namespace LMS.API.Controllers
 
             return Ok(_mapper.Map<IEnumerable<PublicationDto>>(publicationsFromRepo));
         }
-        
+
+      
+
         // Review: Do we need this?
         [HttpGet("{authorId}/publications/{publicationId}")]
         public async Task<ActionResult<PublicationDto>> GetPublicationForAuthor(int authorId, int publicationId)
@@ -92,8 +94,7 @@ namespace LMS.API.Controllers
         [HttpPost]
         public async Task<ActionResult<AuthorDto>> CreateAuthor(AuthorCreationDto newAuthor)
         {
-            // _dbContext.Authors.Add(author);
-            // await _dbContext.SaveChangesAsync();
+
             var authorEntity = _mapper.Map<Author>(newAuthor);
             await _authorsRepository.AddAsync(authorEntity);
             await _authorsRepository.SaveAsync();
@@ -101,10 +102,38 @@ namespace LMS.API.Controllers
             
             return CreatedAtAction("GetAuthor", new { id = authorToReturn.Id }, authorToReturn);
         }
-        
-/* FIXME: Up to this point everything works properly as expected.
- The rest of the methods work too but must be refactored to utilise Repositories and DTOs*/
- 
+
+        /* FIXME: Up to this point everything works properly as expected.
+         The rest of the methods work too but must be refactored to utilise Repositories and DTOs*/
+
+        [HttpGet("UpdateAuthor/{id}")]
+        public async Task<ActionResult<AuthorCreationDto>> UpdateAuthor(int id)
+        {
+            var authorFromRepo = await _authorsRepository.GetAsync(id);
+
+            if (authorFromRepo is null)
+            {
+                return NotFound();
+            }
+
+            var newone = _mapper.Map<AuthorCreationDto>(authorFromRepo);
+            return Ok(newone);
+        }
+
+        [HttpGet("GetAuthorByName/{name}", Name = "GetAuthorByName")]
+        public async Task<ActionResult<AuthorDto>> GetAuthorByName(string name)
+        {
+            var authorFromRepo = await _authorsRepository.GetByNameAsync(name);
+
+            if (authorFromRepo is null)
+            {
+                return NotFound();
+            }
+
+            var newone = _mapper.Map<AuthorDto>(authorFromRepo);
+            return Ok(newone);
+        }
+
         // PUT: api/Authors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

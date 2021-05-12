@@ -77,6 +77,7 @@ namespace LMS.Web.Controllers
 
                 ViewBag.Message = "Files are successfully uploaded";
             }
+          
 
             var model = new FilesViewModel();
 

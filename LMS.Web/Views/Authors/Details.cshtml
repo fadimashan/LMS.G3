@@ -1,0 +1,56 @@
+﻿@model LMS.Core.Models.AuthorWithPublicationsDto
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="content justify-content-center">
+    <div class="row m-3">
+        <div class="col-1"></div>
+        <div class="col-5  align-content-center mt-3 p-5">
+            <h4 class="text-start  text-muted">
+                @{var fullName = Model.FirstName + " " + Model.LastName;}
+
+                <span class="mr-auto"> Author:</span>  <small class="ml-auto">
+                    @Html.DisplayFor(model => fullName)
+                </small>
+            </h4>
+            <hr />
+
+            <h4 class="text-start  text-muted">
+                Age: <small>
+                    @Html.DisplayFor(model => model.Age)
+                </small>
+            </h4>
+        </div>
+        <div class="col-5 text-center">
+            <div class="row justify-content-center" id="f-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+
+                            <th> <h4 class="text-start  text-muted"> Publications </h4></th>
+                            <th> <h4 class="text-start  text-muted"> Publication Date </h4></th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body table table-striped">
+                        @foreach (var item in Model.Publications)
+                        {
+                            string date = $"{item.PublicationDate.ToString("dd/MMM/yyyy")}";
+
+                            <tr>
+                                <td> <a class="btn btn-light"> @item.Title </a></td>
+                                <td>  <a class="btn btn-light"> @date </a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+        <div>
+            <a class="btn btn-info" asp-action="Index">Back</a>
+        </div>
+    
+</div>

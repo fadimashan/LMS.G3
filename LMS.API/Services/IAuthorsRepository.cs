@@ -10,6 +10,7 @@ namespace LMS.API.Services
         Task<IEnumerable<Author>> GetAllWithPublicationsAsync();
         Task<IEnumerable<Author>> GetAllWithPublicationsAsync(string nameLike);
         Task<Author> GetAsync(int? id);
+        Task<Author> GetByNameAsync(string name);
         Task<Author> GetWithPublicationsAsync(int? id);
         Task<IEnumerable<Publication>> GetPublicationsAsync(int id);
         Task<Publication> GetPublicationAsync(int authorId, int publicationId);

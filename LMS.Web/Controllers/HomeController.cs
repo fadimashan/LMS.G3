@@ -40,47 +40,6 @@ namespace LMS.Web.Controllers
             return View();
         }
 
-        public async Task<IActionResult> GetAuthors()
-        {
-            var response = await httpClient.GetAsync("api/authors");
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            IEnumerable<AuthorDto> authors;
-            if (response.Content.Headers.ContentType.MediaType == "application/json")
-            {
-                authors = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(content);
-            }
-            else {
-                var xmlSerialiser = new XmlSerializer(typeof(AuthorDto));
-                authors = (IEnumerable<AuthorDto>)xmlSerialiser.Deserialize(new StringReader(content));
-            }
-            return View(authors);
-        }
-
-
-        public async Task<IActionResult> GetAuthor(int id)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/authors/{id}");
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            var response = await httpClient.SendAsync(request);
-
-            var content = await response.Content.ReadAsStringAsync();
-
-            AuthorDto author;
-
-            if (response.Content.Headers.ContentType.MediaType == "application/json")
-            {
-                author = JsonConvert.DeserializeObject<AuthorDto>(content);
-            }
-            else
-            {
-                var xmlSerialiser = new XmlSerializer(typeof(AuthorDto));
-                author = (AuthorDto)xmlSerialiser.Deserialize(new StringReader(content));
-            }
-            return View(author);
-        }
-
         public IActionResult Privacy()
         {
             return View();

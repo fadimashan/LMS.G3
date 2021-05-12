@@ -13,6 +13,7 @@
 
 namespace LMS.Core.Models
 {
+    using System;
     using System = global::System;
     
     
@@ -27,7 +28,7 @@ namespace LMS.Core.Models
         public string LastName { get; set; }
     
         [Newtonsoft.Json.JsonProperty("dateOfBirth", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
     
     
     }
