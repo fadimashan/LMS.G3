@@ -17,9 +17,9 @@ namespace LMS.Web
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var confiq = services.GetRequiredService<IConfiguration>();
-                var adminPW = confiq["TeacherPW"];
-                var userPW = confiq["StudentPW"];
+                var config = services.GetRequiredService<IConfiguration>();
+                var adminPW = config["TeacherPW"];
+                var userPW = config["StudentPW"];
                 try
                 {
                     SeedData.InitAsync(services, adminPW, userPW).Wait();
