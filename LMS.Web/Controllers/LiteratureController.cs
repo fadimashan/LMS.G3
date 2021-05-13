@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +14,11 @@ using LMS.Core.Models;
 
 namespace LMS.Web.Controllers
 {
-    public class LiteratureController : Controller
+    public class LiteratureController : Controller, IDisposable
     {
+        private const string baseAddress = "https://localhost:5001/";
         private const string baseRoute = "api/publications";
+        
         private readonly ILogger<LiteratureController> _logger;
         private readonly HttpClient httpClient;
 
@@ -22,34 +26,47 @@ namespace LMS.Web.Controllers
         {
             _logger = logger;
 
-            httpClient = new HttpClient
+            // FIXME: This is a temporary solution. Fix SSL certificate to prevent crashes
+            var handler = new HttpClientHandler
             {
-                BaseAddress = new Uri("https://localhost:5001/"), 
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+
+            httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri(baseAddress), 
                 Timeout = new TimeSpan(0, 0, 10)
             };
             httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
-        
+
+        private static bool ServerCertificateCustomValidation(HttpRequestMessage requestMessage,
+            X509Certificate2 certificate, X509Chain chain, SslPolicyErrors sslErrors)
+        {
+            return sslErrors == SslPolicyErrors.None;
+        }
+
         // GET
         public async Task<IActionResult> Index()
         {
             var response = await httpClient.GetAsync(baseRoute);
-            
+
             response.EnsureSuccessStatusCode();
-            
+
             var content = await response.Content.ReadAsStringAsync();
-            
+
             IEnumerable<PublicationWithAuthorsDto> publications;
             if (response.Content.Headers.ContentType?.MediaType == "application/json")
             {
                 publications = JsonConvert.DeserializeObject<IEnumerable<PublicationWithAuthorsDto>>(content);
             }
-            else 
+            else
             {
                 var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
                 publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
             }
+
             return View(publications);
         }
 
@@ -60,7 +77,7 @@ namespace LMS.Web.Controllers
             {
                 return NotFound();
             }
-            
+
             // var request = new HttpRequestMessage(HttpMethod.Get, $"api/publications/{id}");
             var request = new HttpRequestMessage(HttpMethod.Get, string.Join("/", baseRoute, id.ToString()));
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -80,9 +97,10 @@ namespace LMS.Web.Controllers
                 var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
                 publication = (PublicationWithAuthorsDto)xmlSerializer.Deserialize(new StringReader(content));
             }
+
             return View(publication);
         }
-        
+
         // GET: Publications/Create
         public IActionResult Create()
         {
@@ -111,7 +129,7 @@ namespace LMS.Web.Controllers
             var createdPublication = JsonConvert.DeserializeObject<PublicationCreationDto>(content);
             return View(createdPublication);
         }
-        
+
         // GET: Publications/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -119,7 +137,7 @@ namespace LMS.Web.Controllers
             {
                 return NotFound();
             }
-            
+
             var request = new HttpRequestMessage(HttpMethod.Get, string.Join("/", baseRoute, id.ToString()));
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -131,7 +149,7 @@ namespace LMS.Web.Controllers
 
             return View(publication);
         }
-        
+
         // POST: Publications/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -155,13 +173,13 @@ namespace LMS.Web.Controllers
 
             return View();
         }
-        
+
         // GET: Publications/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             return View();
         }
-        
+
         // POST: Publications/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -169,6 +187,15 @@ namespace LMS.Web.Controllers
         {
             return RedirectToAction(nameof(Index));
         }
-        
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                httpClient?.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

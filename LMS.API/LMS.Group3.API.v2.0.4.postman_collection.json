@@ -618,6 +618,48 @@
 			"response": []
 		},
 		{
+			"name": "Put Author",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstName\": \"Trillian 'Trish'\",\n  \"lastName\": \"McMillan\",\n  \"dateOfBirth\": \"1970-07-14\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/authors/34",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"authors",
+						"34"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Post Author",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
@@ -852,7 +894,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"title\": \"Hitchhiker's Guide to the Galaxy: English Translation for Earthlings\",\n  \"description\": \"The famous, indespensible guide translated for Earthlings -- keep your towels ready!\",\n  \"publicationDate\": \"2020-05-05\",\n  \"level\": 1,\n  \"typeId\": 3,\n  \"subjectId\": 1,\n  \"authorIds\": [16, 37]\n}"
+					"raw": "{\n  \"title\": \"New Book\",\n  \"description\": \"A lengthy description\",\n  \"publicationDate\": \"2020-05-05\",\n  \"level\": 1,\n  \"typeId\": 3,\n  \"subjectId\": 1,\n  \"authorIds\": [16, 37]\n}"
 				},
 				"url": {
 					"raw": "https://localhost:5001/api/publications",
@@ -1003,7 +1045,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/api/publications/46",
+					"raw": "https://localhost:5001/api/publications/49",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -1012,7 +1054,7 @@
 					"path": [
 						"api",
 						"publications",
-						"46"
+						"49"
 					]
 				},
 				"description": "Delete author created in the first POST request\n"
