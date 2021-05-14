@@ -37,6 +37,44 @@ namespace LMS.Web.Controllers
             return View("GetCourses", module);
         }
 
+        // Check for Course Unique Title
+        public IActionResult VerifyName(Course course)
+        {
+          
+            if (_dbContext.Course.Any(c => c.Title.ToUpper() == course.Title.ToUpper()))
+            {
+                return Json("Course Title must be uppercase and unique");
+            }
+            return Json(true);
+        }
+
+        // Check for email exist
+
+        [AcceptVerbs("GET", "POST")]
+        public async Task<IActionResult> VerifyEmail(NewUserViewModel model, string email)
+        {
+            var foundEmail = await _dbContext.Course.Include(c => c.Students).ToListAsync();
+
+            var newList = new List<bool>();
+            foreach (var item in foundEmail)
+            {
+                foreach (var s in item.Students)
+                {
+                    newList.Add(s.Email == email);
+
+                }
+            }
+
+            var result = newList.Contains(true);
+
+            if (result) // is it wrong concept?
+            {
+                return Json($"Email {email} is already in use.");
+            }
+
+            return Json(true);
+        }
+
         // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -81,7 +119,7 @@ namespace LMS.Web.Controllers
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View("Details", course);
+            return View(course);
         }
 
         // GET: Courses/Edit/5
