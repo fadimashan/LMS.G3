@@ -134,8 +134,8 @@ namespace LMS.Web.Controllers
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
-            var content = await response.Content.ReadAsStringAsync();
-            var createdPublication = JsonConvert.DeserializeObject<PublicationWithAuthorsDto>(content);
+            // var content = await response.Content.ReadAsStringAsync();
+            // var createdPublication = JsonConvert.DeserializeObject<PublicationWithAuthorsDto>(content);
             // return RedirectToAction($"Details/{createdPublication.Id}");
             return RedirectToAction(nameof(Index));
             // return View("Details",createdPublication);
@@ -186,8 +186,7 @@ namespace LMS.Web.Controllers
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
-            var content = await response.Content.ReadAsStringAsync();
-            
+            // var content = await response.Content.ReadAsStringAsync();
             // var updatedPublication = JsonConvert.DeserializeObject<PublicationWithAuthorsDto>(content);
             // return View();
             return RedirectToAction(nameof(Index));
