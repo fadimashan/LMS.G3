@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +12,7 @@ using LMS.Core.Models;
 
 namespace LMS.Web.Controllers
 {
-    public class LiteratureController : Controller, IDisposable
+    public class LiteratureController : Controller
     {
         private const string baseAddress = "https://localhost:5001/";
         private const string baseRoute = "api/publications";
@@ -39,12 +37,6 @@ namespace LMS.Web.Controllers
             };
             httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        }
-
-        private static bool ServerCertificateCustomValidation(HttpRequestMessage requestMessage,
-            X509Certificate2 certificate, X509Chain chain, SslPolicyErrors sslErrors)
-        {
-            return sslErrors == SslPolicyErrors.None;
         }
 
         // GET
@@ -112,7 +104,7 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(PublicationCreationDto publication)
+        public async Task<IActionResult> Create([Bind("Title, Description, PublicationDate, Level, TypeId, SubjectId")]PublicationCreationDto publication)
         {
             var jsonData = JsonConvert.SerializeObject(publication);
 
@@ -120,14 +112,17 @@ namespace LMS.Web.Controllers
             {
                 Content = new StringContent(jsonData)
             };
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            var createdPublication = JsonConvert.DeserializeObject<PublicationCreationDto>(content);
-            return View(createdPublication);
+            var createdPublication = JsonConvert.DeserializeObject<PublicationWithAuthorsDto>(content);
+            // return RedirectToAction($"Details/{createdPublication.Id}");
+            return RedirectToAction(nameof(Index));
+            // return View("Details",createdPublication);
         }
 
         // GET: Publications/Edit/5
@@ -188,6 +183,14 @@ namespace LMS.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /*
+        private static bool ServerCertificateCustomValidation(HttpRequestMessage requestMessage,
+            X509Certificate2 certificate, X509Chain chain, SslPolicyErrors sslErrors)
+        {
+            return sslErrors == SslPolicyErrors.None;
+        }
+        */
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)

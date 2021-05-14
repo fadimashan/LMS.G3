@@ -59,7 +59,6 @@ namespace LMS.Web.Controllers
             return View(authors);
         }
 
-
         public async Task<IActionResult> GetAuthor(int id)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"api/authors/{id}");
@@ -94,9 +93,11 @@ namespace LMS.Web.Controllers
         public async Task<IActionResult> Create([Bind("FirstName,LastName,DateOfBirth")] AuthorCreationDto author)
         {
             var jsonData = JsonConvert.SerializeObject(author);
-            var request = new HttpRequestMessage(HttpMethod.Post, $"api/authors");
+            var request = new HttpRequestMessage(HttpMethod.Post, $"api/authors")
+            {
+                Content = new StringContent(jsonData)
+            };
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            request.Content = new StringContent(jsonData);
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -105,10 +106,13 @@ namespace LMS.Web.Controllers
             var requestByName = new HttpRequestMessage(HttpMethod.Get, $"api/authors/GetAuthorByName/{fullName}");
             requestByName.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var responseByName =  httpClient.Send(requestByName);
+            var responseByName =  await httpClient.SendAsync(requestByName);
 
             responseByName.EnsureSuccessStatusCode();
-            if (responseByName.IsSuccessStatusCode == false) return NotFound();
+            if (responseByName.IsSuccessStatusCode == false)
+            {
+                return NotFound();
+            }
             var content = await responseByName.Content.ReadAsStringAsync();
 
             var newAuthor = JsonConvert.DeserializeObject<AuthorDto>(content);
@@ -130,7 +134,10 @@ namespace LMS.Web.Controllers
             var response = await httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
-            if (response.IsSuccessStatusCode == false) return NotFound();
+            if (response.IsSuccessStatusCode == false)
+            {
+                return NotFound();
+            }
             var content = await response.Content.ReadAsStringAsync();
             AuthorCreationDto newAuthor;
 
