@@ -29,18 +29,20 @@ namespace LMS.Core.Entities.ViewModels
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
 
+        
         [Display(Name = "Password")]
         [Required(ErrorMessage = "The password is required")]
         [DataType(DataType.Password)]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
 
-        [Display(Name = "Confirmed Password")]
+
+        [Display(Name = "Confirm Password")]
+        [Required(ErrorMessage = "The confirm password is required")]
         [DataType(DataType.Password)]
-        [Compare("Password")]
-        [Required(ErrorMessage = "The confirmed password is required")]
+        [Compare("Password", ErrorMessage = "Password and Confirm Password do not match.")]
         [NotMapped]
-        public string ConfirmedPassword { get; set; }
+        public string ConfirmPassword { get; set; }
 
         public int CourseId { get; set; }
         public IEnumerable<SelectListItem> GetAllCourses { get; set; }

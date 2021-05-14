@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Core.Entities.ViewModels;
 using LMS.Data.Data;
+using static LMS.Web.Areas.Identity.Pages.Account.LoginModel;
 
 namespace LMS.Web.Controllers
 {
@@ -89,6 +90,7 @@ namespace LMS.Web.Controllers
             return Json(true);
         }
 
+
         // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -107,6 +109,7 @@ namespace LMS.Web.Controllers
 
             return View(course);
         }
+
 
         // GET: Courses/Create
         [Authorize(Roles = "Teacher")]
