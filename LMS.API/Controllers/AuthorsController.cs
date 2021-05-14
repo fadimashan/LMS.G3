@@ -106,7 +106,7 @@ namespace LMS.API.Controllers
         /* FIXME: Up to this point everything works properly as expected.
          The rest of the methods work too but must be refactored to utilise Repositories and DTOs*/
 
-        [HttpGet("UpdateAuthor/{id}")]
+        [HttpGet("Edit/{id}")]
         public async Task<ActionResult<AuthorCreationDto>> UpdateAuthor(int id)
         {
             var authorFromRepo = await _authorsRepository.GetAsync(id);

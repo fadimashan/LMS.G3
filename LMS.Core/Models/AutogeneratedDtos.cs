@@ -15,7 +15,10 @@ namespace LMS.Core.Models
 {
     using System;
     using System = global::System;
-    
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.4.1.0 (Newtonsoft.Json v12.0.0.0)")]
@@ -28,6 +31,7 @@ namespace LMS.Core.Models
         public string LastName { get; set; }
     
         [Newtonsoft.Json.JsonProperty("dateOfBirth", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
 
     }
@@ -78,13 +82,13 @@ namespace LMS.Core.Models
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.4.1.0 (Newtonsoft.Json v12.0.0.0)")]
     public enum DifficultyLevel
     {
-        _0 = 0,
-    
-        _1 = 1,
-    
-        _2 = 2,
-    
-        _3 = 3,
+        Beginner = 0,
+
+        Intermediate = 1,
+
+        Advanced = 2,
+
+        None = 3,
     
     }
     
@@ -98,7 +102,8 @@ namespace LMS.Core.Models
         public string Description { get; set; }
     
         [Newtonsoft.Json.JsonProperty("publicationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime PublicationDate { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime PublicationDate { get; set; }
     
         [Newtonsoft.Json.JsonProperty("level", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public DifficultyLevel Level { get; set; }
@@ -115,8 +120,17 @@ namespace LMS.Core.Models
         [Newtonsoft.Json.JsonProperty("subjectName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string SubjectName { get; set; }
         
-        [Newtonsoft.Json.JsonProperty("subject", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> GetAllSubjects { get; set; }
+        [Newtonsoft.Json.JsonProperty("AuthorIds", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ICollection<int> AuthorIds { get; set; } = new List<int>(); 
+
+        [NotMapped]
+        public IEnumerable<SelectListItem> GetSubjects { get; set; }
+        
+        [NotMapped]
+        public IEnumerable<SelectListItem> GetTypes { get; set; }
+
+        [NotMapped]
+        public MultiSelectList GetAuthors { get; set; }
 
     }
     
@@ -133,7 +147,8 @@ namespace LMS.Core.Models
         public string Description { get; set; }
     
         [Newtonsoft.Json.JsonProperty("publicationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime PublicationDate { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime PublicationDate { get; set; }
     
         [Newtonsoft.Json.JsonProperty("level", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public DifficultyLevel Level { get; set; }
@@ -149,8 +164,7 @@ namespace LMS.Core.Models
     
         [Newtonsoft.Json.JsonProperty("subjectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int SubjectId { get; set; }
-    
-    
+
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.4.1.0 (Newtonsoft.Json v12.0.0.0)")]
@@ -161,8 +175,7 @@ namespace LMS.Core.Models
     
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; set; }
-    
-    
+        
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.4.1.0 (Newtonsoft.Json v12.0.0.0)")]
@@ -178,7 +191,8 @@ namespace LMS.Core.Models
         public string Description { get; set; }
     
         [Newtonsoft.Json.JsonProperty("publicationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime PublicationDate { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime PublicationDate { get; set; }
     
         [Newtonsoft.Json.JsonProperty("level", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public DifficultyLevel Level { get; set; }
@@ -197,8 +211,7 @@ namespace LMS.Core.Models
     
         [Newtonsoft.Json.JsonProperty("authors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<AuthorDto> Authors { get; set; }
-    
-    
+        
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.4.1.0 (Newtonsoft.Json v12.0.0.0)")]
@@ -209,8 +222,7 @@ namespace LMS.Core.Models
     
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; set; }
-    
-    
+        
     }
 
 }

@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using LMS.Core.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace LMS.Web.Controllers
 {
@@ -101,7 +103,16 @@ namespace LMS.Web.Controllers
         // GET: Publications/Create
         public IActionResult Create()
         {
-            return View();
+            var items = GetAuthors().Result;
+            var multiItems = new MultiSelectList(items.OrderBy(i=> i.Text), "Value","Text");
+            var model = new PublicationCreationDto()
+            {
+                GetSubjects = GetSubjects().Result,
+                GetAuthors = multiItems,
+                GetTypes = GetTypes().Result
+
+            };
+            return View(model);
         }
 
         // POST: Publications/Create
@@ -109,7 +120,7 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title, Description, PublicationDate, Level, TypeId, SubjectId")]PublicationCreationDto publication)
+        public async Task<IActionResult> Create([Bind("Title, Description, PublicationDate, Level, TypeId, SubjectId,AuthorIds")]PublicationCreationDto publication)
         {
             var jsonData = JsonConvert.SerializeObject(publication);
 
@@ -232,6 +243,82 @@ namespace LMS.Web.Controllers
             }
 
             base.Dispose(disposing);
+        }
+
+
+        public async Task<IEnumerable<SelectListItem>> GetSubjects()
+        {
+            var subjects = new List<SelectListItem>();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/publications/subjects");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var response = await httpClient.SendAsync(request);
+
+            response.EnsureSuccessStatusCode();
+          
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            var subjectList = JsonConvert.DeserializeObject<IEnumerable<SubjectDto>>(content);
+
+            foreach (var subject in subjectList)
+            {
+                var selectListItem = (new SelectListItem
+                {
+                    Text = subject.Name,
+                    Value = subject.Id.ToString()
+                });
+                subjects.Add(selectListItem);
+            }
+            return (subjects);
+        }
+
+        public async Task<IEnumerable<SelectListItem>> GetAuthors()
+        {
+            var selectList = new List<SelectListItem>();
+
+            var response = await httpClient.GetAsync("api/authors");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            IEnumerable<AuthorDto> authors = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(content);
+          
+            foreach (var author in authors)
+            {
+                var authorName = author.FirstName + " " + author.LastName;
+                var selectListItem = new SelectListItem()
+                {
+                    
+                    Text = authorName,
+                    Value = author.Id.ToString()
+                };
+                selectList.Add(selectListItem);
+            }
+            return (selectList);
+        }
+        
+        public async Task<IEnumerable<SelectListItem>> GetTypes()
+        {
+            var selectList = new List<SelectListItem>();
+
+            var response = await httpClient.GetAsync("api/publications/types");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            IEnumerable<PublicationTypeDto> types = JsonConvert.DeserializeObject<IEnumerable<PublicationTypeDto>>(content);
+          
+            foreach (var type in types)
+            {
+                var selectListItem = new SelectListItem()
+                {
+                    
+                    Text = type.Name,
+                    Value = type.Id.ToString()
+                };
+                selectList.Add(selectListItem);
+            }
+            return (selectList);
         }
     }
 }
