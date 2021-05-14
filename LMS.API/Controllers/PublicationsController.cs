@@ -234,20 +234,33 @@ namespace LMS.API.Controllers
         // PUT: api/Publications/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult<PublicationDto>> UpdatePublication(int id, PublicationCreationDto publicationDto)
+        public async Task<ActionResult<PublicationWithAuthorsDto>> UpdatePublication(int id, PublicationCreationDto publicationDto)
         {
-            var publicationFromRepo = await _publicationsRepository.GetAsync(id);
+            var publicationFromRepo = await _publicationsRepository.GetWithAuthorsAsync(id);
 
             if (publicationFromRepo is null)
             {
                 return NotFound();
             }
 
+            if (publicationDto.AuthorIds.Count > 0)
+            {
+                publicationFromRepo.Authors.Clear();
+                foreach (var authorId in publicationDto.AuthorIds)
+                {
+                    var authorFromRepo = await _authorsRepository.GetAsync(authorId);
+                    if (authorFromRepo is not null)
+                    {
+                        publicationFromRepo.Authors.Add(authorFromRepo);
+                    }
+                }
+            }
+            
             _mapper.Map(publicationDto, publicationFromRepo);
 
             if (await _publicationsRepository.SaveAsync())
             {
-                return Ok(_mapper.Map<PublicationDto>(publicationFromRepo));
+                return Ok(_mapper.Map<PublicationWithAuthorsDto>(publicationFromRepo));
             }
             else
             {
