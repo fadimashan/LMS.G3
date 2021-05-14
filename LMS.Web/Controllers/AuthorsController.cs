@@ -1,30 +1,39 @@
-﻿using LMS.Core.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using LMS.Core.Models;
 
 namespace LMS.Web.Controllers
 {
     public class AuthorsController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private const string baseAddress = "https://localhost:5001/";
+
+        private readonly ILogger<AuthorsController> _logger;
         private readonly HttpClient httpClient;
 
-        public AuthorsController(ILogger<HomeController> logger)
+        public AuthorsController(ILogger<AuthorsController> logger)
         {
             _logger = logger;
 
-            httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("https://localhost:5001/");
-            httpClient.Timeout = new TimeSpan(0, 0, 10);
+            // FIXME: This is a temporary solution. Fix SSL certificate to prevent crashes
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+
+            httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri(baseAddress), 
+                Timeout = new TimeSpan(0, 0, 10)
+            };
 
             httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -38,18 +47,17 @@ namespace LMS.Web.Controllers
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             IEnumerable<AuthorDto> authors;
-            if (response.Content.Headers.ContentType.MediaType == "application/json")
+            if (response.Content.Headers.ContentType?.MediaType == "application/json")
             {
                 authors = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(content);
             }
             else
             {
-                var xmlSerialiser = new XmlSerializer(typeof(AuthorDto));
-                authors = (IEnumerable<AuthorDto>)xmlSerialiser.Deserialize(new StringReader(content));
+                var xmlSerializer = new XmlSerializer(typeof(AuthorDto));
+                authors = (IEnumerable<AuthorDto>)xmlSerializer.Deserialize(new StringReader(content));
             }
             return View(authors);
         }
-
 
         public async Task<IActionResult> GetAuthor(int id)
         {
@@ -63,14 +71,14 @@ namespace LMS.Web.Controllers
 
             AuthorDto author;
 
-            if (response.Content.Headers.ContentType.MediaType == "application/json")
+            if (response.Content.Headers.ContentType?.MediaType == "application/json")
             {
                 author = JsonConvert.DeserializeObject<AuthorDto>(content);
             }
             else
             {
-                var xmlSerialiser = new XmlSerializer(typeof(AuthorDto));
-                author = (AuthorDto)xmlSerialiser.Deserialize(new StringReader(content));
+                var xmlSerializer = new XmlSerializer(typeof(AuthorDto));
+                author = (AuthorDto)xmlSerializer.Deserialize(new StringReader(content));
             }
             return View(author);
         }
@@ -85,9 +93,11 @@ namespace LMS.Web.Controllers
         public async Task<IActionResult> Create([Bind("FirstName,LastName,DateOfBirth")] AuthorCreationDto author)
         {
             var jsonData = JsonConvert.SerializeObject(author);
-            var request = new HttpRequestMessage(HttpMethod.Post, $"api/authors");
+            var request = new HttpRequestMessage(HttpMethod.Post, $"api/authors")
+            {
+                Content = new StringContent(jsonData)
+            };
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            request.Content = new StringContent(jsonData);
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -96,14 +106,16 @@ namespace LMS.Web.Controllers
             var requestByName = new HttpRequestMessage(HttpMethod.Get, $"api/authors/GetAuthorByName/{fullName}");
             requestByName.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var responseByName =  httpClient.Send(requestByName);
+            var responseByName =  await httpClient.SendAsync(requestByName);
 
             responseByName.EnsureSuccessStatusCode();
-            if (responseByName.IsSuccessStatusCode == false) return NotFound();
+            if (responseByName.IsSuccessStatusCode == false)
+            {
+                return NotFound();
+            }
             var content = await responseByName.Content.ReadAsStringAsync();
-            AuthorDto newAuthor;
 
-            newAuthor = JsonConvert.DeserializeObject<AuthorDto>(content);
+            var newAuthor = JsonConvert.DeserializeObject<AuthorDto>(content);
 
             return Redirect($"Details/{newAuthor.Id}");
         }
@@ -122,18 +134,21 @@ namespace LMS.Web.Controllers
             var response = await httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
-            if (response.IsSuccessStatusCode == false) return NotFound();
+            if (response.IsSuccessStatusCode == false)
+            {
+                return NotFound();
+            }
             var content = await response.Content.ReadAsStringAsync();
             AuthorCreationDto newAuthor;
 
-            if (response.Content.Headers.ContentType.MediaType == "application/json")
+            if (response.Content.Headers.ContentType?.MediaType == "application/json")
             {
                 newAuthor = JsonConvert.DeserializeObject<AuthorCreationDto>(content);
             }
             else
             {
-                var xmlSerialiser = new XmlSerializer(typeof(AuthorCreationDto));
-                newAuthor = (AuthorCreationDto)xmlSerialiser.Deserialize(new StringReader(content));
+                var xmlSerializer = new XmlSerializer(typeof(AuthorCreationDto));
+                newAuthor = (AuthorCreationDto)xmlSerializer.Deserialize(new StringReader(content));
             }
 
             return View(newAuthor);
@@ -167,18 +182,21 @@ namespace LMS.Web.Controllers
             var response = await httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
-            if (response.IsSuccessStatusCode == false) return NotFound();
+            if (response.IsSuccessStatusCode == false)
+            {
+                return NotFound();
+            }
             var content = await response.Content.ReadAsStringAsync();
             AuthorWithPublicationsDto author;
 
-            if (response.Content.Headers.ContentType.MediaType == "application/json")
+            if (response.Content.Headers.ContentType?.MediaType == "application/json")
             {
                 author = JsonConvert.DeserializeObject<AuthorWithPublicationsDto>(content);
             }
             else
             {
-                var xmlSerialiser = new XmlSerializer(typeof(AuthorWithPublicationsDto));
-                author = (AuthorWithPublicationsDto)xmlSerialiser.Deserialize(new StringReader(content));
+                var xmlSerializer = new XmlSerializer(typeof(AuthorWithPublicationsDto));
+                author = (AuthorWithPublicationsDto)xmlSerializer.Deserialize(new StringReader(content));
             }
 
             return View(author);
@@ -196,14 +214,14 @@ namespace LMS.Web.Controllers
 
             AuthorDto author;
 
-            if (response.Content.Headers.ContentType.MediaType == "application/json")
+            if (response.Content.Headers.ContentType?.MediaType == "application/json")
             {
                 author = JsonConvert.DeserializeObject<AuthorDto>(content);
             }
             else
             {
-                var xmlSerialiser = new XmlSerializer(typeof(AuthorDto));
-                author = (AuthorDto)xmlSerialiser.Deserialize(new StringReader(content));
+                var xmlSerializer = new XmlSerializer(typeof(AuthorDto));
+                author = (AuthorDto)xmlSerializer.Deserialize(new StringReader(content));
             }
             return View(author);
         }
