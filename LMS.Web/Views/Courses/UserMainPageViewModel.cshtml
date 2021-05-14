@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<LMS.Core.Entities.Course>
 
 <div class="row text-center mx-auto mb-0 " id="btn-card" style="top:-90px;">
-    @*style="top:-90px;"*@
+  
     <div class="col text-center mx-auto" style="top:-90px;" >
         <div class="categorie-item">
             <div class="ci-text">
@@ -12,8 +12,8 @@
 </div>
 
 <div id="course" class="mt-0" style="top:-90px;">
-    <div class="btn-group">
-        <p class="btn btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Course participants</p>
+    <div class="btn-group m-lg-auto">
+        <p class="btn btn-outline-secondary ml-4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Course participants</p>
         <div class="dropdown-menu ">
             @foreach (var student in Model.FirstOrDefault().Students)
             {
@@ -67,7 +67,7 @@
                         <tr id="@newId" class="collapse desc-text" aria-expanded="false">
                             <td colspan="3" class="desc-text">
                                 @Html.DisplayNameFor(modelItem => item.Description):
-                                @Html.DisplayFor(modelItem => item.Description)
+                                @Html.DisplayFor(modelItem => item.Description) "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
                             </td>
                         </tr>
                     }
