@@ -29,7 +29,7 @@ namespace LMS.Web
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     options.UseSqlServer(
-                        Configuration.GetConnectionString("SQLServerConnectionMvc")    
+                        Configuration.GetConnectionString("SQLServerConnectionMvc")
                     ).LogTo(System.Console.WriteLine, LogLevel.Information);
                 }
                 else
@@ -45,16 +45,15 @@ namespace LMS.Web
             services.AddDefaultIdentity<ApplicationUser>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
-            })
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<MvcDbContext>();
+            }).AddRoles<IdentityRole>()
+              .AddEntityFrameworkStores<MvcDbContext>();
 
-            services.Configure<MvcDbContext>(o => o.Database.Migrate());
+            services.Configure<MvcDbContext>(db => db.Database.Migrate());
 
             services.AddControllersWithViews();
 
             // services.AddDbContext<MvcDbContext>(options =>
-            //         options.UseSqlServer(Configuration.GetConnectionString("MvcDbContext")).LogTo(System.Console.WriteLine, LogLevel.Information));
+            //         options.UseSqlServer(Configuration.GetConnectionString("LMSWebContext")).LogTo(System.Console.WriteLine, LogLevel.Information));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

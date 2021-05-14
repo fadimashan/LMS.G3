@@ -16,7 +16,8 @@ namespace LMS.API.Profiles
                 )
                 .ForMember(dest => dest.SubjectName,
                     opt => opt.MapFrom(
-                        src => src.Subject.Name));
+                        src => src.Subject.Name))
+                .ReverseMap();
             
             CreateMap<Publication, PublicationWithAuthorsDto>()
                 .ForMember(dest => dest.TypeName,
@@ -26,7 +27,8 @@ namespace LMS.API.Profiles
                 )
                 .ForMember(dest => dest.SubjectName,
                     opt => opt.MapFrom(
-                        src => src.Subject.Name));
+                        src => src.Subject.Name))
+                .ReverseMap();
 
             CreateMap<PublicationCreationDto, Publication>();
         }

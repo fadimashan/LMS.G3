@@ -298,7 +298,7 @@ namespace LMS.Web.Controllers
                 UserName = userVM.FirstName,
                 Email = userVM.Email,
             };
-            
+
             var type = userVM.RoleType == "A" ? "Student" : "Teacher";
 
             var addStudentResult = await _userManager.CreateAsync(newUser, userVM.Password);

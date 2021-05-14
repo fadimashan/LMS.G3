@@ -348,7 +348,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/api/publications/15",
+					"raw": "https://localhost:5001/api/publications/47",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -357,7 +357,7 @@
 					"path": [
 						"api",
 						"publications",
-						"15"
+						"47"
 					]
 				}
 			},
@@ -641,7 +641,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"firstName\": \"Marvin\",\n  \"lastName\": \"Paranoid Android\",\n  \"dateOfBirth\": \"1001-04-14T00:00:00\"\n}"
+					"raw": "{\n  \"firstName\": \"Arthur\",\n  \"lastName\": \"Dent\",\n  \"dateOfBirth\": \"1965-07-14\"\n}"
 				},
 				"url": {
 					"raw": "https://localhost:5001/api/authors",
@@ -829,7 +829,7 @@
 			"response": []
 		},
 		{
-			"name": "Post Publication with New Authors",
+			"name": "Post Publication with Existing Authors",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept": true,
@@ -852,7 +852,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"title\": \"Constructing new habitable worlds\",\n  \"description\": \"How the esthetics of the Norway's fjords have helped Slartibarfast mature as an artist\",\n  \"publicationDate\": \"2021-05-07T00:00:00\",\n  \"level\": 1,\n  \"typeId\": 3,\n  \"subjectId\": 1,\n  \"authors\": [\n    {\n      \"firstName\": \"Slartibartfast\",\n      \"lastName\": \"The Ancient\",\n      \"dateOfBirth\": \"0001-05-07T00:00:00\"\n    },\n    {\n      \"firstName\": \"Agrajag\",\n      \"lastName\": \"The Unlucky\",\n      \"dateOfBirth\": \"1960-01-01\"\n    }\n  ]\n}"
+					"raw": "{\n  \"title\": \"New Book\",\n  \"description\": \"A lengthy description\",\n  \"publicationDate\": \"2020-05-05\",\n  \"level\": 1,\n  \"typeId\": 3,\n  \"subjectId\": 1,\n  \"authorIds\": [16, 37]\n}"
 				},
 				"url": {
 					"raw": "https://localhost:5001/api/publications",
@@ -954,6 +954,90 @@
 			"response": []
 		},
 		{
+			"name": "Put Author",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstName\": \"Trillian 'Trish'\",\n  \"lastName\": \"McMillan\",\n  \"dateOfBirth\": \"1970-07-14\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/authors/34",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"authors",
+						"34"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put Publication with Existing Authors",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"New Book\",\n  \"description\": \"A lengthy description\",\n  \"publicationDate\": \"2020-05-05\",\n  \"level\": 1,\n  \"typeId\": 3,\n  \"subjectId\": 1,\n  \"authorIds\": [8, 35]\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/publications/51",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"publications",
+						"51"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Delete Author",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
@@ -1003,7 +1087,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/api/publications/43",
+					"raw": "https://localhost:5001/api/publications/49",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -1012,7 +1096,7 @@
 					"path": [
 						"api",
 						"publications",
-						"43"
+						"49"
 					]
 				},
 				"description": "Delete author created in the first POST request\n"

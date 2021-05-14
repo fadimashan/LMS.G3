@@ -24,6 +24,7 @@ namespace LMS.API.Controllers
         
         public PublicationsController(IPublicationsRepository publicationsRepository, IAuthorsRepository authorsRepository, IMapper mapper)
         {
+            // _dbContext = context;
             _publicationsRepository = publicationsRepository ?? throw new ArgumentNullException(nameof(publicationsRepository));
             _authorsRepository = authorsRepository ?? throw new ArgumentNullException(nameof(mapper));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -123,29 +124,29 @@ namespace LMS.API.Controllers
         // POST: api/Publications
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<PublicationDto>> CreatePublication(PublicationCreationDto newPublication)
+        public async Task<ActionResult<PublicationWithAuthorsDto>> CreatePublication(PublicationCreationDto newPublication)
         {
-            // OLD: _dbContext.Publications.Add(publication);
-            // OLD: await _dbContext.SaveChangesAsync();
-            
-            // 1. Test if PublicationType is valid
-            // if (newPublication.TypeId is null && string.IsNullOrWhiteSpace(newPublication.TypeName))
-            // {
-            //     return BadRequest();
-            // }
-            
-            // 1.2 If PublicationType doesn't exist -- create it
-            // 2. Test if Subject is valid
-            // 2.2 If Subject doesn't exist -- create it
-            
-            // 3. Map the DTO to the Publication Entity
+            // Map the DTO to the Publication Entity
             var publicationEntity = _mapper.Map<Publication>(newPublication);
-            // 4. Add the Publication entity to the DB and Save it
+            
+            // For each AuthorId find the corresponding author
+            // and if it's not null -- add it
+            publicationEntity.Authors = new List<Author>();
+            foreach (var authorId in newPublication.AuthorIds)
+            {
+                var authorFromRepo = await _authorsRepository.GetAsync(authorId);
+                if (authorFromRepo is not null)
+                {
+                    publicationEntity.Authors.Add(authorFromRepo);
+                }
+            }
+            // Add the Publication entity to the DB
             await _publicationsRepository.AddPublicationAsync(publicationEntity);
+            // Save the changes to the DB
             await _publicationsRepository.SaveAsync();
             
-            // 5. Return the corresponding DTO
-            var publicationToReturn = _mapper.Map<PublicationDto>(publicationEntity);
+            // Return the corresponding DTO
+            var publicationToReturn = _mapper.Map<PublicationWithAuthorsDto>(publicationEntity);
             // OLD: return CreatedAtRoute("GetPublication", new {id = publicationToReturn.Id}, publicationToReturn);
             return CreatedAtAction("GetPublication", new { id = publicationToReturn.Id }, publicationToReturn);
         }
@@ -232,20 +233,33 @@ namespace LMS.API.Controllers
         // PUT: api/Publications/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult<PublicationDto>> UpdatePublication(int id, PublicationCreationDto publicationDto)
+        public async Task<ActionResult<PublicationWithAuthorsDto>> UpdatePublication(int id, PublicationCreationDto publicationDto)
         {
-            var publicationFromRepo = await _publicationsRepository.GetAsync(id);
+            var publicationFromRepo = await _publicationsRepository.GetWithAuthorsAsync(id);
 
             if (publicationFromRepo is null)
             {
                 return NotFound();
             }
 
+            if (publicationDto.AuthorIds.Count > 0)
+            {
+                publicationFromRepo.Authors.Clear();
+                foreach (var authorId in publicationDto.AuthorIds)
+                {
+                    var authorFromRepo = await _authorsRepository.GetAsync(authorId);
+                    if (authorFromRepo is not null)
+                    {
+                        publicationFromRepo.Authors.Add(authorFromRepo);
+                    }
+                }
+            }
+            
             _mapper.Map(publicationDto, publicationFromRepo);
 
             if (await _publicationsRepository.SaveAsync())
             {
-                return Ok(_mapper.Map<PublicationDto>(publicationFromRepo));
+                return Ok(_mapper.Map<PublicationWithAuthorsDto>(publicationFromRepo));
             }
             else
             {

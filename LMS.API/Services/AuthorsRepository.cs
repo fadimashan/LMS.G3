@@ -99,12 +99,7 @@ namespace LMS.API.Services
             }
             await _dbContext.AddAsync(author);
         }
-/*
-        public async void UpdateAsync(Publication publication)
-        {
-            throw new NotImplementedException();
-        }
-*/
+
         public async Task RemoveAsync(Author author)
         {
             _dbContext.Authors.Remove(author);
@@ -122,5 +117,12 @@ namespace LMS.API.Services
             return _dbContext.Authors.Any(a => a.Id == id);
         }
 
+        public async Task<Author> GetByNameAsync(string name)
+        {
+
+            var author = await _dbContext.Authors.Where(a => a.FirstName + a.LastName == name)
+                 .FirstOrDefaultAsync();
+            return author;
+        }
     }
 }
