@@ -102,6 +102,11 @@ namespace LMS.Web.Controllers
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
+            var content1 = await response.Content.ReadAsStringAsync();
+            var newAuthor1 = JsonConvert.DeserializeObject<AuthorDto>(content1);
+
+
+
             var fullName = author.FirstName + author.LastName;
             var requestByName = new HttpRequestMessage(HttpMethod.Get, $"api/authors/GetAuthorByName/{fullName}");
             requestByName.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

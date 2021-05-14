@@ -17,6 +17,6 @@ namespace LMS.API.Models.DTO
         public int SubjectId { get; set; }
         public string SubjectName { get; set; }
 
-        public ICollection<int> AuthorIds = new List<int>();
+        public ICollection<int> AuthorIds { get; set; } = new List<int>(); 
     }
 }
