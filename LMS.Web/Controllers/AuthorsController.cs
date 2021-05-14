@@ -109,14 +109,14 @@ namespace LMS.Web.Controllers
         }
 
 
-        public async Task<IActionResult> UpdateAuthor(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id is null)
             {
                 return NotFound();
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/authors/UpdateAuthor/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/authors/Edit/{id}");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var response = await httpClient.SendAsync(request);
@@ -141,7 +141,7 @@ namespace LMS.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateAuthor(int id, [Bind("Id,FirstName,LastName,DateOfBirth")] AuthorCreationDto author)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,DateOfBirth")] AuthorCreationDto author)
         {
             var jsonData = JsonConvert.SerializeObject(author);
             var request = new HttpRequestMessage(HttpMethod.Put, $"api/authors/{id}");
@@ -151,7 +151,7 @@ namespace LMS.Web.Controllers
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
-            return RedirectToAction("GetAuthors");
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Details(int? id)

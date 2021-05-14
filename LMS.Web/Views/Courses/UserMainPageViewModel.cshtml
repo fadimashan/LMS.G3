@@ -25,18 +25,17 @@
         <div class="col-md">
             <table class="table  table-dark table-striped text-white m-2 overflow-scroll">
                 <thead>
-                    <tr class="text-start">
-                        <th class="text-start">
+                    <tr class="text-center">
+                        <th class="text-center">
                             Module Title
                         </th>
-                        <th class="text-start" colspan="2">
+                        <th class="text-center" colspan="2">
                             Start Date
                         </th>
                         <th></th>
-                        <th class="text-start">
+                        <th class="text-center">
                             Period
                         </th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody class="table-body">
@@ -90,14 +89,15 @@
                                     <div class="col-sd-2">
                                         <div class="categorie-item" id="card-main-item ">
                                             @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
-                                                var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg"; }
+                                                var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg";
+                                                var period = (int)(item.EndDate - item.StartDate).TotalDays / 30; var atLeast = period == 0 ? 1 : period; }
                                             <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
                                                 <div class="ci-thumb set-bg" data-setbg=@link></div>
                                                 <div class="ci-text">
 
                                                     <h5>@Html.DisplayFor(modelItem => item.Name)</h5>
                                                     <p>@Html.DisplayFor(modelItem => item.ActivityType)</p>
-                                                    <span>@Html.DisplayFor(modelItem => start) -  @Html.DisplayFor(modelItem => end)</span>
+                                                    <span>@atLeast Month. Strat date: @Html.DisplayFor(modelItem => start) </span>
                                                 </div>
                                             </a>
 
