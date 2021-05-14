@@ -75,7 +75,12 @@ namespace LMS.Web.Controllers
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var response = await httpClient.SendAsync(request);
-
+            response.EnsureSuccessStatusCode();
+            if (response.IsSuccessStatusCode == false)
+            {
+                return NotFound();
+            }
+            
             var content = await response.Content.ReadAsStringAsync();
 
             PublicationWithAuthorsDto publication;
@@ -137,6 +142,12 @@ namespace LMS.Web.Controllers
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var response = await httpClient.SendAsync(request);
+            
+            response.EnsureSuccessStatusCode();
+            if (response.IsSuccessStatusCode == false)
+            {
+                return NotFound();
+            }
 
             var content = await response.Content.ReadAsStringAsync();
 
@@ -150,7 +161,7 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, PublicationCreationDto publication)
+        public async Task<IActionResult> Edit(int id, [Bind("Title, Description, PublicationDate, Level, TypeId, SubjectId")] PublicationCreationDto publication)
         {
             var jsonData = JsonConvert.SerializeObject(publication);
 
@@ -158,21 +169,38 @@ namespace LMS.Web.Controllers
             {
                 Content = new StringContent(jsonData)
             };
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            var updatedPublication = JsonConvert.DeserializeObject<PublicationWithAuthorsDto>(content);
-
-            return View();
+            
+            // var updatedPublication = JsonConvert.DeserializeObject<PublicationWithAuthorsDto>(content);
+            // return View();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Publications/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            return View();
+            if (id is null)
+            {
+                return NotFound();
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Get, string.Join("/", baseRoute, id.ToString()));
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            
+            var response = await httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+
+            PublicationWithAuthorsDto publication = JsonConvert.DeserializeObject<PublicationWithAuthorsDto>(content);
+            
+            return View(publication);
         }
 
         // POST: Publications/Delete/5
@@ -180,6 +208,11 @@ namespace LMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var request = new HttpRequestMessage(HttpMethod.Delete, string.Join("/", baseRoute, id.ToString()));
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            
+            var response = await httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
             return RedirectToAction(nameof(Index));
         }
 

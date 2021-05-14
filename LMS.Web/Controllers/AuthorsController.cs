@@ -182,7 +182,10 @@ namespace LMS.Web.Controllers
             var response = await httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
-            if (response.IsSuccessStatusCode == false) return NotFound();
+            if (response.IsSuccessStatusCode == false)
+            {
+                return NotFound();
+            }
             var content = await response.Content.ReadAsStringAsync();
             AuthorWithPublicationsDto author;
 
@@ -192,8 +195,8 @@ namespace LMS.Web.Controllers
             }
             else
             {
-                var xmlSerialiser = new XmlSerializer(typeof(AuthorWithPublicationsDto));
-                author = (AuthorWithPublicationsDto)xmlSerialiser.Deserialize(new StringReader(content));
+                var xmlSerializer = new XmlSerializer(typeof(AuthorWithPublicationsDto));
+                author = (AuthorWithPublicationsDto)xmlSerializer.Deserialize(new StringReader(content));
             }
 
             return View(author);
