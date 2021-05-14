@@ -2,23 +2,25 @@
 
 <div class="text-center justify-content-center">
     <h2 class="m-2 text-center text-muted">LMS Courses</h2>
+    <a type="button" class="btn btn-outline-info m-2 text-center" asp-controller="Courses" asp-action="GetAllStudents">All Students</a>
+
     <hr />
     <br />
-    <div class="btn-group text-center m-2">
-        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  class="site-btn m-2 text-center">Create</p>
-        <div class="dropdown-menu shadow">
-            <a asp-controller="Courses" asp-action="Create" type="button" class="dropdown-item">Course</a>
-            <a asp-controller="Modules" asp-action="Create" type="button" class="dropdown-item">Module</a>
-            <a asp-controller="Activities" asp-action="Create" type="button" class="dropdown-item">Activity</a>
-        </div>
 
-        <a type="button" class="site-btn m-2 text-center" asp-controller="Courses" asp-action="GetAllStudents" style="width:max-content;">All Students</a>
 
-    </div>
 </div>
+<div class="btn-group">
+    <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="site-btn">Create</p>
+    <div class="dropdown-menu shadow">
+        <a asp-controller="Courses" asp-action="Create" type="button" class="dropdown-item">Course</a>
+        <a asp-controller="Modules" asp-action="Create" type="button" class="dropdown-item">Module</a>
+        <a asp-controller="Activities" asp-action="Create" type="button" class="dropdown-item">Activity</a>
+    </div>
 
+
+</div>
 <table class="table table-striped">
-    <thead>
+    <thead class="text-muted">
         <tr class="text-muted fs-3">
             <th> <h5>Title </h5></th>
             <th class="text-center text-muted"> <h5>Period </h5></th>
@@ -79,7 +81,7 @@
 
                         @foreach (var student in item.Students)
                         {
-                            <a class="dropdown-item">Name: @student.FirstName @student.LastName <br/>Email: @student.Email <hr/></a>
+                            <a class="dropdown-item">Name: @student.FirstName @student.LastName <br />Email: @student.Email <hr /></a>
                         }
                     </div>
 

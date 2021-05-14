@@ -349,5 +349,19 @@ namespace LMS.Web.Controllers
             }
             return (courses);
         }
+
+        public async Task<IActionResult> GetStudent(string name)
+        {
+            var query =  string.IsNullOrWhiteSpace(name) ?
+               _dbContext.Users :
+            _dbContext.Users.Where(u => u.FirstName.StartsWith(name) || u.LastName.StartsWith(name));
+           
+            //return View(nameof(Index), await model.ToListAsync());
+
+
+
+
+            return View(query.ToListAsync());
+        }
     }
 }
