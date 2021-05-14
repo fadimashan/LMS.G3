@@ -37,7 +37,6 @@ namespace LMS.Data.Data
             //    .HasMany(m => m.Activities)
             //    .WithOne(m => m.Module)
             //    .OnDelete(DeleteBehavior.NoAction);
-
         }
     }
 }

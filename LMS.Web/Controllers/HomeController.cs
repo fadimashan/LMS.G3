@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Xml.Serialization;
-using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using LMS.Web.Models;
-using LMS.Core.Models;
 
 namespace LMS.Web.Controllers
 {
@@ -90,6 +81,5 @@ namespace LMS.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        
     }
 }

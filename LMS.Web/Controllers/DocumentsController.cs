@@ -1,46 +1,59 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using LMS.Core.Entities.ViewModels;
 using LMS.Core.Entities;
 using LMS.Data.Data;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using LMS.Core.Entities.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-
 
 namespace LMS.Web.Controllers
 {
     public class DocumentsController : Controller
     {
         private readonly MvcDbContext _dbContext;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DocumentsController(MvcDbContext context)
+        public DocumentsController(MvcDbContext context, UserManager<ApplicationUser> userManager)
         {
             _dbContext = context;
+            _userManager = userManager;
         }
 
         //GET: Documents
         public async Task<IActionResult> Index()
         {
-            return View(await _dbContext.Document.ToListAsync());
+            return View(await _dbContext.Document
+                .OrderBy(d => d.Name)
+                .ToListAsync());
         }
-
-
-        //GET: UploadedFiles
-        public IActionResult Files()
+        
+        //GET: Read exist Files
+        public IActionResult Files(int? courseId , int? moduleId, int? activityId)
         {
             // Get files from the server
             var model = new FilesViewModel();
+            var userId = _userManager.GetUserId(User);
 
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
             {
+
                 model.Files.Add(
-                    new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
+                    new FileDetails 
+                    {
+                        Name = System.IO.Path.GetFileName(item),
+                        UserName = User.Identity.Name,
+                        UploadTime = DateTime.Now,
+                        CourseId = courseId,
+                        ModuleId = moduleId,
+                        ActivityId = activityId,
+                        UserId = userId,
+                        Path = item 
+                    }) ;
             }
 
             return View(model);
@@ -60,7 +73,6 @@ namespace LMS.Web.Controllers
                 {
                     var fileName = System.IO.Path.GetFileName(file.FileName);
 
-
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", fileName);
 
                     if (System.IO.File.Exists(filePath))
@@ -74,7 +86,6 @@ namespace LMS.Web.Controllers
                         uploadedFile.CopyTo(localFile);
                     }
                 }
-
                 ViewBag.Message = "Files are successfully uploaded";
             }
           
@@ -83,11 +94,16 @@ namespace LMS.Web.Controllers
 
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files")))
             {
-                model.Files.Add(new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
+                model.Files.Add(
+                    new FileDetails
+                    {
+                        Name = System.IO.Path.GetFileName(item), 
+                        Path = item
+                    });
             }
             return View(model);
         }
-
+        
         /// <summary>
         /// Downlaod Files
         /// </summary>
@@ -95,12 +111,15 @@ namespace LMS.Web.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Download(string filename)
         {
-            if (filename == null)
+            if (filename is null)
+            {
                 return Content("filename is not availble");
+            }
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", filename);
 
             var memory = new MemoryStream();
+            
             using (var stream = new FileStream(path, FileMode.Open))
             {
                 await stream.CopyToAsync(memory);
@@ -144,6 +163,7 @@ namespace LMS.Web.Controllers
 
             var document = await _dbContext.Document
                 .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (document is null)
             {
                 return NotFound();
@@ -167,7 +187,7 @@ namespace LMS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _dbContext.Add(document);
+                await _dbContext.AddAsync(document);
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -233,9 +253,10 @@ namespace LMS.Web.Controllers
             {
                 return NotFound();
             }
-
-            var document = await _dbContext.Document.FirstOrDefaultAsync(m => m.Id == id);
-
+            
+            var document = await _dbContext.Document
+                .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (document is null)
             {
                 return NotFound();

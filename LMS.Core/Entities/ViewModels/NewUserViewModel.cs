@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LMS.Core.Entities.ViewModels
@@ -7,9 +7,10 @@ namespace LMS.Core.Entities.ViewModels
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Email { get; set; }
-        
+      
         public string RoleType { get; set; }
+      
+        public string Email { get; set; }
         public string Password { get; set; }
 
         public int CourseId { get; set; }
