@@ -9,12 +9,13 @@ namespace LMS.Core.Entities.ViewModels
 {
     public class NewUserViewModel
     {
-        [CheckUserName]
+        [Remote(action: "VerifyName", controller: "Courses", AdditionalFields = nameof(LastName))]
         [Display(Name = "First Name")]
         [Required(ErrorMessage = "First Name is required")]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "First Name must be between 3 to 50 characters")]
         public string FirstName { get; set; }
 
+        [Remote(action: "VerifyName", controller: "Courses", AdditionalFields = nameof(FirstName))]
         [Display(Name = "Last Name")]
         [Required(ErrorMessage = "Last Name is required")]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "Last Name must be between 3 to 50 characters")]
@@ -22,7 +23,6 @@ namespace LMS.Core.Entities.ViewModels
 
         public string RoleType { get; set; }
 
-        //[CheckUserEmail]
         [Remote(action: "VerifyEmail", controller: "Courses")]
         [Display(Name ="Email address")]
         [Required(ErrorMessage ="The email address is required")]
@@ -32,6 +32,7 @@ namespace LMS.Core.Entities.ViewModels
         [Display(Name = "Password")]
         [Required(ErrorMessage = "The password is required")]
         [DataType(DataType.Password)]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
 
         [Display(Name = "Confirmed Password")]

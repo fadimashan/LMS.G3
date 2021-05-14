@@ -51,7 +51,7 @@ namespace LMS.Web.Controllers
         // Check for email exist
 
         [AcceptVerbs("GET", "POST")]
-        public async Task<IActionResult> VerifyEmail(NewUserViewModel model, string email)
+        public async Task<IActionResult> VerifyEmail(string email)
         {
             var foundEmail = await _dbContext.Course.Include(c => c.Students).ToListAsync();
 
@@ -70,6 +70,20 @@ namespace LMS.Web.Controllers
             if (result) // is it wrong concept?
             {
                 return Json($"Email {email} is already in use.");
+            }
+
+            return Json(true);
+        }
+
+
+        // Check for user FirstName and LastName
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyName(NewUserViewModel model, string firstName, string lastName)
+        {
+            if(model.FirstName == lastName || model.LastName == firstName)
+            {
+                return Json($"First name: {firstName}, must not be the same with Last Name: {lastName}");
             }
 
             return Json(true);
@@ -353,19 +367,19 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            if (await _userManager.IsInRoleAsync(userFromManager, userVM.RoleType))
+            if (await _userManager.IsInRoleAsync(userFromManager, type))
             {
                 return NotFound();
             }
 
-            var addToRoleResult = await _userManager.AddToRoleAsync(userFromManager, userVM.RoleType);
+            var addToRoleResult = await _userManager.AddToRoleAsync(userFromManager, type);
 
             if (!addToRoleResult.Succeeded)
             {
                 throw new Exception(string.Join("\n", addToRoleResult.Errors));
             }
             
-            if (userVM.RoleType == RoleType.Student.ToString())
+            if (type == RoleType.Student.ToString())
             {
                 var enrol = new ApplicationUserCourse
                 {
