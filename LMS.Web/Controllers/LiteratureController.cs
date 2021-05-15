@@ -120,7 +120,7 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title, Description, PublicationDate, Level, TypeId, SubjectId,AuthorIds")]PublicationCreationDto publication)
+        public async Task<IActionResult> Create([Bind("Title, Description, PublicationDate, Level, TypeId, SubjectId, AuthorIds")] PublicationCreationDto publication)
         {
             var jsonData = JsonConvert.SerializeObject(publication);
 
