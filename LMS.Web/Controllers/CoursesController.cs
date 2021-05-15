@@ -81,6 +81,7 @@ namespace LMS.Web.Controllers
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            // return View("GetCourses", course);
             return View("Details", course);
         }
 
@@ -171,7 +172,7 @@ namespace LMS.Web.Controllers
 
         private bool CourseExists(int id)
         {
-            return _dbContext.Course.Any(e => e.Id == id);
+            return _dbContext.Course.Any(c => c.Id == id);
         }
         
         // public async Task<IActionResult> UserMainPageViewModel()
@@ -196,6 +197,7 @@ namespace LMS.Web.Controllers
                     .ToListAsync();
                 
                 return View("GetCourses", modules);
+                // return Redirect("/courses/GetCourses);
             }
 
             if (moduleID is null && User.IsInRole("Student"))
@@ -252,6 +254,20 @@ namespace LMS.Web.Controllers
 
             return View("GetAllStudents", students);
         }
+        
+        /*
+        public async Task<IActionResult> GetStudentByName(string name)
+        {
+            var students = await _dbContext.Course
+                .Where(c => c.Students.Any(s => s.LastName.StartsWith(name) || s.FirstName.StartsWith(name) || name == null))
+                .Include( c=> c.Students)
+                .ToListAsync();
+
+
+
+            return View("GetAllStudents", students);
+        }
+        */
 
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
