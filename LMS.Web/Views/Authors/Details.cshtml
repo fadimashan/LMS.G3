@@ -7,11 +7,11 @@
     @{var fullName = Model.FirstName + " " + Model.LastName;}
 
 
-    Name: @Html.DisplayFor(model => fullName) & Age:  @Html.DisplayFor(model => model.Age)
+    Name: @Html.DisplayFor(model => fullName),  @Html.DisplayFor(model => model.Age) Year old.
 </h4>
 <form asp-action="Delete" class="text-center">
    
-    <a asp-action="Index" class="btn btn-outline-info">Back to List</a>
+    <a asp-action="Index" class="btn btn-outline-info">Back</a>
 </form>
 
 <hr />

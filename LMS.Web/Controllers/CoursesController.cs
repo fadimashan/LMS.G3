@@ -255,12 +255,9 @@ namespace LMS.Web.Controllers
         public async Task<IActionResult> GetStudentByName(string name)
         {
             var students = await _dbContext.Course
-                .Where(c => c.Students.Any(s => s.LastName.StartsWith(name) || s.FirstName.StartsWith(name) || name == null))
+                .Where(c => c.Students.Any(s => s.LastName.ToLower().StartsWith(name.ToLower()) || s.FirstName.ToLower().StartsWith(name.ToLower()) || name == null))
                 .Include( c=> c.Students)
                 .ToListAsync();
-
-
-
             return View("GetAllStudents", students);
         }
 

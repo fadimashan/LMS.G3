@@ -13,14 +13,14 @@
             </h4>
             <hr />
             <h4 class="text-start  text-muted">
-                @{ var startD = @Model.StartDate.ToString("M"); var period = (int)(Model.EndDate - Model.StartDate).TotalDays / 30; }
+                @{ var startD = @Model.StartDate.ToString("g"); var period = (Model.EndDate - Model.StartDate).TotalHours; }
                 Start date: <small> @startD</small>
             </h4>
           
             <hr />
           
             <h4 class="text-start  text-muted">
-                Period: <small> @period Month</small>
+                Period: <small> @period Hours</small>
             </h4>
           
             <hr />
@@ -31,7 +31,6 @@
 
             <hr />
           
-            <button class="site-btn">Delete</button>
         </div>
         <div class="col-5 justify-content-center mt-5">
             @{ var activityIs = Model.ActivityType.ToString(); var link = $"/img/activity-c/{activityIs}.jfif";}

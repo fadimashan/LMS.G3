@@ -54,16 +54,13 @@ namespace LMS.Web.Controllers
                 if (response.Content.Headers.ContentType?.MediaType == "application/json")
                 {
                     authors = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(content);
-                    authors = authors.Where(a => a.FirstName.ToLower().StartsWith(name) || a.LastName.ToLower().StartsWith(name)
-                    || a.FirstName.ToUpper().StartsWith(name) || a.LastName.ToUpper().StartsWith(name)
-                    );
+                    authors = authors.Where(a => a.FirstName.ToLower().StartsWith(name.ToLower()) || a.LastName.ToLower().StartsWith(name.ToLower()));
                 }
                 else
                 {
                     var xmlSerializer = new XmlSerializer(typeof(AuthorDto));
                     authors = (IEnumerable<AuthorDto>)xmlSerializer.Deserialize(new StringReader(content));
-                    authors = authors.Where(a => a.FirstName.ToLower().StartsWith(name) || a.LastName.ToLower().StartsWith(name)
-                    || a.FirstName.ToUpper().StartsWith(name) || a.LastName.ToUpper().StartsWith(name)
+                    authors = authors.Where(a => a.FirstName.ToLower().StartsWith(name.ToLower()) || a.LastName.ToLower().StartsWith(name.ToLower())
                     );
                 }
             }
@@ -81,9 +78,7 @@ namespace LMS.Web.Controllers
                     authors = (IEnumerable<AuthorDto>)xmlSerializer.Deserialize(new StringReader(content));
 
 
-                }
-
-               
+                }  
             }
             return View(authors);
         }

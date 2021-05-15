@@ -2,7 +2,7 @@
 
 <div class="row text-center mx-auto mb-0 " id="btn-card" style="top:-90px;">
     @*style="top:-90px;"*@
-    <div class="col text-center mx-auto" style="top:-90px;" >
+    <div class="col text-center mx-auto" style="top:-90px;">
         <div class="categorie-item">
             <div class="ci-text">
                 <a style="width: 100%;" id="my-btn" class="btn">You are enrolled in: <span class="text-capitalize">@Model.FirstOrDefault().Title</span></a>
@@ -14,7 +14,7 @@
 
 <div id="course" class="mt-0" style="top:-90px;">
     <div class="btn-group">
-        <p class="btn btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Course participants</p>
+        <p class="btn text-center site-btn ml-1 w-auto" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 25px !important;">Course participants</p>
         <div class="dropdown-menu ">
             @foreach (var student in Model.FirstOrDefault().Students)
             {
@@ -89,16 +89,16 @@
                                 {
                                     <div class="col-sd-2">
                                         <div class="categorie-item" id="card-main-item ">
-                                            @{ var start = item.StartDate.ToString("yyyy-MM-dd"); var end = item.EndDate.ToString("yyyy-MM-dd");
+                                            @{ var start = item.StartDate.ToString("g"); var end = item.EndDate.ToString("g");
                                                 var activityIs = item.ActivityType.ToString(); var link = $"img/activity/{activityIs}.jpg";
-                                                var period = (int)(item.EndDate - item.StartDate).TotalDays / 30; var atLeast = period == 0 ? 1 : period; }
+                                                var period = (item.EndDate - item.StartDate).TotalHours; }
                                             <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">
                                                 <div class="ci-thumb set-bg" data-setbg=@link></div>
                                                 <div class="ci-text">
 
                                                     <h5>@Html.DisplayFor(modelItem => item.Name)</h5>
                                                     <p>@Html.DisplayFor(modelItem => item.ActivityType)</p>
-                                                    <span>@atLeast Month. Strat date: @Html.DisplayFor(modelItem => start) </span>
+                                                    <span>@period Hour. Strat date: @Html.DisplayFor(modelItem => start) </span>
                                                 </div>
                                             </a>
 
