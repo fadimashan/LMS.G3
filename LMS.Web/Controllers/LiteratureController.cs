@@ -42,27 +42,44 @@ namespace LMS.Web.Controllers
         }
 
         // GET
-        public async Task<IActionResult> Index(string title)
+        public async Task<IActionResult> Index(string searchQuery)
         {
-            var response = await httpClient.GetAsync(baseRoute);
+            var uri = baseRoute + (string.IsNullOrWhiteSpace(searchQuery) ? "" : $"?searchQuery={searchQuery}");
+            var response = await httpClient.GetAsync(uri);
 
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
 
             IEnumerable<PublicationWithAuthorsDto> publications;
-            if(!String.IsNullOrEmpty(title))
+            if (response.Content.Headers.ContentType?.MediaType == "application/json")
+            {
+                publications = JsonConvert.DeserializeObject<IEnumerable<PublicationWithAuthorsDto>>(content);
+            }
+            else
+            {
+                var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
+                publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
+            }
+            return View(publications);
+            
+/*
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            IEnumerable<PublicationWithAuthorsDto> publications;
+            if(!string.IsNullOrEmpty(searchQuery))
             {
                 if (response.Content.Headers.ContentType?.MediaType == "application/json")
                 {
                     publications = JsonConvert.DeserializeObject<IEnumerable<PublicationWithAuthorsDto>>(content);
-                    publications = publications.Where(p => p.Title.ToLower().StartsWith(title) || p.Title.ToUpper().StartsWith(title));
+                    publications = publications.Where(p => p.Title.ToLower().StartsWith(searchQuery) || p.Title.ToUpper().StartsWith(searchQuery));
                 }
                 else
                 {
                     var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
                     publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
-                    publications = publications.Where(p => p.Title.ToLower().StartsWith(title) || p.Title.ToUpper().StartsWith(title));
+                    publications = publications.Where(p => p.Title.ToLower().StartsWith(searchQuery) || p.Title.ToUpper().StartsWith(searchQuery));
                 }
             }
             else
@@ -77,8 +94,8 @@ namespace LMS.Web.Controllers
                     publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
                 }
             }
-
             return View(publications);
+            */
         }
 
         // GET: Publications/Details/5

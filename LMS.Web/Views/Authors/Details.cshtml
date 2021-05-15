@@ -5,8 +5,6 @@
 }
 <h4 class="text-center text-muted m-2">
     @{var fullName = Model.FirstName + " " + Model.LastName;}
-
-
     Name: @Html.DisplayFor(model => fullName) & Age:  @Html.DisplayFor(model => model.Age)
 </h4>
 <form asp-action="Delete" class="text-center">
