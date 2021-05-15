@@ -252,6 +252,17 @@ namespace LMS.Web.Controllers
 
             return View("GetAllStudents", students);
         }
+        public async Task<IActionResult> GetStudentByName(string name)
+        {
+            var students = await _dbContext.Course
+                .Where(c => c.Students.Any(s => s.LastName.StartsWith(name) || s.FirstName.StartsWith(name) || name == null))
+                .Include( c=> c.Students)
+                .ToListAsync();
+
+
+
+            return View("GetAllStudents", students);
+        }
 
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
