@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 <hr />
-<form asp-action=""  asp-controller="" class="course-search-form w-75 justify-content-center container-fluid m-auto" style="left:100px;">
+<form asp-action="" asp-controller="" class="course-search-form w-75 justify-content-center container-fluid m-auto" style="left:100px;">
     <input name="" type="text" placeholder="Students" class="w-75 m-1">
     <button type="submit" class="site-btn m-1">Search Course</button>
 </form>
@@ -17,16 +17,24 @@
     <thead class="bg-light text-muted">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                <h5 class="text-muted">
+                    @Html.DisplayNameFor(model => model.Title)
+                </h5>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                <h5 class="text-muted">
+                    @Html.DisplayNameFor(model => model.Description)
+                </h5>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartDate)
+                <h5 class="text-muted">
+                    Start Date
+                </h5>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+                <h5 class="text-muted">
+                    End Date
+                </h5>
             </th>
             <th></th>
         </tr>

@@ -58,7 +58,7 @@
                     <button disabled="" class="btn btn-light ">@date</button>
                 </td>
                 <td class="text-center">
-                    @Html.DisplayFor(modelItem => item.Modules.Count)
+                    <p class="btn btn-light "> @Html.DisplayFor(modelItem => item.Modules.Count)</p>
                 </td>
                 <td class="text-center">
                     @{ var numberOfActivities = 0; }
@@ -73,7 +73,7 @@
                         }
                     }
 
-                    @Html.DisplayFor(modelItem => numberOfActivities)
+                    <p class="btn btn-light ">@Html.DisplayFor(modelItem => numberOfActivities)</p>
                 </td>
                 <td>
                     <a class="btn btn-outline-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Course Students</a>
