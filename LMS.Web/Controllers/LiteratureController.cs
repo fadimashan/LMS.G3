@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using LMS.Core.Models;
+using System.Linq;
 
 namespace LMS.Web.Controllers
 {
@@ -40,7 +41,7 @@ namespace LMS.Web.Controllers
         }
 
         // GET
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string title)
         {
             var response = await httpClient.GetAsync(baseRoute);
 
@@ -49,15 +50,33 @@ namespace LMS.Web.Controllers
             var content = await response.Content.ReadAsStringAsync();
 
             IEnumerable<PublicationWithAuthorsDto> publications;
-            if (response.Content.Headers.ContentType?.MediaType == "application/json")
+            if(!String.IsNullOrEmpty(title))
             {
-                publications = JsonConvert.DeserializeObject<IEnumerable<PublicationWithAuthorsDto>>(content);
+                if (response.Content.Headers.ContentType?.MediaType == "application/json")
+                {
+                    publications = JsonConvert.DeserializeObject<IEnumerable<PublicationWithAuthorsDto>>(content);
+                    publications = publications.Where(p => p.Title.ToLower().StartsWith(title) || p.Title.ToUpper().StartsWith(title));
+                }
+                else
+                {
+                    var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
+                    publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
+                    publications = publications.Where(p => p.Title.ToLower().StartsWith(title) || p.Title.ToUpper().StartsWith(title));
+                }
             }
             else
             {
-                var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
-                publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
+                if (response.Content.Headers.ContentType?.MediaType == "application/json")
+                {
+                    publications = JsonConvert.DeserializeObject<IEnumerable<PublicationWithAuthorsDto>>(content);
+                }
+                else
+                {
+                    var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
+                    publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
+                }
             }
+            
 
             return View(publications);
         }

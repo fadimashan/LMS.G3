@@ -7,7 +7,7 @@
 <h3 class="text-center text-black-50 m-3">LMS Students</h3>
 
 <hr />
-    <form asp-action="GetStudent"  asp-controller="Courses" class="course-search-form w-75 justify-content-center container-fluid m-auto" style="left:100px;">
+    <form asp-action="GetStudentByName"  asp-controller="Courses" class="course-search-form w-75 justify-content-center container-fluid m-auto" style="left:100px;">
         <input name="name" type="text" placeholder="Students" class="w-75 m-1">
         <button type="submit" class="site-btn m-1">Search Student</button>
     </form>
@@ -31,7 +31,16 @@
         </tr>
     </thead>
     <tbody class="table table-striped">
-        @foreach (var course in Model)
+        @if(Model.Count() == 0)
+            {
+                <tr class="alert-danger">
+                    <td colspan="4"> No records found</td>
+                </tr>
+            }else
+            {
+
+           
+        foreach (var course in Model)
         {
             foreach (var student in course.Students)
             {
@@ -54,8 +63,9 @@
                         </form>
                     </td>
                 </tr>
-            }
+                                    }
 
-        }
+                                }
+                            }
     </tbody>
 </table>
