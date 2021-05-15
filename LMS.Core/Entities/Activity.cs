@@ -13,7 +13,9 @@ namespace LMS.Core.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Description { get; set; }
-        
+
+        public DateTime? Deadline { get; set; }
+
         public int ModuleId { get; set; }
         public Module Module { get; set; }
 

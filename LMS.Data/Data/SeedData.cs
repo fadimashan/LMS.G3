@@ -191,8 +191,10 @@ namespace LMS.Data.Data
                     StartDate = date,
                     EndDate = date.AddDays(5),
                     ActivityType = _fake.PickRandom<ActivityType>(),
+                    
                 };
 
+                if(activity.ActivityType == ActivityType.Assignments) activity.Deadline = activity.EndDate;
                 activities.Add(activity);
             }
 
