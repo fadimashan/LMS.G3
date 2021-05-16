@@ -54,16 +54,15 @@ namespace LMS.Web.Controllers
         [AcceptVerbs("GET", "POST")]
         public async Task<IActionResult> VerifyEmail(string email)
         {
-            var foundEmail = await _dbContext.Course.Include(c => c.Students).ToListAsync();
+            var foundEmail = await _dbContext.Users.ToListAsync();
 
             var newList = new List<bool>();
-            foreach (var item in foundEmail)
+            foreach (var s in foundEmail)
             {
-                foreach (var s in item.Students)
-                {
+               
                     newList.Add(s.Email == email);
 
-                }
+                
             }
 
             var result = newList.Contains(true);
@@ -77,6 +76,7 @@ namespace LMS.Web.Controllers
         }
 
 
+
         // Check for user FirstName and LastName
 
         [AcceptVerbs("GET", "POST")]
@@ -87,9 +87,15 @@ namespace LMS.Web.Controllers
                 return Json($"First name: {firstName}, must not be the same with Last Name: {lastName}");
             }
 
+            var foundEmail = _dbContext.Users.ToList();
+
+            if (foundEmail.Any(a => a.FirstName == firstName && a.LastName == lastName))
+            {
+                return Json($"This name: {firstName}, is already in the system ");
+            }
+
             return Json(true);
         }
-
 
         // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
