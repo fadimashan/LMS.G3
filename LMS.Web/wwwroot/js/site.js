@@ -8,7 +8,6 @@ $(document).ready(function () {
 });
 
 
-
 let sel = document.getElementById('select');
 
 sel.addEventListener('change', () => {
@@ -21,7 +20,6 @@ sel.addEventListener('change', () => {
 });
 
 let sel2 = document.getElementById('select2');
-
 
 
 var headers = ["H1", "H2", "H3", "H4", "H5", "H6"];
@@ -64,9 +62,6 @@ select1.addEventListener('change', () => {
 
 let select2 = document.getElementById('assignment2');
 
-
-
-
 let selectActivity = document.getElementById('act');
 let selectActivity2 = document.getElementById('act2');
 selectActivity.addEventListener('change', () => {
@@ -78,12 +73,12 @@ selectActivity.addEventListener('change', () => {
     }
 });
 
-/*
 
+// From Upload_File_Refresh branch 
+/*
 let table = document.getElementById("test22");
 let table2 = table.cloneNode(table);
 let uploadBtn = document.getElementById("uploadBtn");
-
 
 uploadBtn.addEventListener("click", () => {
     console.log("click");
@@ -94,7 +89,6 @@ uploadBtn.addEventListener("click", () => {
             row.classList.remove("collapse");
         }
     })
-
 });
 
 var target = document.querySelector('#drop2');
