@@ -49,3 +49,34 @@ $(".accordion").click(function (e) {
         $(target).css({ "border-bottom-right-radius": "0", "border-bottom-left-radius": "0" });
     }
 });
+
+
+let select1 = document.getElementById('assignment');
+
+select1.addEventListener('change', () => {
+
+    if (select1.value === "B" || select1.value === "C" || select1.value === "D") {
+        select2.style.display = "none";
+    } else {
+        select2.style.display = "block";
+    }
+});
+
+let select2 = document.getElementById('assignment2');
+
+
+
+
+let selectActivity = document.getElementById('act');
+let selectActivity2 = document.getElementById('act2');
+selectActivity.addEventListener('change', () => {
+
+    if (selectActivity.value === "B" || selectActivity.value === "C" || selectActivity.value === "D") {
+        selectActivity2.style.display = "none";
+    } else {
+        selectActivity2.style.display = "block";
+    }
+});
+
+
+
