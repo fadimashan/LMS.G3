@@ -42,7 +42,8 @@ namespace LMS.Web.Controllers
 
         public async Task<IActionResult> Index(string nameLike)
         {
-            var response = await httpClient.GetAsync(baseRoute);
+            var uri = baseRoute + (string.IsNullOrWhiteSpace(nameLike) ? "" : $"?nameLike={nameLike}");
+            var response = await httpClient.GetAsync(uri);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             IEnumerable<AuthorDto> authors;
