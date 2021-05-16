@@ -5,55 +5,36 @@
 }
 <h4 class="text-center text-muted m-2">
     @{var fullName = Model.FirstName + " " + Model.LastName;}
-
-
-    Name: @Html.DisplayFor(model => fullName),  @Html.DisplayFor(model => model.Age) Year old.
+    Name: @Html.DisplayFor(model => fullName) & Age:  @Html.DisplayFor(model => model.Age)
+    @* Name: @Html.DisplayFor(model => fullName),  @Html.DisplayFor(model => model.Age) Year old. *@
 </h4>
 <form asp-action="Delete" class="text-center">
    
-    <a asp-action="Index" class="btn btn-outline-info">Back</a>
+    <a asp-action="Index" class="btn btn-outline-info">Back to List</a>
 </form>
 
 <hr />
 
-
-
 <div class="row justify-content-center">
-
     <div class="col-auto">
-
         <table class="table table-striped text-muted">
             <thead>
                 <tr>
-
                     <th>  Publications </th>
                     <th>  Publication Date </th>
                 </tr>
             </thead>
             <tbody class="table-body table table-striped">
-
-
-
-                @foreach (var item in Model.Publications)
+            @foreach (var item in Model.Publications)
                 {
-                    string date = $"{item.PublicationDate.ToString("dd/MMM/yyyy")}";
+                    var date = $"{item.PublicationDate.ToString("dd/MMM/yyyy")}";
                     <tr>
-
                         <td> <a> @item.Title </a></td>
                         <td>  <a> @date </a></td>
                     </tr>
                 }
-
-
-
-
-
-
             </tbody>
         </table>
-
     </div>
 </div>
 <hr />
-
-

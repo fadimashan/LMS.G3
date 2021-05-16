@@ -10,22 +10,20 @@
 
     <hr />
     <br />
-    <div class="btn-group text-center m-2">
-        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="site-btn m-2 text-center">Create</p>
-        <div class="dropdown-menu shadow">
-            <a asp-controller="Courses" asp-action="Create" type="button" class="dropdown-item">Course</a>
-            <a asp-controller="Modules" asp-action="Create" type="button" class="dropdown-item">Module</a>
-            <a asp-controller="Activities" asp-action="Create" type="button" class="dropdown-item">Activity</a>
-        </div>
-
-        <a type="button" class="site-btn m-2 text-center" asp-controller="Courses" asp-action="GetAllStudents" style="width:max-content;">All Students</a>
-
+    
+</div>
+<div class="btn-group text-center m-2">
+    <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="site-btn m-2 text-center">Create</p>
+    <div class="dropdown-menu shadow">
+        <a asp-controller="Courses" asp-action="Create" type="button" class="dropdown-item">Course</a>
+        <a asp-controller="Modules" asp-action="Create" type="button" class="dropdown-item">Module</a>
+        <a asp-controller="Activities" asp-action="Create" type="button" class="dropdown-item">Activity</a>
     </div>
 </div>
 
 <table class="table table-striped" id="drop2">
     <thead class="text-muted">
-    <tr class="text-muted fs-3">
+        <tr class="text-muted fs-3">
             <th> <h5>Title </h5></th>
             <th class="text-center text-muted"> <h5>Period </h5></th>
             <th class="text-center text-muted"> <h5>Start Date </h5></th>
@@ -63,7 +61,7 @@
                     <button disabled="" class="btn btn-light ">@date</button>
                 </td>
                 <td class="text-center">
-                    @Html.DisplayFor(modelItem => course.Modules.Count)
+                    <p class="btn btn-light "> @Html.DisplayFor(modelItem => course.Modules.Count)</p>
                 </td>
                 <td class="text-center">
                     @{ var numberOfActivities = 0; }

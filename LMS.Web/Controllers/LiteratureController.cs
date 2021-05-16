@@ -42,9 +42,10 @@ namespace LMS.Web.Controllers
         }
 
         // GET
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchQuery)
         {
-            var response = await httpClient.GetAsync(baseRoute);
+            var uri = baseRoute + (string.IsNullOrWhiteSpace(searchQuery) ? "" : $"?searchQuery={searchQuery}");
+            var response = await httpClient.GetAsync(uri);
 
             response.EnsureSuccessStatusCode();
 
@@ -60,8 +61,41 @@ namespace LMS.Web.Controllers
                 var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
                 publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
             }
-
             return View(publications);
+            
+/*
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            IEnumerable<PublicationWithAuthorsDto> publications;
+            if(!string.IsNullOrEmpty(searchQuery))
+            {
+                if (response.Content.Headers.ContentType?.MediaType == "application/json")
+                {
+                    publications = JsonConvert.DeserializeObject<IEnumerable<PublicationWithAuthorsDto>>(content);
+                    publications = publications.Where(p => p.Title.ToLower().StartsWith(searchQuery) || p.Title.ToUpper().StartsWith(searchQuery));
+                }
+                else
+                {
+                    var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
+                    publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
+                    publications = publications.Where(p => p.Title.ToLower().StartsWith(searchQuery) || p.Title.ToUpper().StartsWith(searchQuery));
+                }
+            }
+            else
+            {
+                if (response.Content.Headers.ContentType?.MediaType == "application/json")
+                {
+                    publications = JsonConvert.DeserializeObject<IEnumerable<PublicationWithAuthorsDto>>(content);
+                }
+                else
+                {
+                    var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
+                    publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
+                }
+            }
+            return View(publications);
+            */
         }
 
         // GET: Publications/Details/5
@@ -103,8 +137,8 @@ namespace LMS.Web.Controllers
         // GET: Publications/Create
         public IActionResult Create()
         {
-            var items = GetAuthors().Result;
-            var multiItems = new MultiSelectList(items.OrderBy(i=> i.Text), "Value","Text");
+            var authorsLists = GetAuthors().Result;
+            var multiItems = new MultiSelectList(authorsLists.OrderBy(i=> i.Text), "Value","Text");
             var model = new PublicationCreationDto()
             {
                 GetSubjects = GetSubjects().Result,
@@ -142,6 +176,7 @@ namespace LMS.Web.Controllers
         }
 
         // GET: Publications/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id is null)
@@ -164,6 +199,10 @@ namespace LMS.Web.Controllers
 
             var publication = JsonConvert.DeserializeObject<PublicationWithAuthorsDto>(content);
 
+            publication.GetTypes = GetTypes().Result;
+            publication.GetSubjects = GetSubjects().Result;
+            // var authorsLists = GetAuthors().Result;
+            publication.GetAuthors = new MultiSelectList(GetAuthors().Result.OrderBy(i=> i.Text), "Value","Text");
             return View(publication);
         }
 
@@ -172,7 +211,7 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Title, Description, PublicationDate, Level, TypeId, SubjectId")] PublicationCreationDto publication)
+        public async Task<IActionResult> Edit(int id, [Bind("Title, Description, PublicationDate, Level, TypeId, SubjectId, AuthorIds")] PublicationCreationDto publication)
         {
             var jsonData = JsonConvert.SerializeObject(publication);
 
