@@ -332,16 +332,15 @@ namespace LMS.Web.Controllers
             return View("GetAllStudents", students);
         }
         
-        /*
         public async Task<IActionResult> GetStudentByName(string name)
         {
+            name = name.Trim().ToLower();
             var students = await _dbContext.Course
-                .Where(c => c.Students.Any(s => s.LastName.StartsWith(name) || s.FirstName.StartsWith(name) || name == null))
+                .Where(au => au.Students.Any(s => s.LastName.ToLower().StartsWith(name) || s.FirstName.ToLower().StartsWith(name) || name == null))
                 .Include( c=> c.Students)
                 .ToListAsync();
             return View("GetAllStudents", students);
         }
-        */
 
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
