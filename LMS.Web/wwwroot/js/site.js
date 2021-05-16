@@ -23,6 +23,19 @@ sel.addEventListener('change', () => {
 let sel2 = document.getElementById('select2');
 
 
+let select1 = document.getElementById('selectItem');
+
+select1.addEventListener('change', () => {
+
+    if (select1.value === "B" || select1.value === "C" || select1.value === "D") {
+        select2.style.display = "none";
+    } else {
+        select2.style.display = "block";
+    }
+});
+
+let select2 = document.getElementById('showList');
+
 
 var headers = ["H1", "H2", "H3", "H4", "H5", "H6"];
 
@@ -51,32 +64,21 @@ $(".accordion").click(function (e) {
 });
 
 
-let select1 = document.getElementById('assignment');
-
-select1.addEventListener('change', () => {
-
-    if (select1.value === "B" || select1.value === "C" || select1.value === "D") {
-        select2.style.display = "none";
-    } else {
-        select2.style.display = "block";
-    }
-});
-
-let select2 = document.getElementById('assignment2');
 
 
 
 
-let selectActivity = document.getElementById('act');
-let selectActivity2 = document.getElementById('act2');
-selectActivity.addEventListener('change', () => {
 
-    if (selectActivity.value === "B" || selectActivity.value === "C" || selectActivity.value === "D") {
-        selectActivity2.style.display = "none";
-    } else {
-        selectActivity2.style.display = "block";
-    }
-});
+//let selectActivity = document.getElementById('act');
+//let selectActivity2 = document.getElementById('act2');
+//selectActivity.addEventListener('change', () => {
+
+//    if (selectActivity.value === "B" || selectActivity.value === "C" || selectActivity.value === "D") {
+//        selectActivity2.style.display = "none";
+//    } else {
+//        selectActivity2.style.display = "block";
+//    }
+//});
 
 
 

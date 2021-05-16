@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using LMS.Core.Validation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LMS.Core.Entities
@@ -20,13 +21,14 @@ namespace LMS.Core.Entities
         [Required]
         public ActivityType ActivityType { get; set; }
 
-        [CheckActivityDate]
+        [Remote(action: "VerifyStartDate", controller: "Activities", AdditionalFields = ("ModuleId,EndDate"))]
         [Display(Name = "StartDate")]
         [Required(ErrorMessage = "Activity StartDate is required")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime StartDate { get; set; }
-                
+
+        [Remote(action: "VerifyStartDate", controller: "Activities", AdditionalFields = ("ModuleId,StartDate"))]
         [Display(Name = "EndDate")]
         [Required(ErrorMessage = "Activity EndDate is required")]
         [DataType(DataType.Date)]

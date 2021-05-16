@@ -12,8 +12,7 @@ namespace LMS.Data.Data
         public DbSet<Module> Module { get; set; }
         public DbSet<Activity> Activity { get; set; }
         public DbSet<Document> Document { get; set; }
-        public DbSet<AuthorDto> AuthorDto { get; set; }
-        //public DbSet<AuthorCreationDto> AuthorCDto { get; set; }
+      
 
         public MvcDbContext(DbContextOptions<MvcDbContext> options)
           : base(options)
