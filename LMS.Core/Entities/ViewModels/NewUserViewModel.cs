@@ -30,18 +30,15 @@ namespace LMS.Core.Entities.ViewModels
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
 
-        
         [Display(Name = "Password")]
-        [Required(ErrorMessage = "The password is required")]
+        [Remote(action: "VerifyPassword", controller: "Courses", AdditionalFields = nameof(ConfirmPassword))]
         [DataType(DataType.Password)]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
 
-
         [Display(Name = "Confirm Password")]
         [Required(ErrorMessage = "The confirm password is required")]
         [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Password and Confirm Password do not match.")]
         [NotMapped]
         public string ConfirmPassword { get; set; }
 

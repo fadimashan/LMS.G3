@@ -86,7 +86,6 @@ namespace LMS.Web.Controllers
             {
                 return Json($"First name: {firstName}, must not be the same with Last Name: {lastName}");
             }
-
             var foundEmail = _dbContext.Users.ToList();
 
             if (foundEmail.Any(a => a.FirstName == firstName && a.LastName == lastName))
@@ -96,6 +95,30 @@ namespace LMS.Web.Controllers
 
             return Json(true);
         }
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyPassword(NewUserViewModel model)
+        {
+            if (model.Password != model.ConfirmPassword && !String.IsNullOrEmpty(model.ConfirmPassword) )
+            {
+                return Json($"Not matching with Confirm Password!");
+            }
+
+            var symbols = (@"[!@#$%^&*]");
+            var list = new List<bool>();
+            foreach (var char1 in symbols)
+            {
+                list.Add(model.Password.Contains(char1));
+            }
+
+            if (!list.Contains(true))
+            {
+                return Json($"Password should contains one of this symbols !@#$%^&*");
+
+            }
+            return Json(true);
+        }
+
 
         // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
