@@ -28,10 +28,10 @@
             <div class="form-group">
                 <label class="control-label"> Activity Type</label>
                 <select id="selectList" asp-for="ActivityType" class="form-control">
-                    <option value="A">Assignments</option>
-                    <option value="B">E_Learning</option>
-                    <option value="C">lectures</option>
-                    <option value="D">Other</option>
+                    <option value="Assignments">Assignments</option>
+                    <option value="E_Learning">E_Learning</option>
+                    <option value="lectures">lectures</option>
+                    <option value="Other">Other</option>
                 </select>
                 <span asp-validation-for="ActivityType" class="text-danger"></span>
             </div>
@@ -78,7 +78,7 @@
 
     listOfItems.addEventListener('change', () => {
 
-        if (listOfItems.value === "B" || listOfItems.value === "C" || listOfItems.value === "D") {
+        if (listOfItems.value === "E_Learning" || listOfItems.value === "lectures" || listOfItems.value === "Other") {
             inputBox.style.display = "none";
         } else {
             inputBox.style.display = "block";

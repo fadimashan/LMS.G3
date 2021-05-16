@@ -20,11 +20,11 @@
 
             <div class="form-group">
                 <label class="control-label"> Activity Type</label>
-                <select id="selectItem" asp-for="ActivityType" class="form-control">
-                    <option value="A">Assignments</option>
-                    <option value="B">E_Learning</option>
-                    <option value="C">lectures</option>
-                    <option value="D">Other</option>
+                <select id="selectItem1" asp-for="ActivityType" class="form-control">
+                    <option value="Assignments">Assignments</option>
+                    <option value="E_Learning">E_Learning</option>
+                    <option value="lectures">lectures</option>
+                    <option value="Other">Other</option>
                 </select>
                 <span asp-validation-for="ActivityType" class="text-danger"></span>
             </div>
@@ -49,7 +49,7 @@
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
 
-            <div class="form-group" id="showList">
+            <div class="form-group" id="showList1">
                 <label asp-for="Deadline" class="control-label"></label>
                 <input asp-for="Deadline" class="form-control" />
                 <span asp-validation-for="Deadline" class="text-danger"></span>
@@ -72,18 +72,18 @@
 
 <script>
 
-    let listOfItems = document.getElementById('selectItem');
+    let listOfItems = document.getElementById('selectItem1');
 
     listOfItems.addEventListener('change', () => {
 
-        if (listOfItems.value === "B" || listOfItems.value === "C" || listOfItems.value === "D") {
+        if (listOfItems.value === "E_Learning" || listOfItems.value === "lectures" || listOfItems.value === "Other") {
             inputBox.style.display = "none";
         } else {
             inputBox.style.display = "block";
         }
     });
 
-    let inputBox = document.getElementById('showList');
+    let inputBox = document.getElementById('showList1');
 </script>
 
 @section Scripts {

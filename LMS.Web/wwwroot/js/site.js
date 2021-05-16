@@ -22,18 +22,18 @@ sel.addEventListener('change', () => {
 let sel2 = document.getElementById('select2');
 
 
-let select1 = document.getElementById('selectItem');
+//let select1 = document.getElementById('selectItem');
 
-select1.addEventListener('change', () => {
+//select1.addEventListener('change', () => {
 
-    if (select1.value === "B" || select1.value === "C" || select1.value === "D") {
-        select2.style.display = "none";
-    } else {
-        select2.style.display = "block";
-    }
-});
+//    if (select1.value === "B" || select1.value === "C" || select1.value === "D") {
+//        select2.style.display = "none";
+//    } else {
+//        select2.style.display = "block";
+//    }
+//});
 
-let select2 = document.getElementById('showList');
+//let select2 = document.getElementById('showList');
 
 
 var headers = ["H1", "H2", "H3", "H4", "H5", "H6"];

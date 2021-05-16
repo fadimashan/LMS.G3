@@ -112,7 +112,7 @@ namespace LMS.Web.Controllers
 
 
             return View(publications);
-            */
+            
         }
 
         // GET: Publications/Details/5

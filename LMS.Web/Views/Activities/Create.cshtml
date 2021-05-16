@@ -29,10 +29,10 @@
             <div class="form-group">
                 <label class="control-label"> Activity Type</label>
                 <select id="selectItem" asp-for="ActivityType" class="form-control">
-                    <option value="A">Assignments</option>
-                    <option value="B">E_Learning</option>
-                    <option value="C">lectures</option>
-                    <option value="D">Other</option>
+                    <option value="Assignments">Assignments</option>
+                    <option value="E_Learning">E_Learning</option>
+                    <option value="lectures">lectures</option>
+                    <option value="Other">Other</option>
                 </select>
                 <span asp-validation-for="ActivityType" class="text-danger"></span>
             </div>
@@ -69,6 +69,23 @@
         </form>
     </div>
 </div>
+
+<script>
+
+    let listOfItems = document.getElementById('selectItem');
+
+    listOfItems.addEventListener('change', () => {
+
+        if (listOfItems.value === "E_Learning" || listOfItems.value === "lectures" || listOfItems.value === "Other") {
+            inputBox.style.display = "none";
+        } else {
+            inputBox.style.display = "block";
+        }
+    });
+
+    let inputBox = document.getElementById('showList');
+</script>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
