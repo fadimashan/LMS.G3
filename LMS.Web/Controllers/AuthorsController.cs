@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using LMS.Core.Models;
-using System.Linq;
 
 namespace LMS.Web.Controllers
 {
