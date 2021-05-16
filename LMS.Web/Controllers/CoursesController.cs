@@ -332,14 +332,17 @@ namespace LMS.Web.Controllers
             return View("GetAllStudents", students);
         }
         
+        // FIXME: This does not work. The method searches courses attended by a student, not students
         public async Task<IActionResult> GetStudentByName(string name)
         {
             name = name.Trim().ToLower();
-            var students = await _dbContext.Course
-                .Where(au => au.Students.Any(s => s.LastName.ToLower().StartsWith(name) || s.FirstName.ToLower().StartsWith(name) || name == null))
+            // This is a list of Courses, not Students
+            var courses = await _dbContext.Course
+                .Where(c => c.Students.Any(au => au.LastName.ToLower().StartsWith(name) || au.FirstName.ToLower().StartsWith(name) || name == null))
                 .Include( c=> c.Students)
                 .ToListAsync();
-            return View("GetAllStudents", students);
+            
+            return View("GetAllStudents", courses);
         }
 
         [HttpPost]
