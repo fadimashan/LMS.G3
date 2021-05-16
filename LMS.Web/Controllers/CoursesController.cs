@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Core.Entities.ViewModels;
 using LMS.Data.Data;
+using static LMS.Web.Areas.Identity.Pages.Account.LoginModel;
 
 namespace LMS.Web.Controllers
 {
@@ -37,6 +38,88 @@ namespace LMS.Web.Controllers
             return View("GetCourses", module);
         }
 
+        // Check for Course Unique Title
+        public IActionResult VerifyName(Course course)
+        {
+          
+            if (_dbContext.Course.Any(c => c.Title.ToUpper() == course.Title.ToUpper()))
+            {
+                return Json("Course Title must be uppercase and unique");
+            }
+            return Json(true);
+        }
+
+        // Check for email exist
+
+        [AcceptVerbs("GET", "POST")]
+        public async Task<IActionResult> VerifyEmail(string email)
+        {
+            var foundEmail = await _dbContext.Users.ToListAsync();
+
+            var newList = new List<bool>();
+            foreach (var s in foundEmail)
+            {
+               
+                    newList.Add(s.Email == email);
+
+                
+            }
+
+            var result = newList.Contains(true);
+
+            if (result) // is it wrong concept?
+            {
+                return Json($"Email {email} is already in use.");
+            }
+
+            return Json(true);
+        }
+
+
+
+        // Check for user FirstName and LastName
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyName(NewUserViewModel model, string firstName, string lastName)
+        {
+            if(model.FirstName == lastName || model.LastName == firstName)
+            {
+                return Json($"First name: {firstName}, must not be the same with Last Name: {lastName}");
+            }
+            var foundEmail = _dbContext.Users.ToList();
+
+            if (foundEmail.Any(a => a.FirstName == firstName && a.LastName == lastName))
+            {
+                return Json($"This name: {firstName}, is already in the system ");
+            }
+
+            return Json(true);
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyPassword(NewUserViewModel model)
+        {
+            if (model.Password != model.ConfirmPassword && !String.IsNullOrEmpty(model.ConfirmPassword) )
+            {
+                return Json($"Not matching with Confirm Password!");
+            }
+
+            var symbols = (@"[!@#$%^&*]");
+            var list = new List<bool>();
+            foreach (var char1 in symbols)
+            {
+                list.Add(model.Password.Contains(char1));
+            }
+
+            if (!list.Contains(true))
+            {
+                return Json($"Password should contains one of this symbols !@#$%^&*");
+
+            }
+            return Json(true);
+        }
+
+
         // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -55,6 +138,7 @@ namespace LMS.Web.Controllers
 
             return View(course);
         }
+
 
         // GET: Courses/Create
         [Authorize(Roles = "Teacher")]
@@ -81,7 +165,7 @@ namespace LMS.Web.Controllers
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View("Details", course);
+            return View(course);
         }
 
         // GET: Courses/Edit/5
@@ -252,6 +336,14 @@ namespace LMS.Web.Controllers
 
             return View("GetAllStudents", students);
         }
+        public async Task<IActionResult> GetStudentByName(string name)
+        {
+            var students = await _dbContext.Course
+                .Where(c => c.Students.Any(s => s.LastName.ToLower().StartsWith(name.ToLower()) || s.FirstName.ToLower().StartsWith(name.ToLower()) || name == null))
+                .Include( c=> c.Students)
+                .ToListAsync();
+            return View("GetAllStudents", students);
+        }
 
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
@@ -315,19 +407,19 @@ namespace LMS.Web.Controllers
                 return NotFound();
             }
 
-            if (await _userManager.IsInRoleAsync(userFromManager, userVM.RoleType))
+            if (await _userManager.IsInRoleAsync(userFromManager, type))
             {
                 return NotFound();
             }
 
-            var addToRoleResult = await _userManager.AddToRoleAsync(userFromManager, userVM.RoleType);
+            var addToRoleResult = await _userManager.AddToRoleAsync(userFromManager, type);
 
             if (!addToRoleResult.Succeeded)
             {
                 throw new Exception(string.Join("\n", addToRoleResult.Errors));
             }
             
-            if (userVM.RoleType == RoleType.Student.ToString())
+            if (type == RoleType.Student.ToString())
             {
                 var enrol = new ApplicationUserCourse
                 {

@@ -28,7 +28,6 @@ namespace LMS.Web
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex.Message, "Seed fail");
-                    throw;
                 }
             }
 

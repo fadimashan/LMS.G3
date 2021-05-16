@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using LMS.Core.Models;
+using System.Linq;
 
 namespace LMS.Web.Controllers
 {
@@ -41,23 +42,49 @@ namespace LMS.Web.Controllers
         }
 
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string name)
         {
+            
+            IEnumerable<AuthorDto> authors;
             var response = await httpClient.GetAsync("api/authors");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
-            IEnumerable<AuthorDto> authors;
-            if (response.Content.Headers.ContentType?.MediaType == "application/json")
+            if (!String.IsNullOrEmpty(name))
             {
-                authors = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(content);
+                if (response.Content.Headers.ContentType?.MediaType == "application/json")
+                {
+                    authors = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(content);
+                    authors = authors.Where(a => a.FirstName.ToLower().StartsWith(name.ToLower()) || a.LastName.ToLower().StartsWith(name.ToLower()));
+                }
+                else
+                {
+                    var xmlSerializer = new XmlSerializer(typeof(AuthorDto));
+                    authors = (IEnumerable<AuthorDto>)xmlSerializer.Deserialize(new StringReader(content));
+                    authors = authors.Where(a => a.FirstName.ToLower().StartsWith(name.ToLower()) || a.LastName.ToLower().StartsWith(name.ToLower())
+                    );
+                }
             }
             else
             {
-                var xmlSerializer = new XmlSerializer(typeof(AuthorDto));
-                authors = (IEnumerable<AuthorDto>)xmlSerializer.Deserialize(new StringReader(content));
+
+                if (response.Content.Headers.ContentType?.MediaType == "application/json")
+                {
+                    authors = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(content);
+
+                }
+                else
+                {
+                    var xmlSerializer = new XmlSerializer(typeof(AuthorDto));
+                    authors = (IEnumerable<AuthorDto>)xmlSerializer.Deserialize(new StringReader(content));
+
+
+                }  
             }
             return View(authors);
         }
+
+
+
 
         public async Task<IActionResult> GetAuthor(int id)
         {

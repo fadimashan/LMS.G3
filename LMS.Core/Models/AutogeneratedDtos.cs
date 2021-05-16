@@ -102,32 +102,36 @@ namespace LMS.Core.Models
         public string Description { get; set; }
     
         [Newtonsoft.Json.JsonProperty("publicationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [DataType(DataType.Date)]
+        [DataType(DataType.Date), Display(Name = "Publication Date")]
         public DateTime PublicationDate { get; set; }
     
         [Newtonsoft.Json.JsonProperty("level", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Display(Name = "Difficulty Level")]
         public DifficultyLevel Level { get; set; }
     
         [Newtonsoft.Json.JsonProperty("typeId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Display(Name = "Type")]
         public int? TypeId { get; set; }
     
         [Newtonsoft.Json.JsonProperty("typeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string TypeName { get; set; }
     
         [Newtonsoft.Json.JsonProperty("subjectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Display(Name = "Subject")]
         public int SubjectId { get; set; }
     
         [Newtonsoft.Json.JsonProperty("subjectName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string SubjectName { get; set; }
         
         [Newtonsoft.Json.JsonProperty("AuthorIds", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Display(Name = "Authors")]
         public ICollection<int> AuthorIds { get; set; } = new List<int>(); 
 
         [NotMapped]
-        public IEnumerable<SelectListItem> GetSubjects { get; set; }
+        public IEnumerable<SelectListItem> GetTypes { get; set; }
         
         [NotMapped]
-        public IEnumerable<SelectListItem> GetTypes { get; set; }
+        public IEnumerable<SelectListItem> GetSubjects { get; set; }
 
         [NotMapped]
         public MultiSelectList GetAuthors { get; set; }
@@ -191,26 +195,42 @@ namespace LMS.Core.Models
         public string Description { get; set; }
     
         [Newtonsoft.Json.JsonProperty("publicationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [DataType(DataType.Date)]
+        [DataType(DataType.Date), Display(Name = "Publication Date")]
         public DateTime PublicationDate { get; set; }
     
         [Newtonsoft.Json.JsonProperty("level", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Display(Name = "Difficulty")]
         public DifficultyLevel Level { get; set; }
     
         [Newtonsoft.Json.JsonProperty("typeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Display(Name = "Type")]
         public string TypeName { get; set; }
     
         [Newtonsoft.Json.JsonProperty("typeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Display(Name = "Type")]
         public int TypeId { get; set; }
     
         [Newtonsoft.Json.JsonProperty("subjectName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Display(Name = "Subject")]
         public string SubjectName { get; set; }
     
         [Newtonsoft.Json.JsonProperty("subjectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Display(Name = "Subject")]
         public int SubjectId { get; set; }
     
         [Newtonsoft.Json.JsonProperty("authors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Display(Name = "Authors")]
         public System.Collections.Generic.ICollection<AuthorDto> Authors { get; set; }
+        
+        
+        [NotMapped]
+        public IEnumerable<SelectListItem> GetTypes { get; set; }
+        
+        [NotMapped]
+        public IEnumerable<SelectListItem> GetSubjects { get; set; }
+
+        [NotMapped]
+        public MultiSelectList GetAuthors { get; set; }
         
     }
     
