@@ -69,6 +69,18 @@
         </form>
     </div>
 </div>
+<script>
+    let selectActivity = document.getElementById('act');
+    let selectActivity2 = document.getElementById('act2');
+    selectActivity.addEventListener('change', () => {
+
+        if (selectActivity.value === "B" || selectActivity.value === "C" || selectActivity.value === "D") {
+            selectActivity2.style.display = "none";
+        } else {
+            selectActivity2.style.display = "block";
+        }
+    });
+</script>
 
 
 
