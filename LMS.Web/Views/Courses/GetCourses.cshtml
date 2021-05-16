@@ -1,33 +1,37 @@
 ﻿@model IEnumerable<LMS.Core.Entities.Course>
 
+@{
+    var uploadId2 = @Url.RouteUrl(ViewContext.RouteData.Values).Last();
+ }
+
 <div class="text-center justify-content-center">
     <h2 class="m-2 text-center text-muted">LMS Courses</h2>
     <a type="button" class="btn btn-outline-info m-2 text-center" asp-controller="Courses" asp-action="GetAllStudents">All Students</a>
 
     <hr />
     <br />
+    <div class="btn-group text-center m-2">
+        <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="site-btn m-2 text-center">Create</p>
+        <div class="dropdown-menu shadow">
+            <a asp-controller="Courses" asp-action="Create" type="button" class="dropdown-item">Course</a>
+            <a asp-controller="Modules" asp-action="Create" type="button" class="dropdown-item">Module</a>
+            <a asp-controller="Activities" asp-action="Create" type="button" class="dropdown-item">Activity</a>
+        </div>
 
+        <a type="button" class="site-btn m-2 text-center" asp-controller="Courses" asp-action="GetAllStudents" style="width:max-content;">All Students</a>
 
-</div>
-<div class="btn-group">
-    <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="site-btn">Create</p>
-    <div class="dropdown-menu shadow">
-        <a asp-controller="Courses" asp-action="Create" type="button" class="dropdown-item">Course</a>
-        <a asp-controller="Modules" asp-action="Create" type="button" class="dropdown-item">Module</a>
-        <a asp-controller="Activities" asp-action="Create" type="button" class="dropdown-item">Activity</a>
     </div>
-
-
 </div>
-<table class="table table-striped">
+
+<table class="table table-striped" id="drop2">
     <thead class="text-muted">
-        <tr class="text-muted fs-3">
+    <tr class="text-muted fs-3">
             <th> <h5>Title </h5></th>
             <th class="text-center text-muted"> <h5>Period </h5></th>
             <th class="text-center text-muted"> <h5>Start Date </h5></th>
             <th class="text-center text-muted"> <h5>Modules No.</h5></th>
             <th class="text-center text-muted"> <h5>Activities No.</h5> </th>
-            <th > </th>
+            <th> </th>
         </tr>
     </thead>
 
@@ -36,7 +40,7 @@
         {
             var itemID = course.Id;
             var newId = "test" + course.Id.ToString();
-            var uploadId = "test2" + course.Id.ToString();
+            var uploadId = "testNew" + course.Id.ToString();
 
             <tr class="table-light">
                 <td class="text-left">
@@ -93,7 +97,7 @@
                         <a asp-controller="Courses" asp-action="Edit" asp-route-id="@course.Id" type="button" class="dropdown-item">Edit</a>
                         <a asp-controller="Courses" asp-action="Delete" asp-route-id="@course.Id" type="button" class="dropdown-item">Delete</a>
                         <a class="cell-1 dropdown-item" data-toggle="collapse" data-target="#@newId" aria-expanded="false">Description </a>
-                        <a class="cell-1 dropdown-item" data-toggle="collapse" data-target="#@uploadId" aria-expanded="false"> Upload Doc</a>
+                        <a class="cell-1 dropdown-item" data-toggle="collapse" data-target="#@uploadId" aria-expanded="false" id="docId"> Upload Doc</a>
                     </div>
                 </td>
             </tr>
@@ -103,58 +107,193 @@
                     @Html.DisplayFor(modelItem => course.Description)
                 </td>
             </tr>
-            <tr id="@uploadId" class="collapse desc-text table-info" aria-expanded="false">
-                <td colspan="3" class="desc-text">
-                    <form method="post" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <div class="container justify-content-center">
-                                <div class="row justify-content-center">
-                                    <div class="col-xs-4 justify-content-center">
-                                        <input type="file" name="files" value="Upload" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="bottom" title="Upload new file" multiple="multiple" />
-                                        <button asp-controller="Courses" asp-action="UploadCourseDocument" asp-route-id="@course.Id" value="upload" class="btn btn-outline-danger">Upload</button>
-                                        <div class="clear"></div>
-                                        @if (ViewBag.Message != null)
-                                        {
-                                            <div class="alert alert-success" style="margin-top:50px">
-                                                @ViewBag.Message
-                                            </div>
-                                        }
+            @if (course.Id.ToString() == uploadId2.ToString())
+            {
+                <tr id="@uploadId" class="desc-text table-info" aria-expanded="true">
+                    <td colspan="3" class="desc-text">
+                        <form method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <div class="container justify-content-center">
+                                    <div class="row justify-content-center">
+                                        <div class="col-xs-4 justify-content-center">
+                                            <input type="file" name="files" value="Upload" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="bottom" title="Upload new file" multiple="multiple" />
+                                            <button asp-controller="Courses" asp-action="UploadCourseDocument" asp-route-id="@course.Id" value="upload" class="btn btn-outline-danger" id="uploadBtn" data-toggle="collapse" data-target="#@uploadId" aria-expanded="false">Upload</button>
+                                            <div class="clear"></div>
+                                            @if (ViewBag.Message != null)
+                                            {
+                                                <div class="alert alert-success" style="margin-top:50px">
+                                                    @ViewBag.Message
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
-                </td>
-                <th colspan="2">
-                    File Name
-                </th>
-                <th >
-                    Uploaded Time
-                </th>
-                <th class="table-info" colspan="1"></th>
-            </tr>
-            @foreach (var item in course.Documents)
-            {
-                string uploadDate = $"{item.UploadTime.ToString("dd/MMM/yyyy")}";
-
-                <tr id="@uploadId" class="collapse desc-text" aria-expanded="false">
-                    <td colspan="3"></td>
-                    <td colspan="2">
-                        @Html.DisplayFor(modelItem => item.Name)
+                        </form>
                     </td>
 
-                    <td >
-                        @Html.DisplayFor(modelItem => uploadDate)
-                    </td>
-                    <td>
-                        <a class="btn btn-info" asp-controller="Documents" asp-action="Download"
-                           asp-route-filename="@item.Name">
-                            <i class="fas fa-download"></i>
-                        </a>
-                    </td>
+                    <th colspan="2">
+                        File Name
+                    </th>
+                    <th>
+                        Uploaded Time
+                    </th>
+                    <th class="table-info" colspan="1"></th>
                 </tr>
-            }
+
+
+                @foreach (var item in course.Documents)
+                {
+                    string uploadDate = $"{item.UploadTime.ToString("dd/MMM/yyyy")}";
+
+                    <tr id="@uploadId" class="desc-text" aria-expanded="false">
+                        <td colspan="3"></td>
+                        <td colspan="2">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => uploadDate)
+                        </td>
+                        <td>
+                            <a class="btn btn-info" asp-controller="Documents" asp-action="Download"
+                               asp-route-filename="@item.Name">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </td>
+                    </tr>
+}}
+            else
+            {
+
+                <tr id="@uploadId" class="collapse table-info" aria-expanded="true">
+                    <td colspan="3" class="desc-text">
+                        <form method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <div class="container justify-content-center">
+                                    <div class="row justify-content-center">
+                                        <div class="col-xs-4 justify-content-center">
+                                            <input type="file" name="files" value="Upload" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="bottom" title="Upload new file" multiple="multiple" />
+                                            <button asp-controller="Courses" asp-action="UploadCourseDocument" asp-route-id="@course.Id" value="upload" class="btn btn-outline-danger" id="uploadBtn" data-toggle="collapse" data-target="#@uploadId" aria-expanded="false">Upload</button>
+                                            <div class="clear"></div>
+                                            @if (ViewBag.Message != null)
+                                            {
+                                                <div class="alert alert-success" style="margin-top:50px">
+                                                    @ViewBag.Message
+                                                </div>}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+
+                    <th colspan="2">
+                        File Name
+                    </th>
+                    <th>
+                        Uploaded Time
+                    </th>
+                    <th class="table-info" colspan="1"></th>
+                </tr>
+
+
+                @foreach (var item in course.Documents)
+                {
+                    string uploadDate = $"{item.UploadTime.ToString("dd/MMM/yyyy")}";
+
+                    <tr id="@uploadId" class="collapse desc-text" aria-expanded="false">
+                        <td colspan="3"></td>
+                        <td colspan="2">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => uploadDate)
+                        </td>
+                        <td>
+                            <a class="btn btn-info" asp-controller="Documents" asp-action="Download"
+                               asp-route-filename="@item.Name">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </td>
+                    </tr>
+}}
+        }
+
 
         }
     </tbody>
 </table>
+
+<script>
+    //let table = document.getElementById("drop2");
+    //let table2 = table.cloneNode(table);
+    //let uploadBtn = document.getElementById("uploadBtn");
+    //let allRows = document.querySelectorAll("TR");
+    
+    //let docId = document.getElementById("docId");
+    //docId.addEventListener("click", () => {
+    //    let courseId = uploadBtn.getAttribute("data-target");
+    //    let modCourseId = courseId.slice(1);
+    //    let row = document.getElementById(modCourseId);
+    //    row.classList.add(row);
+    //    row.classList.add(show);
+    //    setTimeout(() => {
+    //        allRows.forEach(r => {
+    //            if (r.classList.contains(row)) {
+    //                r.classList.add("show");
+    //                r.classList.remove("collapse");
+
+    //            }
+    //        })
+    //    }, 5000)
+    //})
+    //uploadBtn.addEventListener("click", () => {
+    //    /*console.log("click");*/
+       
+    //    //console.log(courseId);
+    //    //console.log(modCourseId);
+    //    let courseId = uploadBtn.getAttribute("data-target");
+    //    let modCourseId = courseId.slice(1);
+    //    let row = document.getElementById(modCourseId);
+    //    row.classList.add(row);
+    //    setTimeout(() => {
+    //        allRows.forEach(r => {
+    //            if (r.classList.contains(row)) {
+    //                r.classList.add("show");
+    //                r.classList.remove("collapse");
+
+    //            }
+    //        })
+    //    }, 5000)
+
+    //});
+    //setTimeout(() => {
+    //    allRows.forEach(r => {
+    //        if (r.classList.contains(row)) {
+    //            r.classList.add("show");
+    //            r.classList.remove("collapse");
+
+    //        }
+    //    })
+    //},5000)
+
+    //var target = document.querySelector('#drop2');
+
+    // create an observer instance
+    //var observer = new MutationObserver(function (mutations) {
+    //    mutations.forEach(function (mutation) {
+    //        console.log(mutation.type);
+    //    });
+    //});
+
+    // configuration of the observer:
+    //var config = { attributes: true, childList: true, characterData: true }
+
+    // pass in the target node, as well as the observer options
+    //observer.observe(target, config);
+
+    // later, you can stop observing
+    //observer.disconnect();
+</script>

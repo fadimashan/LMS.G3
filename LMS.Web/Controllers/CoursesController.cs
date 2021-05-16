@@ -50,7 +50,6 @@ namespace LMS.Web.Controllers
         }
 
         // Check for email exist
-
         [AcceptVerbs("GET", "POST")]
         public async Task<IActionResult> VerifyEmail(string email)
         {
@@ -59,10 +58,7 @@ namespace LMS.Web.Controllers
             var newList = new List<bool>();
             foreach (var s in foundEmail)
             {
-               
-                    newList.Add(s.Email == email);
-
-                
+                newList.Add(s.Email == email);
             }
 
             var result = newList.Contains(true);
@@ -74,11 +70,8 @@ namespace LMS.Web.Controllers
 
             return Json(true);
         }
-
-
-
+        
         // Check for user FirstName and LastName
-
         [AcceptVerbs("GET", "POST")]
         public IActionResult VerifyName(NewUserViewModel model, string firstName, string lastName)
         {
@@ -118,8 +111,7 @@ namespace LMS.Web.Controllers
             }
             return Json(true);
         }
-
-
+        
         // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -138,7 +130,6 @@ namespace LMS.Web.Controllers
 
             return View(course);
         }
-
 
         // GET: Courses/Create
         [Authorize(Roles = "Teacher")]
@@ -165,6 +156,7 @@ namespace LMS.Web.Controllers
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            // return View("Details", course);
             return View(course);
         }
 
@@ -336,6 +328,7 @@ namespace LMS.Web.Controllers
 
             return View("GetAllStudents", students);
         }
+        
         public async Task<IActionResult> GetStudentByName(string name)
         {
             var students = await _dbContext.Course
@@ -390,7 +383,7 @@ namespace LMS.Web.Controllers
                 UserName = userVM.FirstName,
                 Email = userVM.Email,
             };
-
+            
             var type = userVM.RoleType == "A" ? "Student" : "Teacher";
 
             var addStudentResult = await _userManager.CreateAsync(newUser, userVM.Password);
@@ -452,6 +445,14 @@ namespace LMS.Web.Controllers
         [HttpPost]
         public IActionResult UploadCourseDocument(int id, IFormFile[] files)
         {
+
+            var courses = _dbContext.Course
+                    .Include(c => c.Modules)
+                    .Include(s => s.Students)
+                    .Include(d => d.Documents)
+                    .ToList();
+            // Variable `course` is never used
+            var course = _dbContext.Course.Find(id);
             var userId = _userManager.GetUserId(User);
             if (files is not null && files.Length > 0)
             {
@@ -485,6 +486,11 @@ namespace LMS.Web.Controllers
                 }
                 _dbContext.SaveChanges();
             }
+            else
+            {
+                ViewBag.Message = "Please select a doc.";
+                return View("GetCourses", courses);
+            }
 
             var model = new FilesViewModel();
             
@@ -502,7 +508,8 @@ namespace LMS.Web.Controllers
                     });
             }
             
-            return Redirect("/courses");
+            return View("GetCourses", courses);
+            //return Redirect("/Courses");
         }
     }
 }

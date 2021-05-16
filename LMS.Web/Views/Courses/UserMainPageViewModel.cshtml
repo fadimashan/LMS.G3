@@ -11,10 +11,11 @@
     </div>
 </div>
 
-
 <div id="course" class="mt-0" style="top:-90px;">
-    <div class="btn-group">
+    <div class="btn-groupm-lg-auto">
         <p class="btn text-center site-btn ml-1 w-auto" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 25px !important;">Course participants</p>
+        @* <p class="btn btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Course participants</p> *@
+        @* <p class="btn btn-outline-secondary ml-4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Course participants</p> *@
         <div class="dropdown-menu ">
             @foreach (var student in Model.FirstOrDefault().Students)
             {
@@ -34,9 +35,10 @@
                             Start Date
                         </th>
                         <th></th>
-                        <th class="text-center">
+                        <th class="text-start">
                             Period
                         </th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody class="table-body">
@@ -67,7 +69,7 @@
                         <tr id="@newId" class="collapse desc-text" aria-expanded="false">
                             <td colspan="3" class="desc-text">
                                 @Html.DisplayNameFor(modelItem => item.Description):
-                                @Html.DisplayFor(modelItem => item.Description)
+                                @Html.DisplayFor(modelItem => item.Description) "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
                             </td>
                         </tr>
                     }
