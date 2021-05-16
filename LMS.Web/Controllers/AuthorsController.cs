@@ -33,14 +33,15 @@ namespace LMS.Web.Controllers
 
             httpClient = new HttpClient(handler)
             {
-                BaseAddress = new Uri(baseAddress), 
+                BaseAddress = new Uri(baseAddress),
                 Timeout = new TimeSpan(0, 0, 10)
             };
             httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<IActionResult> Index(string nameLike)
+
+        public async Task<IActionResult> Index(string nameLike, string name, string sortOrder)
         {
             var uri = baseRoute + (string.IsNullOrWhiteSpace(nameLike) ? "" : $"?nameLike={nameLike}");
             var response = await httpClient.GetAsync(uri);
@@ -98,6 +99,26 @@ namespace LMS.Web.Controllers
                     var xmlSerializer = new XmlSerializer(typeof(AuthorDto));
                     authors = (IEnumerable<AuthorDto>)xmlSerializer.Deserialize(new StringReader(content));
                 }
+            }
+
+            ViewBag.FullName = (sortOrder == "FirstName") ? $"{sortOrder}_desc" : "FirstName";
+            ViewBag.Age = (sortOrder == "Age") ? $"{sortOrder}_desc" : "Age";
+
+            switch (sortOrder)
+            {
+                case "FirstName":
+                    authors = authors.OrderBy(v => v.FirstName);
+                    break;
+                case "FirstName_desc":
+                    authors = authors.OrderByDescending(v => v.FirstName);
+                    break;
+
+                case "Age":
+                    authors = authors.OrderBy(v => v.Age);
+                    break;
+                case "Age_desc":
+                    authors = authors.OrderByDescending(v => v.Age);
+                    break;
             }
             return View(authors);
             */
@@ -190,7 +211,7 @@ namespace LMS.Web.Controllers
             var requestByName = new HttpRequestMessage(HttpMethod.Get, $"api/authors/GetAuthorByName/{fullName}");
             requestByName.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var responseByName =  await httpClient.SendAsync(requestByName);
+            var responseByName = await httpClient.SendAsync(requestByName);
 
             responseByName.EnsureSuccessStatusCode();
             if (responseByName.IsSuccessStatusCode == false)

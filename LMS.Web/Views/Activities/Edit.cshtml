@@ -18,19 +18,18 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
-            @*<div class="form-group">
-            <label class="control-label"> Belongs to Module </label>
-            <select id="select" asp-for="ModuleId" asp-items="@Model.GetModulesSelectListItem" class="form-control">
-                <option value="0">Select</option>
-            </select>
-            <span asp-validation-for="ModuleId" class="text-danger"></span>
-        </div>*@
-
             <div class="form-group">
-                <label asp-for="ActivityType" class="control-label"></label>
-                <select asp-for="ActivityType" asp-items="@Html.GetEnumSelectList<ActivityType>()" class="form-control"></select>
+                <label class="control-label"> Activity Type</label>
+                <select id="selectItem" asp-for="ActivityType" class="form-control">
+                    <option value="A">Assignments</option>
+                    <option value="B">E_Learning</option>
+                    <option value="C">lectures</option>
+                    <option value="D">Other</option>
+                </select>
                 <span asp-validation-for="ActivityType" class="text-danger"></span>
             </div>
+
+         
 
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>
@@ -38,10 +37,22 @@
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
 
+            <div class="form-group" hidden="hidden">
+                <input asp-for="ModuleId" class="form-control" />
+            </div>
+
+            <input type="hidden" asp-for="Module" />
+
             <div class="form-group">
                 <label asp-for="EndDate" class="control-label"></label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" id="showList">
+                <label asp-for="Deadline" class="control-label"></label>
+                <input asp-for="Deadline" class="form-control" />
+                <span asp-validation-for="Deadline" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -52,14 +63,28 @@
 
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-outline-danger" />
-                <a asp-action="Index" class="btn btn-outline-info">Back to List</a>
+                <a asp-controller="Courses" asp-action="Index" class="btn btn-outline-info">Back to List</a>
             </div>
 
         </form>
     </div>
 </div>
 
+<script>
 
+    let listOfItems = document.getElementById('selectItem');
+
+    listOfItems.addEventListener('change', () => {
+
+        if (listOfItems.value === "B" || listOfItems.value === "C" || listOfItems.value === "D") {
+            inputBox.style.display = "none";
+        } else {
+            inputBox.style.display = "block";
+        }
+    });
+
+    let inputBox = document.getElementById('showList');
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -7,7 +7,34 @@
 <h4 class="text-center mt-3">Literature</h4>
 <hr />
 <form asp-action="Index" asp-controller="Literature" class="course-search-form w-75 justify-content-center container-fluid m-auto" style="left:100px;">
-    <input name="searchQuery" type="text" placeholder="Search Literature by Title" class="w-75 m-1">
+    <input name="searchQuery" type="text" placeholder="Search Literature by Title" class="w-50 m-1">
+        @{ var list = new List<string>();
+
+            foreach (var item in Model)
+            {
+                list.Add(item.TypeName.ToString());
+            }
+
+            list = list.Distinct().ToList();
+            var items = new List<SelectListItem>();
+
+            foreach (var type in list)
+            {
+                var selectListItem = (new SelectListItem
+                {
+                    Text = type,
+                    Value = type
+                    
+                });
+                items.Add(selectListItem);
+            }
+           }
+        <select name="filter" class="btn  btn-dark dropdown-toggle p-3 " onchange="this.form.submit()">
+            <option selected="selected" value=" ">Please select</option>
+            <option>Blogg</option>
+            <option>Article</option>
+            <option>Book</option>
+        </select>
     <button type="submit" class="site-btn m-1">Search Literature</button>
 </form>
 
@@ -21,35 +48,56 @@
         </p>
         <table class="table table-striped">
             <thead class="text-muted bg-light">
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Title)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                    @* Description *@
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.PublicationDate)
-                    @* Publication Date *@
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Level)
-                    @* Level *@
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TypeName)
-                    @* Type *@
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.SubjectName)
-                    @* Subject *@
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Authors)
-                </th>
-                <th></th>
-            </tr>
+                <tr>
+                    <th>
+                        <a style="color:black">
+
+                            @Html.DisplayNameFor(model => model.Id)
+                        </a>
+                    </th>
+                    <th>
+                        <a style="color:black" href="@Url.Action("Index", new { sortOrder =  ViewBag.Title1})">
+                            @Html.DisplayNameFor(model => model.Title)
+                            <i class="fa fa-sort" aria-hidden="true"> </i>
+                        </a>
+                    </th>
+                    <th>
+                        <a style="color:black">
+
+                            @Html.DisplayNameFor(model => model.Description)
+                        </a>
+                    </th>
+                    <th>
+                        <a style="color:black" href="@Url.Action("Index", new { sortOrder = ViewBag.PublicationDate })">
+                            @Html.DisplayNameFor(model => model.PublicationDate)  <i class="fa fa-sort" aria-hidden="true"> </i>
+                        </a>
+
+                    </th>
+                    <th>
+                        <a style="color:black" href="@Url.Action("Index", new { sortOrder = ViewBag.Level1 })">
+                            @Html.DisplayNameFor(model => model.Level)  <i class="fa fa-sort" aria-hidden="true"> </i>
+                        </a>
+
+                    </th>
+                    <th>
+                        <a style="color:black" href="@Url.Action("Index", new { sortOrder = ViewBag.TypeName1 })">
+                            @Html.DisplayNameFor(model => model.TypeName)  <i class="fa fa-sort" aria-hidden="true"> </i>
+                        </a>
+                    </th>
+                    <th>
+
+                        <a style="color:black" href="@Url.Action("Index", new { sortOrder = ViewBag.SubjectName1 })">
+                            @Html.DisplayNameFor(model => model.SubjectName)  <i class="fa fa-sort" aria-hidden="true"> </i>
+                        </a>
+
+                    </th>
+                    <th>
+                        <a style="color:black">
+                            @Html.DisplayNameFor(model => model.Authors)
+                        </a>
+                    </th>
+                    <th></th>
+                </tr>
             </thead>
             <tbody>
             @if (Model.Any())

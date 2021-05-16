@@ -22,6 +22,20 @@ sel.addEventListener('change', () => {
 let sel2 = document.getElementById('select2');
 
 
+let select1 = document.getElementById('selectItem');
+
+select1.addEventListener('change', () => {
+
+    if (select1.value === "B" || select1.value === "C" || select1.value === "D") {
+        select2.style.display = "none";
+    } else {
+        select2.style.display = "block";
+    }
+});
+
+let select2 = document.getElementById('showList');
+
+
 var headers = ["H1", "H2", "H3", "H4", "H5", "H6"];
 
 $(".accordion").click(function (e) {
@@ -49,63 +63,21 @@ $(".accordion").click(function (e) {
 });
 
 
-let select1 = document.getElementById('assignment');
-
-select1.addEventListener('change', () => {
-
-    if (select1.value === "B" || select1.value === "C" || select1.value === "D") {
-        select2.style.display = "none";
-    } else {
-        select2.style.display = "block";
-    }
-});
-
-let select2 = document.getElementById('assignment2');
-
-let selectActivity = document.getElementById('act');
-let selectActivity2 = document.getElementById('act2');
-selectActivity.addEventListener('change', () => {
-
-    if (selectActivity.value === "B" || selectActivity.value === "C" || selectActivity.value === "D") {
-        selectActivity2.style.display = "none";
-    } else {
-        selectActivity2.style.display = "block";
-    }
-});
 
 
-// From Upload_File_Refresh branch 
-/*
-let table = document.getElementById("test22");
-let table2 = table.cloneNode(table);
-let uploadBtn = document.getElementById("uploadBtn");
 
-uploadBtn.addEventListener("click", () => {
-    console.log("click");
-    let courseId = uploadBtn.getAttribute("data-target");
-    let updatedView = document.querySelectorAll("TR");
-    updatedView.forEach(row => {
-        if (row.classList.contains("collapse")) {
-            row.classList.remove("collapse");
-        }
-    })
-});
 
-var target = document.querySelector('#drop2');
 
-// create an observer instance
-var observer = new MutationObserver(function (mutations) {
-    mutations.forEach(function (mutation) {
-        console.log(mutation.type);
-    });
-});
+//let selectActivity = document.getElementById('act');
+//let selectActivity2 = document.getElementById('act2');
+//selectActivity.addEventListener('change', () => {
 
-// configuration of the observer:
-var config = { attributes: true, childList: true, characterData: true }
+//    if (selectActivity.value === "B" || selectActivity.value === "C" || selectActivity.value === "D") {
+//        selectActivity2.style.display = "none";
+//    } else {
+//        selectActivity2.style.display = "block";
+//    }
+//});
 
-// pass in the target node, as well as the observer options
-observer.observe(target, config);
 
-// later, you can stop observing
-observer.disconnect();
-*/
+

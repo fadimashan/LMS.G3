@@ -293,5 +293,26 @@ namespace LMS.Web.Controllers
             return Redirect($"/Modules/details/{moduleFromContext.Id}");
         }
 
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyModuleStartDate(Module module)
+        {
+            var course = _dbContext.Course.Find(module.CourseId);
+
+            if (module.EndDate != DateTime.Parse("0001-01-01 00:00:00") && (module.StartDate < course.StartDate || module.EndDate > course.EndDate || module.StartDate > course.EndDate || module.EndDate < course.StartDate))
+            {
+                return Json($"Course started in {course.StartDate}. End in { course.EndDate} ");
+            }
+
+            if (module.EndDate != DateTime.Parse("0001-01-01 00:00:00") && (module.StartDate >= module.EndDate))
+            {
+                return Json($"Date should not start and end in the same time!");
+
+            }
+
+            return Json(true);
+        }
+
+
     }
 }

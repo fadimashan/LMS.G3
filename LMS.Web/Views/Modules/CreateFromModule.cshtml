@@ -27,7 +27,7 @@
 
             <div class="form-group">
                 <label class="control-label"> Activity Type</label>
-                <select id="act" asp-for="ActivityType" class="form-control">
+                <select id="selectList" asp-for="ActivityType" class="form-control">
                     <option value="A">Assignments</option>
                     <option value="B">E_Learning</option>
                     <option value="C">lectures</option>
@@ -49,7 +49,7 @@
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
 
-            <div class="form-group" id="act2">
+            <div class="form-group" id="showInputbox">
                 <label class="control-label">Dead line</label>
                 <input asp-for="Deadline" class="form-control" value="@DateTime.Now" />
                 <span asp-validation-for="Deadline" class="text-danger"></span>
@@ -71,6 +71,22 @@
 </div>
 
 
+
+<script>
+
+    let listOfItems = document.getElementById('selectList');
+
+    listOfItems.addEventListener('change', () => {
+
+        if (listOfItems.value === "B" || listOfItems.value === "C" || listOfItems.value === "D") {
+            inputBox.style.display = "none";
+        } else {
+            inputBox.style.display = "block";
+        }
+    });
+
+    let inputBox = document.getElementById('showInputbox');
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
