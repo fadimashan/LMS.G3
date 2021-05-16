@@ -50,6 +50,12 @@
             <div class="form-group">
                 <input type="submit" value="Add User" class="btn btn-outline-danger" />
                 <a class="btn btn-outline-info" asp-action="GetAllStudents">Back</a>
+                <label  class="control-label">Confirmed Password</label>
+                <input type="password" asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add User" class="btn btn-primary" />
             </div>
         </form>
 </div>
