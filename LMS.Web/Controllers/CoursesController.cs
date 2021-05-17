@@ -38,14 +38,39 @@ namespace LMS.Web.Controllers
             return View("GetCourses", module);
         }
 
-        // Check for Course Unique Title
-        public IActionResult VerifyName(Course course)
+        [AcceptVerbs("GET", "POST")]
+        public async Task<IActionResult> VerifyCourse(string title)
         {
-          
-            if (_dbContext.Course.Any(c => c.Title.ToUpper() == course.Title.ToUpper()))
+            var courses = await _dbContext.Course.ToListAsync();
+            var list = new List<string>();
+
+            foreach (var t in courses)
             {
-                return Json("Course Title must be uppercase and unique");
+                list.Add(t.Title.ToLower());
             }
+
+            var result = list.Contains(title.ToLower());
+
+            if (result) 
+            {
+                return Json($"Course {title} is already in use.");
+            }
+
+            return Json(true);
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyCourseDate(Course course)
+        {
+            if(course.EndDate != DateTime.Parse("0001-01-01 00:00:00"))
+            {
+                if (course.StartDate >= course.EndDate)
+                {
+                    return Json($"Date should not end in the same day or before start date!");
+
+                }
+            }
+
             return Json(true);
         }
 
@@ -139,24 +164,20 @@ namespace LMS.Web.Controllers
         }
 
         // POST: Courses/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate")] Course course, [Bind("Id,Title,Description,StartDate,EndDate")] Module module)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,StartDate,EndDate")] Course course)
         {
             if (ModelState.IsValid)
             {
-                List<Module> modules = new List<Module>();
-                modules.Add(module);
-                var newCourse = course;
-                newCourse.Modules = modules;
-                await _dbContext.AddAsync(newCourse);
+
+                await _dbContext.AddAsync(course);
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            
+
             // return View(course);
             // return View("GetCourses", course);
             return View("Details", course);
@@ -247,7 +268,16 @@ namespace LMS.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CourseExists(int id)
+        public async Task<IActionResult> CourseFiles()
+        {
+            var firstCourseID = await _dbContext.Course
+                    .Include(c => c.Documents)
+                    .FirstOrDefaultAsync();
+
+            return View("CourseFiles", firstCourseID);
+
+        }
+            private bool CourseExists(int id)
         {
             return _dbContext.Course.Any(c => c.Id == id);
         }
@@ -514,7 +544,12 @@ namespace LMS.Web.Controllers
                         Path = item
                     });
             }
-            
+
+            if (User.IsInRole("Student"))
+            {
+                return RedirectToAction("CourseFiles");
+
+            }
             return View("GetCourses", courses);
             //return Redirect("/Courses");
         }

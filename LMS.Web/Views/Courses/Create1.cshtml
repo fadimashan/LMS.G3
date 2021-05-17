@@ -1,15 +1,16 @@
 ﻿@model LMS.Core.Entities.Course
+
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create1";
 }
 
-<h4 class="text-center text-muted m-2">Create New Course</h4>
+<h1>Create1</h1>
 
+<h4>Course</h4>
 <hr />
-
-<div class="row justify-content-center">
-    <div class="col-auto">
-        <form asp-action="Create">
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create1">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
@@ -22,27 +23,23 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label"> Start Date</label>
+                <label asp-for="StartDate" class="control-label"></label>
                 <input asp-for="StartDate" class="form-control" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label"> End Date</label>
+                <label asp-for="EndDate" class="control-label"></label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
-
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-outline-info">Back to List</a>
             </div>
-
         </form>
     </div>
 </div>
 
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
 
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

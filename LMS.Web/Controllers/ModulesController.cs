@@ -237,6 +237,17 @@ namespace LMS.Web.Controllers
             return Redirect("/courses");
         }
 
+        public async Task<IActionResult> ModuleFiles(int id)
+        {
+            
+            var firstModuleID = await _dbContext.Module.Where(m => m.Id == id)
+                    .Include(c => c.Documents)
+                    .FirstOrDefaultAsync();
+
+            return View("ModuleFiles", firstModuleID);
+
+        }
+
         [HttpPost]
         public IActionResult UploadModuleDocument(int id, IFormFile[] files)
         {
@@ -289,6 +300,11 @@ namespace LMS.Web.Controllers
                     });
             }
 
+            if (User.IsInRole("Student"))
+            {
+                return RedirectToAction("ModuleFiles", moduleFromContext);
+
+            }
             //return View();
             return Redirect($"/Modules/details/{moduleFromContext.Id}");
         }
@@ -297,6 +313,7 @@ namespace LMS.Web.Controllers
         [AcceptVerbs("GET", "POST")]
         public IActionResult VerifyModuleStartDate(Module module)
         {
+        
             var course = _dbContext.Course.Find(module.CourseId);
 
             if (module.EndDate != DateTime.Parse("0001-01-01 00:00:00") && (module.StartDate < course.StartDate || module.EndDate > course.EndDate || module.StartDate > course.EndDate || module.EndDate < course.StartDate))

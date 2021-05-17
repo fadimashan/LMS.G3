@@ -24,14 +24,12 @@ namespace LMS.Core.Entities
         [Remote(action: "VerifyStartDate", controller: "Activities", AdditionalFields = ("ModuleId,EndDate"))]
         [Display(Name = "StartDate")]
         [Required(ErrorMessage = "Activity StartDate is required")]
-        [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime StartDate { get; set; }
 
         [Remote(action: "VerifyStartDate", controller: "Activities", AdditionalFields = ("ModuleId,StartDate"))]
         [Display(Name = "EndDate")]
         [Required(ErrorMessage = "Activity EndDate is required")]
-        [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime EndDate { get; set; }
 
