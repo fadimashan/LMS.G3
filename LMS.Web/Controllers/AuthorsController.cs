@@ -48,22 +48,6 @@ namespace LMS.Web.Controllers
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             IEnumerable<AuthorDto> authors;
-            if (response.Content.Headers.ContentType?.MediaType == "application/json")
-            {
-                authors = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(content);
-            }
-            else
-            {
-                var xmlSerializer = new XmlSerializer(typeof(AuthorDto));
-                authors = (IEnumerable<AuthorDto>)xmlSerializer.Deserialize(new StringReader(content));
-            }
-            return View(authors);
-            
-            /*
-            IEnumerable<AuthorDto> authors;
-            var response = await httpClient.GetAsync("api/authors");
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
             if (!String.IsNullOrEmpty(nameLike))
             {
                 if (response.Content.Headers.ContentType?.MediaType == "application/json")
@@ -121,7 +105,7 @@ namespace LMS.Web.Controllers
                     break;
             }
             return View(authors);
-            */
+            
             
         }
         
