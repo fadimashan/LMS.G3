@@ -62,40 +62,6 @@ namespace LMS.Web.Controllers
                 publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
             }
             return View(publications);
-            
-/*
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-
-            IEnumerable<PublicationWithAuthorsDto> publications;
-            if(!string.IsNullOrEmpty(searchQuery))
-            {
-                if (response.Content.Headers.ContentType?.MediaType == "application/json")
-                {
-                    publications = JsonConvert.DeserializeObject<IEnumerable<PublicationWithAuthorsDto>>(content);
-                    publications = publications.Where(p => p.Title.ToLower().StartsWith(searchQuery) || p.Title.ToUpper().StartsWith(searchQuery));
-                }
-                else
-                {
-                    var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
-                    publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
-                    publications = publications.Where(p => p.Title.ToLower().StartsWith(searchQuery) || p.Title.ToUpper().StartsWith(searchQuery));
-                }
-            }
-            else
-            {
-                if (response.Content.Headers.ContentType?.MediaType == "application/json")
-                {
-                    publications = JsonConvert.DeserializeObject<IEnumerable<PublicationWithAuthorsDto>>(content);
-                }
-                else
-                {
-                    var xmlSerializer = new XmlSerializer(typeof(PublicationWithAuthorsDto));
-                    publications = (IEnumerable<PublicationWithAuthorsDto>)xmlSerializer.Deserialize(new StringReader(content));
-                }
-            }
-            return View(publications);
-            */
         }
 
         // GET: Publications/Details/5
