@@ -1,5 +1,6 @@
 using LMS.Core.Entities;
 using LMS.Data.Data;
+using LMS.Data.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -56,6 +57,8 @@ namespace LMS.Web
 
             services.AddDbContext<LMSWebContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("LMSWebContext")).LogTo(System.Console.WriteLine, LogLevel.Information));
+
+            services.AddScoped<IUoW, UoW>();
 
         }
 

@@ -8,23 +8,26 @@ using Microsoft.EntityFrameworkCore;
 using LMS.Core.Entities;
 using LMS.Data.Data;
 using Microsoft.AspNetCore.Authorization;
+using LMS.Data.Repositories;
 
 namespace LMS.Web.Controllers
 {
     [Authorize]
     public class ModulesController : Controller
     {
+        private readonly IUoW uow;
         private readonly LMSWebContext db;
 
-        public ModulesController(LMSWebContext context)
+        public ModulesController(IUoW uow, LMSWebContext db)
         {
-            db = context;
+            this.uow = uow;
+            this.db = db;
         }
 
         // GET: Modules
         public async Task<IActionResult> Index()
         {
-            return View(await db.Module.ToListAsync());
+            return View(await uow.ModulesRepo.GetAll());
         }
 
         // GET: Modules/Details/5

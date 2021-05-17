@@ -9,6 +9,7 @@ using LMS.API.Data;
 using LMS.API.Models.DTO;
 using LMS.API.Models.Entities;
 using LMS.API.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace LMS.API.Controllers
 {
@@ -18,13 +19,9 @@ namespace LMS.API.Controllers
     {
         private readonly IAuthorsRepository _authorsRepository;
         private readonly IMapper _mapper;
-        
-        // ToDo: To be removed when all methods are using the Repository
-        private readonly ApiDbContext _dbContext;
 
-        public AuthorsController(ApiDbContext context, IAuthorsRepository authorsRepository, IMapper mapper)
+        public AuthorsController(IAuthorsRepository authorsRepository, IMapper mapper)
         {
-            _dbContext = context;
             _authorsRepository = authorsRepository ?? throw new ArgumentNullException(nameof(authorsRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -52,6 +49,8 @@ namespace LMS.API.Controllers
 
             return Ok(_mapper.Map<AuthorWithPublicationsDto>(authorFromRepo));
         }
+
+       
 
         [HttpGet("{id}/publications")]
         public async Task<ActionResult<IEnumerable<PublicationDto>>> GetPublicationsForAuthor(int id)
@@ -108,33 +107,27 @@ namespace LMS.API.Controllers
         // PUT: api/Authors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAuthor(int id, Author author)
+        public async Task<IActionResult> PutAuthor(int id,  AuthorDto dto)
         {
-            if (id != author.Id)
-            {
-                return BadRequest();
-            }
+            var author = _authorsRepository.GetAsync(id);
 
-            _dbContext.Entry(author).State = EntityState.Modified;
 
-            try
-            {
-                // await _dbContext.SaveChangesAsync();
-                await _authorsRepository.SaveAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_authorsRepository.Exists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            if (author==null) return StatusCode(StatusCodes.Status404NotFound);
 
-            return NoContent();
+
+            //_dbContext.Entry(author).State = EntityState.Modified;
+
+           // _mapper.Map(dto, author);
+
+            if(await _authorsRepository.SaveAsync())
+            {
+                return Ok(_mapper.Map<AuthorDto>(author));
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+            
         }
 
         // DELETE: api/Authors/5
