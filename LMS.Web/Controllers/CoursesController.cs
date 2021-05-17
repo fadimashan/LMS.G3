@@ -323,25 +323,28 @@ namespace LMS.Web.Controllers
             return View("GetStudentsForThisCourse", course);
         }
 
-        public async Task<IActionResult> GetAllStudents()
+
+        public async Task<IActionResult> GetAllStudents(string name)
         {
-            var students = await _dbContext.Course
+            if (string.IsNullOrEmpty(name))
+            {
+                var students = await _dbContext.Course
                 .Include(c => c.Students)
                 .ToListAsync();
 
-            return View("GetAllStudents", students);
-        }
-        
-        /*
-        public async Task<IActionResult> GetStudentByName(string name)
-        {
-            var students = await _dbContext.Course
-                .Where(c => c.Students.Any(s => s.LastName.StartsWith(name) || s.FirstName.StartsWith(name) || name == null))
-                .Include( c=> c.Students)
+
+
+                return View("GetAllStudents", students);
+            }
+            else
+            {
+                var students = await _dbContext.Course
+                .Where(c => c.Students.Any(s => s.LastName.ToLower().StartsWith(name.ToLower()) || s.FirstName.ToLower().StartsWith(name.ToLower()) || name == null))
+                .Include(c => c.Students)
                 .ToListAsync();
-            return View("GetAllStudents", students);
+                return View("GetAllStudents", students);
+            }
         }
-        */
 
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)

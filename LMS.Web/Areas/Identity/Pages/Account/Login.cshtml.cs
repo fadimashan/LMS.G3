@@ -85,7 +85,7 @@ namespace LMS.Web.Areas.Identity.Pages.Account
                 {
 
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl + "courses");
+                    return Redirect("/courses");
 
                 }
                 if (result.RequiresTwoFactor)
