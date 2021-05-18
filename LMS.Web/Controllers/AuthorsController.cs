@@ -42,7 +42,8 @@ namespace LMS.Web.Controllers
 
         public async Task<IActionResult> Index(string nameLike)
         {
-            var response = await httpClient.GetAsync(baseRoute);
+            var uri = baseRoute + (string.IsNullOrWhiteSpace(nameLike) ? "" : $"?nameLike={nameLike}");
+            var response = await httpClient.GetAsync(uri);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             IEnumerable<AuthorDto> authors;
@@ -56,51 +57,6 @@ namespace LMS.Web.Controllers
                 authors = (IEnumerable<AuthorDto>)xmlSerializer.Deserialize(new StringReader(content));
             }
             return View(authors);
-            
-            /*
-            IEnumerable<AuthorDto> authors;
-            var response = await httpClient.GetAsync("api/authors");
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            if (!String.IsNullOrEmpty(nameLike))
-            {
-                if (response.Content.Headers.ContentType?.MediaType == "application/json")
-                {
-                    authors = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(content);
-                    authors = authors
-                        .Where(a => a.FirstName.ToLower().StartsWith(nameLike) || 
-                                    a.LastName.ToLower().StartsWith(nameLike) || 
-                                    a.FirstName.ToUpper().StartsWith(nameLike) || 
-                                    a.LastName.ToUpper().StartsWith(nameLike)
-                    );
-                }
-                else
-                {
-                    var xmlSerializer = new XmlSerializer(typeof(AuthorDto));
-                    authors = (IEnumerable<AuthorDto>)xmlSerializer.Deserialize(new StringReader(content));
-                    authors = authors
-                        .Where(a => a.FirstName.ToLower().StartsWith(nameLike) || 
-                                    a.LastName.ToLower().StartsWith(nameLike) || 
-                                    a.FirstName.ToUpper().StartsWith(nameLike) || 
-                                    a.LastName.ToUpper().StartsWith(nameLike)
-                    );
-                }
-            }
-            else
-            {
-                if (response.Content.Headers.ContentType?.MediaType == "application/json")
-                {
-                    authors = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(content);
-                }
-                else
-                {
-                    var xmlSerializer = new XmlSerializer(typeof(AuthorDto));
-                    authors = (IEnumerable<AuthorDto>)xmlSerializer.Deserialize(new StringReader(content));
-                }
-            }
-            return View(authors);
-            */
-            
         }
         
         public async Task<IActionResult> GetAuthor(int id)
