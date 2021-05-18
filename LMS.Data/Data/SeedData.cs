@@ -1,41 +1,40 @@
-﻿using Bogus;
-using LMS.Core.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Bogus;
+using LMS.Core.Entities;
 
 namespace LMS.Data.Data
 {
     public static class SeedData
     {
-        private static Faker fake;
-        private static UserManager<ApplicationUser> userManager;
-        private static RoleManager<IdentityRole> roleManager;
+        private static Faker _fake;
+        private static UserManager<ApplicationUser> _userManager;
+        private static RoleManager<IdentityRole> _roleManager;
 
         public static async Task InitAsync(IServiceProvider services, string adminPW, string studentPW)
         {
-            using (var context = new LMSWebContext(services.GetRequiredService<DbContextOptions<LMSWebContext>>()))
+            using (var context = new MvcDbContext(services.GetRequiredService<DbContextOptions<MvcDbContext>>()))
             {
+                _userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                _roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-                userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
-
-                fake = new Faker("sv");
+                _fake = new Faker("sv");
 
                 var roleNames = new[] { "Teacher", "Student" };
 
                 foreach (var roleName in roleNames)
                 {
-                    if (await roleManager.RoleExistsAsync(roleName)) continue;
+                    if (await _roleManager.RoleExistsAsync(roleName))
+                    {
+                        continue;
+                    }
 
                     var role = new IdentityRole { Name = roleName };
-                    var result = await roleManager.CreateAsync(role);
+                    var result = await _roleManager.CreateAsync(role);
 
                     if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
                 }
@@ -43,9 +42,9 @@ namespace LMS.Data.Data
 
                 var TeacherEmail = "dimitris@lms.se";
 
-                var foundTeacher = await userManager.FindByEmailAsync(TeacherEmail);
+                var foundTeacher = await _userManager.FindByEmailAsync(TeacherEmail);
 
-                if (foundTeacher != null) return;
+                if (foundTeacher is not null) return;
 
                 var admin = new ApplicationUser
                 {
@@ -53,88 +52,97 @@ namespace LMS.Data.Data
                     Email = TeacherEmail,
                 };
 
-                var addAdminResult = await userManager.CreateAsync(admin, adminPW);
+                var addAdminResult = await _userManager.CreateAsync(admin, adminPW);
 
-                if (!addAdminResult.Succeeded) throw new Exception(string.Join("\n", addAdminResult.Errors));
+                if (!addAdminResult.Succeeded)
+                {
+                    throw new Exception(string.Join("\n", addAdminResult.Errors));
+                }
 
-                var adminUser = await userManager.FindByEmailAsync(TeacherEmail);
+                var adminUser = await _userManager.FindByEmailAsync(TeacherEmail);
 
                 foreach (var role in roleNames)
                 {
-                    if (await userManager.IsInRoleAsync(adminUser, role)) continue;
+                    if (await _userManager.IsInRoleAsync(adminUser, role))
+                    {
+                        continue;
+                    }
 
-                    var addToRoleResult = await userManager.AddToRoleAsync(adminUser, role);
+                    var addToRoleResult = await _userManager.AddToRoleAsync(adminUser, role);
 
-                    if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                    if (!addToRoleResult.Succeeded)
+                    {
+                        throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                    }
                 }
-
-
-
+                
                 var courses = new List<Course>();
-                for (int i = 0; i < 5; i++)
+                
+                for (var i = 0; i < 5; i++)
                 {
-                    var date = DateTime.Now;
+                    var date = DateTime.Now.AddDays(_fake.Random.Int(-22, 0));
                     var course = new Course
                     {
-                        Title = fake.Company.CatchPhrase(),
-                        Description = fake.Hacker.Verb(),
+                        Title = _fake.Company.CatchPhrase(),
+                        Description = _fake.Hacker.Verb(),
                         StartDate = date,
                         EndDate = date.AddMonths(6),
                         Modules = GetModules(10),
-                        //Students = GetStudents(30)
                     };
                     courses.Add(course);
                 }
-                context.AddRange(courses);
-                context.SaveChanges();
+                await context.AddRangeAsync(courses);
+                await context.SaveChangesAsync();
 
 
                 var students = GetStudents(20);
                 
                 foreach (var student in students)
                 {
-                    var addStudentResult = await userManager.CreateAsync(student, studentPW);
-                    if (!addStudentResult.Succeeded) throw new Exception(string.Join("\n", addStudentResult.Errors));
+                    var addStudentResult = await _userManager.CreateAsync(student, studentPW);
+                    
+                    if (!addStudentResult.Succeeded)
+                    {
+                        throw new Exception(string.Join("\n", addStudentResult.Errors));
+                    }
 
-                    var studentUser = await userManager.FindByEmailAsync(student.Email);
+                    var studentUser = await _userManager.FindByEmailAsync(student.Email);
 
-                    if (studentUser is null) continue;
-                    if (await userManager.IsInRoleAsync(studentUser, roleNames[1])) continue;
+                    if (studentUser is null)
+                    {
+                        continue;
+                    }
 
-                    var addToRoleResult = await userManager.AddToRoleAsync(studentUser, roleNames[1]);
+                    if (await _userManager.IsInRoleAsync(studentUser, roleNames[1]))
+                    {
+                        continue;
+                    }
 
-                    if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                    var addToRoleResult = await _userManager.AddToRoleAsync(studentUser, roleNames[1]);
+
+                    if (!addToRoleResult.Succeeded)
+                    {
+                        throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                    }
 
                 }
-
-
-                var enrollist = new List<ApplicationUserCourse>();
+                
+                var enrollmentsList = new List<ApplicationUserCourse>();
                 foreach (var s in students)
                 {
-                        var junktion = new ApplicationUserCourse
+                        var junction = new ApplicationUserCourse
                         {
                             ApplicationUserId = s.Id,
-                            CourseId = courses[fake.Random.Int(0,4)].Id
+                            CourseId = courses[_fake.Random.Int(0,4)].Id
                         };
-                    enrollist.Add(junktion);
+                    enrollmentsList.Add(junction);
                     
                 }
-                context.AddRange(enrollist);
-                context.SaveChanges();
-                //var newStudentList = new List<ApplicationUser>();
-                var randomInt = fake.Random.Int(1, 5);
+                await context.AddRangeAsync(enrollmentsList);
+                await context.SaveChangesAsync();
+                var randomInt = _fake.Random.Int(1, 5);
                 foreach (var c in courses)
                 {
-                    //for (int i = 0; i < 20; i++)
-                    //{
-                    //    var student1 = students[fake.Random.Int(0, 49)];
-                    //    if (c.Students is null || !c.Students.Contains(student1))
-                    //    {
-                    //        newStudentList.Add(student1);
-                    //    }
-                    //}
-                    //c.Students = newStudentList;
-                    //c.Documents = GetDocuments(randomInt, c.Students.ToList());
                     c.Documents = GetDocuments(randomInt, students);
                     foreach (var m in c.Modules)
                     {
@@ -146,25 +154,20 @@ namespace LMS.Data.Data
                         }
                     }
                 }
-                context.SaveChanges();
                 await context.SaveChangesAsync();
-
-
             }
         }
-
-
+        
         private static List<Module> GetModules(int count)
         {
             var modules = new List<Module>();
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                var date = DateTime.Now.AddDays(fake.Random.Int(-2, 2));
-
+                var date = DateTime.Now.AddDays(_fake.Random.Int(-12, 2));
                 var module = new Module
                 {
-                    Title = fake.Company.CatchPhrase(),
-                    Description = fake.Commerce.ProductAdjective(),
+                    Title = _fake.Company.CatchPhrase(),
+                    Description = _fake.Commerce.ProductAdjective(),
                     StartDate = date,
                     EndDate = date.AddMonths(1),
                     Activities = GetActivities(5),
@@ -177,19 +180,21 @@ namespace LMS.Data.Data
         private static List<Activity> GetActivities(int count)
         {
             var activities = new List<Activity>();
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                var date = DateTime.Now.AddDays(fake.Random.Int(-2, 2));
+                var date = DateTime.Now.AddDays(_fake.Random.Int(-2, 2));
 
                 var activity = new Activity
                 {
-                    Name = fake.Lorem.Word(),
-                    Description = fake.Hacker.Verb(),
+                    Name = _fake.Lorem.Word(),
+                    Description = _fake.Hacker.Verb(),
                     StartDate = date,
                     EndDate = date.AddDays(5),
-                    ActivityType = fake.PickRandom<ActivityType>(),
+                    ActivityType = _fake.PickRandom<ActivityType>(),
+                    
                 };
 
+                if(activity.ActivityType == ActivityType.Assignments) activity.Deadline = activity.EndDate;
                 activities.Add(activity);
             }
 
@@ -199,16 +204,16 @@ namespace LMS.Data.Data
         private static List<Document> GetDocuments(int count, List<ApplicationUser> listStudent)
         {
             var documents = new List<Document>();
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                var date = DateTime.Now.AddDays(fake.Random.Int(-12, -2));
+                var date = DateTime.Now.AddDays(_fake.Random.Int(-12, -2));
 
                 var document = new Document
                 {
-                    Name = fake.System.CommonFileName(),
-                    Description = fake.Hacker.Verb(),
+                    Name = _fake.System.CommonFileName(),
+                    Description = _fake.Hacker.Verb(),
                     UploadTime = date,
-                    UserId = listStudent[fake.Random.Int(1, (listStudent.Count-1))].Id
+                    UserId = listStudent[_fake.Random.Int(1, (listStudent.Count-1))].Id
                 };
 
                 documents.Add(document);
@@ -219,17 +224,16 @@ namespace LMS.Data.Data
         private static List<ApplicationUser> GetStudents(int count)
         {
             var list = new List<ApplicationUser>();
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                var fName = fake.Name.FirstName();
-                var lName = fake.Name.LastName();
+                var fName = _fake.Name.FirstName();
+                var lName = _fake.Name.LastName();
                 var student = new ApplicationUser()
                 {
                     FirstName = fName,
                     LastName = lName,
                     UserName = fName,
-                    Email = fake.Internet.Email($"{fName} {lName}")
-
+                    Email = _fake.Internet.Email($"{fName} {lName}")
                 };
                 list.Add(student);
             }

@@ -1,5 +1,4 @@
-using LMS.Core.Entities;
-using LMS.Data.Data;
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -8,36 +7,36 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Runtime.InteropServices;
+using LMS.Core.Entities;
+using LMS.Data.Data;
 
 namespace LMS.Web
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<LMSWebContext>(options =>
+            services.AddDbContext<MvcDbContext>(options =>
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-
                     options.UseSqlServer(
-                        Configuration.GetConnectionString("SQLServerConnectionMvc") //  DefaultConnection    
-                    );
+                        Configuration.GetConnectionString("SQLServerConnectionMvc")
+                    ).LogTo(System.Console.WriteLine, LogLevel.Information);
                 }
                 else
                 {
                     options.UseSqlite(
                         Configuration.GetConnectionString("SQLiteConnectionMvc")
-                    );
+                    ).LogTo(System.Console.WriteLine, LogLevel.Information);
                 }
             });
 
@@ -46,17 +45,15 @@ namespace LMS.Web
             services.AddDefaultIdentity<ApplicationUser>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
-            })
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<LMSWebContext>();
+            }).AddRoles<IdentityRole>()
+              .AddEntityFrameworkStores<MvcDbContext>();
 
-            services.Configure<LMSWebContext>(o => o.Database.Migrate());
+            services.Configure<MvcDbContext>(db => db.Database.Migrate());
 
             services.AddControllersWithViews();
 
-            services.AddDbContext<LMSWebContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("LMSWebContext")).LogTo(System.Console.WriteLine, LogLevel.Information));
-
+            // services.AddDbContext<MvcDbContext>(options =>
+            //         options.UseSqlServer(Configuration.GetConnectionString("LMSWebContext")).LogTo(System.Console.WriteLine, LogLevel.Information));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

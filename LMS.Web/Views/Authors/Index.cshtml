@@ -1,0 +1,77 @@
+﻿@model IEnumerable<LMS.Core.Models.AuthorDto>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h4 class="text-center mt-3">Authors</h4>
+<hr />
+<form asp-action="Index" asp-controller="Authors" class="course-search-form w-75 justify-content-center container-fluid m-auto" style="left:100px;">
+    <input name="nameLike" type="text" placeholder="Search Author" class="w-75 m-1">
+    <button type="submit" class="site-btn m-1">Search Author</button>
+</form>
+
+<hr />
+
+<div class="row justify-content-center">
+
+    <div class="col-auto">
+        <p>
+            <a asp-action="Create" class="btn btn-outline-secondary">Create New</a>
+        </p>
+        <table class="table table-striped table-responsive">
+            <thead class="text-muted bg-light">
+                <tr>
+                    <th>
+                        Full name
+                    </th>
+
+                    <th>
+                        age
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count() == 0)
+                {
+                    <tr class="alert-danger">
+                        <td colspan="4"> No records found</td>
+                    </tr>
+                }
+                else
+                {
+
+                    foreach (var item in Model)
+                    {
+                        var fullName = item.FirstName + " " + item.LastName;
+
+                        if (Model.Count() == 0)
+                        {
+                            <tr class="alert-danger">
+                                <td colspan="4"> No records found</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => fullName)
+                                </td>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Age)
+                                </td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary">Edit</a>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info">Details</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                </tbody>
+        </table>
+    </div>
+</div>

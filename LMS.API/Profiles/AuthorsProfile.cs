@@ -25,7 +25,8 @@ namespace LMS.API.Profiles
                     )
                 );
 
-            CreateMap<AuthorCreationDto, Author>();
+            CreateMap<AuthorCreationDto, Author>().ReverseMap();
+          
         }
     }
 }

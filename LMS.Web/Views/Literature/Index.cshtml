@@ -1,0 +1,101 @@
+@model IEnumerable<LMS.Core.Models.PublicationWithAuthorsDto>
+
+@{
+    ViewData["Title"] = "Literature";
+}
+
+<h4 class="text-center mt-3">Literature</h4>
+<hr />
+<form asp-action="Index" asp-controller="Literature" class="course-search-form w-75 justify-content-center container-fluid m-auto" style="left:100px;">
+    <input name="searchQuery" type="text" placeholder="Search Literature by Title" class="w-75 m-1">
+    <button type="submit" class="site-btn m-1">Search Literature</button>
+</form>
+
+<hr />
+
+<div class="row justify-content-center">
+
+    <div class="col-auto">
+        <p>
+            <a asp-action="Create" class="btn btn-outline-secondary">Create New</a>
+        </p>
+        <table class="table table-striped">
+            <thead class="text-muted bg-light">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                    @* Description *@
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PublicationDate)
+                    @* Publication Date *@
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Level)
+                    @* Level *@
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TypeName)
+                    @* Type *@
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SubjectName)
+                    @* Subject *@
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Authors)
+                </th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            <details close>
+                                <summary>Description...</summary>
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </details>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PublicationDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Level)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TypeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SubjectName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Authors.Count)
+                        </td>
+                        <td colspan="3">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary" style="font-size:11px;">Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info" style="font-size:11px;">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" style="font-size:11px;">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr class="alert-danger">
+                    <td colspan="8"> No records found</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

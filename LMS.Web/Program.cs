@@ -1,6 +1,5 @@
 using LMS.Data.Data;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,13 +14,12 @@ namespace LMS.Web
         {
             var host = CreateHostBuilder(args).Build();
 
-
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var confiq = services.GetRequiredService<IConfiguration>();
-                var adminPW = confiq["TeacherPW"];
-                var userPW = confiq["StudentPW"];
+                var config = services.GetRequiredService<IConfiguration>();
+                var adminPW = config["TeacherPW"];
+                var userPW = config["StudentPW"];
                 try
                 {
                     SeedData.InitAsync(services, adminPW, userPW).Wait();
@@ -30,11 +28,10 @@ namespace LMS.Web
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex.Message, "Seed fail");
-                    throw;
                 }
             }
 
-                host.Run();
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
