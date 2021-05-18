@@ -323,26 +323,23 @@ namespace LMS.Web.Controllers
             return View("GetStudentsForThisCourse", course);
         }
 
-        public async Task<IActionResult> GetAllStudents()
+        public async Task<IActionResult> GetAllStudents(string name)
         {
-            var students = await _dbContext.Course
-                .Include(c => c.Students)
-                .ToListAsync();
-
-            return View("GetAllStudents", students);
-        }
-        
-        // FIXME: This does not work. The method searches courses attended by a student, not students
-        public async Task<IActionResult> GetStudentByName(string name)
-        {
-            name = name.Trim().ToLower();
-            // This is a list of Courses, not Students
-            var courses = await _dbContext.Course
-                .Where(c => c.Students.Any(au => au.LastName.ToLower().StartsWith(name) || au.FirstName.ToLower().StartsWith(name) || name == null))
-                .Include( c=> c.Students)
-                .ToListAsync();
-            
-            return View("GetAllStudents", courses);
+            if (string.IsNullOrEmpty(name))
+            {
+                var students = await _dbContext.Course
+                    .Include(c => c.Students)
+                    .ToListAsync();
+                return View("GetAllStudents", students);
+            } 
+            else
+            {
+                var students = await _dbContext.Course
+                    .Where(c => c.Students.Any(s => s.LastName.ToLower().StartsWith(name.ToLower()) || s.FirstName.ToLower().StartsWith(name.ToLower()) || name == null))
+                    .Include(c => c.Students)
+                    .ToListAsync();
+                return View("GetAllStudents", students);
+            }
         }
 
         [HttpPost]

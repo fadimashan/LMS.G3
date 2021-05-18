@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMS.Core", "LMS.Core\LMS.Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMS.API", "LMS.API\LMS.API.csproj", "{FC42F67B-F200-4DE9-A2ED-A370508BC67C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMS.Data", "LMS.Data\LMS.Data.csproj", "{044AC807-EDA1-4157-80FA-798D9D808891}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMS.Data", "LMS.Data\LMS.Data.csproj", "{044AC807-EDA1-4157-80FA-798D9D808891}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
