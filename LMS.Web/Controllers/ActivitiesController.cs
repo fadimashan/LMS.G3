@@ -90,6 +90,7 @@ namespace LMS.Web.Controllers
             }
 
             var activity = await _dbContext.Activity.FindAsync(id);
+            var module = await _dbContext.Module.FindAsync(activity.ModuleId);
 
             if (activity is null)
             {
@@ -106,7 +107,7 @@ namespace LMS.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ActivityType,StartDate,EndDate,Description")] Activity activity)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ActivityType,StartDate,EndDate,Description,ModuleId,Module")] Activity activity)
         {
             if (id != activity.Id)
             {
@@ -142,6 +143,25 @@ namespace LMS.Web.Controllers
             }
             //return View(activity);
             return Redirect("/courses");
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyStartDate(Activity activity)
+        {
+            var module = _dbContext.Module.Find(activity.ModuleId);
+
+            if (activity.EndDate != DateTime.Parse("0001-01-01 00:00:00") && (activity.StartDate < module.StartDate || activity.EndDate > module.EndDate || activity.StartDate > module.EndDate || activity.EndDate < module.StartDate))
+            {
+                return Json($"Module started in {module.StartDate}. End in { module.EndDate} ");
+            }
+
+            if(activity.EndDate != DateTime.Parse("0001-01-01 00:00:00") && (activity.StartDate >= activity.EndDate))
+            {
+                return Json($"Date should not start and end in the same time!");
+
+            }
+
+            return Json(true);
         }
 
         // GET: Activities/Delete/5

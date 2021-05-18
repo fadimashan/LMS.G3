@@ -1,0 +1,61 @@
+﻿@model LMS.Core.Entities.Course
+
+
+<div>
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <div class="container justify-content-center">
+                <div class="row justify-content-center ">
+                    <div class="col-sm-auto mt-3">
+                        <input type="file" name="files" value="Upload" class="btn btn-outline-secondary" data-toggle="tooltip" data-placement="bottom" title="Upload new file" multiple="multiple" />
+                        <button asp-controller="Courses" asp-action="UploadCourseDocument" asp-route-id="@Model.Id" value="upload" class="btn btn-outline-secondary">Upload</button>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="m-4">
+    <h6 style="margin-top: 50px" class="m-2">List of downloaded files: </h6>
+    <table class="table table-striped m-2">
+        <thead>
+            <tr>
+                <th>
+                    File Name
+                </th>
+                <th>
+                    Uploaded Time
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model.Documents)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UploadTime)
+                    </td>
+                    <td>
+                        <a class="btn btn-info" asp-controller="Documents" asp-action="Download"
+                           asp-route-filename="@item.Name">
+                            <i class="fas fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    <a asp-controller="courses" asp-action="Index" class="btn site-btn">Back</a>
+
+
+</div>

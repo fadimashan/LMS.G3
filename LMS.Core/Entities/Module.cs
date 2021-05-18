@@ -1,4 +1,5 @@
 ﻿using LMS.Core.Validation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -24,16 +25,15 @@ namespace LMS.Core.Entities
         [StringLength(1000, ErrorMessage = "Module Description cannot be longer than 1000 characters")]
         public string Description { get; set; }
 
-        [CheckModuleDate]
+        [Remote(action: "VerifyModuleStartDate", controller: "Modules", AdditionalFields = ("CourseId,EndDate"))]
         [Display(Name = "StartDate")]
         [Required(ErrorMessage = "Module StartDate is required")]
-        [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime StartDate { get; set; }
 
+        [Remote(action: "VerifyModuleStartDate", controller: "Modules", AdditionalFields = ("CourseId,StartDate"))]
         [Display(Name = "EndDate")]
         [Required(ErrorMessage = "Module EndDate is required")]
-        [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime EndDate { get; set; }
 

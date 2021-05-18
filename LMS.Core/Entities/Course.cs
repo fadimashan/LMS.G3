@@ -15,10 +15,8 @@ namespace LMS.Core.Entities
         [Key]
         public int Id { get; set; }
 
-        [Remote(action: "CheckUniqueTitle", controller: "Courses")]
-        [Display(Name = "Course Title")]
-        [Required(ErrorMessage = "Course Title is required")]
-
+        [Remote(action: "VerifyCourse", controller: "Courses")]
+        [Required]
         [StringLength(100, ErrorMessage = "Course Title cannot be longer than 100 characters")]
         public string Title { get; set; }
 
@@ -33,6 +31,7 @@ namespace LMS.Core.Entities
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime StartDate { get; set; }
 
+        [Remote(action: "VerifyCourseDate", controller: "Courses", AdditionalFields =("StartDate"))]
         [Display(Name = "EndDate")]
         [Required(ErrorMessage = "Course EndDate is required")]
         [DataType(DataType.Date)]

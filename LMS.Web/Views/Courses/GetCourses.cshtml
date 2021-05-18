@@ -2,7 +2,7 @@
 
 @{
     var uploadId2 = @Url.RouteUrl(ViewContext.RouteData.Values).Last();
- }
+}
 
 <div class="text-center justify-content-center">
     <h2 class="m-2 text-center text-muted">LMS Courses</h2>
@@ -10,7 +10,7 @@
 
     <hr />
     <br />
-    
+
 </div>
 <div class="btn-group text-center m-2">
     <p type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="site-btn m-2 text-center">Create</p>
@@ -20,11 +20,10 @@
         <a asp-controller="Activities" asp-action="Create" type="button" class="dropdown-item">Activity</a>
     </div>
 </div>
-
 <table class="table table-striped" id="drop2">
     <thead class="text-muted">
         <tr class="text-muted fs-3">
-            <th class="text-center text-muted"> <h5>Title </h5></th>
+            <th> <h5>Title </h5></th>
             <th class="text-center text-muted"> <h5>Period </h5></th>
             <th class="text-center text-muted"> <h5>Start Date </h5></th>
             <th class="text-center text-muted"> <h5>Modules No.</h5></th>
@@ -228,7 +227,7 @@
     //let table2 = table.cloneNode(table);
     //let uploadBtn = document.getElementById("uploadBtn");
     //let allRows = document.querySelectorAll("TR");
-    
+
     //let docId = document.getElementById("docId");
     //docId.addEventListener("click", () => {
     //    let courseId = uploadBtn.getAttribute("data-target");
@@ -248,7 +247,7 @@
     //})
     //uploadBtn.addEventListener("click", () => {
     //    /*console.log("click");*/
-       
+
     //    //console.log(courseId);
     //    //console.log(modCourseId);
     //    let courseId = uploadBtn.getAttribute("data-target");

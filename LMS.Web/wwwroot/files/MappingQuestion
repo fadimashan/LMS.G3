@@ -1,0 +1,27 @@
+Hej! Jag har en fråga angående mappning av komplexa entiteter med samlingar med hjälp av en Automapper.
+Situationen: Det finns två entiteter med en många-till-många relation. `ClassA` innehåller en `ICollection<ClassB>`, medan `ClassB` innehåller en `ICollection<ClassA>`. Vi har också två DTO klasser som motsvarar dessa entiteter. Och så länge DTOs skippar samlingar så är mappningen mycket enkel och sker problemfritt. Men om vi i `ClassADto` lägger en samling i form av `ICollection<ClassBDto>`, och samtidigt har en en `ICollection<ClassADto>` inuti `ClassBDto` så blir det väldigt svårt att mappa mellan entiteter och motsvarande DTOs, pga ett cirkulärt beroende. Frågan är: Hur brukar man lösa det här problemmet?
+Min första tanke är att skapa två extra DTO klasser och flytta samlingarna till dem. Så det blir till slut så här:
+
+```
+ClassADto
+{
+    ... // Bara enkla properties
+}
+
+ClassBDto
+{
+    ... // Inga samlingar
+}
+
+ClassAwithCollectionDto : ClassADto
+{
+    ICollection<ClassBDto> collection { get; set; }
+}
+
+ClassBwithCollectionDto
+{
+    ICollection<ClassADto> collection { get; set; }
+}
+```
+
+Är jag på rätt spår eller finns det ett bättre sätt att åstadkomma det här?

@@ -33,7 +33,7 @@ namespace LMS.Web.Controllers
 
             httpClient = new HttpClient(handler)
             {
-                BaseAddress = new Uri(baseAddress), 
+                BaseAddress = new Uri(baseAddress),
                 Timeout = new TimeSpan(0, 0, 10)
             };
             httpClient.DefaultRequestHeaders.Clear();
@@ -145,7 +145,7 @@ namespace LMS.Web.Controllers
             var requestByName = new HttpRequestMessage(HttpMethod.Get, $"api/authors/GetAuthorByName/{fullName}");
             requestByName.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var responseByName =  await httpClient.SendAsync(requestByName);
+            var responseByName = await httpClient.SendAsync(requestByName);
 
             responseByName.EnsureSuccessStatusCode();
             if (responseByName.IsSuccessStatusCode == false)

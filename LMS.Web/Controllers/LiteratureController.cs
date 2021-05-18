@@ -18,7 +18,7 @@ namespace LMS.Web.Controllers
     {
         private const string baseAddress = "https://localhost:5001/";
         private const string baseRoute = "api/publications";
-        
+
         private readonly ILogger<LiteratureController> _logger;
         private readonly HttpClient httpClient;
 
@@ -34,7 +34,7 @@ namespace LMS.Web.Controllers
 
             httpClient = new HttpClient(handler)
             {
-                BaseAddress = new Uri(baseAddress), 
+                BaseAddress = new Uri(baseAddress),
                 Timeout = new TimeSpan(0, 0, 10)
             };
             httpClient.DefaultRequestHeaders.Clear();
@@ -82,7 +82,7 @@ namespace LMS.Web.Controllers
             {
                 return NotFound();
             }
-            
+
             var content = await response.Content.ReadAsStringAsync();
 
             PublicationWithAuthorsDto publication;
@@ -154,7 +154,7 @@ namespace LMS.Web.Controllers
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var response = await httpClient.SendAsync(request);
-            
+
             response.EnsureSuccessStatusCode();
             if (response.IsSuccessStatusCode == false)
             {
@@ -207,14 +207,14 @@ namespace LMS.Web.Controllers
 
             var request = new HttpRequestMessage(HttpMethod.Get, string.Join("/", baseRoute, id.ToString()));
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            
+
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
-            
+
             var content = await response.Content.ReadAsStringAsync();
 
             PublicationWithAuthorsDto publication = JsonConvert.DeserializeObject<PublicationWithAuthorsDto>(content);
-            
+
             return View(publication);
         }
 
@@ -225,7 +225,7 @@ namespace LMS.Web.Controllers
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, string.Join("/", baseRoute, id.ToString()));
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            
+
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return RedirectToAction(nameof(Index));
@@ -239,6 +239,17 @@ namespace LMS.Web.Controllers
         }
         */
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                httpClient?.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+
         public async Task<IEnumerable<SelectListItem>> GetSubjects()
         {
             var subjects = new List<SelectListItem>();
@@ -249,7 +260,7 @@ namespace LMS.Web.Controllers
             var response = await httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
-          
+
 
             var content = await response.Content.ReadAsStringAsync();
 
@@ -276,13 +287,12 @@ namespace LMS.Web.Controllers
             var content = await response.Content.ReadAsStringAsync();
 
             IEnumerable<AuthorDto> authors = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(content);
-          
+
             foreach (var author in authors)
             {
                 var authorName = author.FirstName + " " + author.LastName;
                 var selectListItem = new SelectListItem()
                 {
-                    
                     Text = authorName,
                     Value = author.Id.ToString()
                 };
@@ -290,7 +300,7 @@ namespace LMS.Web.Controllers
             }
             return (selectList);
         }
-        
+
         public async Task<IEnumerable<SelectListItem>> GetTypes()
         {
             var selectList = new List<SelectListItem>();
@@ -300,12 +310,11 @@ namespace LMS.Web.Controllers
             var content = await response.Content.ReadAsStringAsync();
 
             IEnumerable<PublicationTypeDto> types = JsonConvert.DeserializeObject<IEnumerable<PublicationTypeDto>>(content);
-          
+
             foreach (var type in types)
             {
                 var selectListItem = new SelectListItem()
                 {
-                    
                     Text = type.Name,
                     Value = type.Id.ToString()
                 };
@@ -313,16 +322,5 @@ namespace LMS.Web.Controllers
             }
             return (selectList);
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                httpClient?.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
-
     }
 }

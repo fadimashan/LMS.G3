@@ -11,7 +11,8 @@ namespace LMS.Data.Data
         public DbSet<Module> Module { get; set; }
         public DbSet<Activity> Activity { get; set; }
         public DbSet<Document> Document { get; set; }
-        // public DbSet<AuthorDto> AuthorDto { get; set; }
+      
+
         public MvcDbContext(DbContextOptions<MvcDbContext> options)
           : base(options)
         {
@@ -30,10 +31,7 @@ namespace LMS.Data.Data
                     a => a.HasOne(a => a.Course).WithMany(c => c.Enrollments),
                     a => a.HasOne(app => app.Student).WithMany(s => s.AttendingCourses));
 
-            //builder.Entity<Module>()
-            //    .HasMany(m => m.Activities)
-            //    .WithOne(m => m.Module)
-            //    .OnDelete(DeleteBehavior.NoAction);
+           
         }
     }
 }
