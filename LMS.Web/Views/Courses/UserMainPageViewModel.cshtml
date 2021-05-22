@@ -13,8 +13,9 @@
 
 <div id="course" class=" mt-0" style="top:-90px;">
     <div class="row">
-        <div class="btn-groupm-lg-auto col-auto" />
-        <p class="btn text-center site-btn ml-1 w-auto" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 25px !important;">Course participants</p>
+        <div class="btn-groupm-lg-auto col-auto">
+            <p class="btn text-center site-btn ml-1 w-auto" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 25px !important;">Course participants</p>
+        </div>
         <div class="dropdown-menu ">
             @foreach (var student in Model.FirstOrDefault().Students)
             {
@@ -118,7 +119,6 @@
         </div>
     </div>
 </div>
-</div>
 
 <script>
     let userPage = document.getElementById("userPage");
@@ -137,7 +137,7 @@
             activity.style.display = "block";
         }
         else {
-             el.setAttribute("href", "#");
+            el.setAttribute("href", "#");
             course.style.display = "none";
             userPage.style.display = "none";
             activity.style.display = "none";

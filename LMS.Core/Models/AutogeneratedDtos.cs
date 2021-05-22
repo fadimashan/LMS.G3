@@ -31,7 +31,7 @@ namespace LMS.Core.Models
         public string LastName { get; set; }
     
         [Newtonsoft.Json.JsonProperty("dateOfBirth", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [DataType(DataType.Date)]
+        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime DateOfBirth { get; set; }
 
     }
@@ -49,6 +49,7 @@ namespace LMS.Core.Models
         public string LastName { get; set; }
         
         [Newtonsoft.Json.JsonProperty("dateOfBirth", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime DateOfBirth { get; set; }
     
         [Newtonsoft.Json.JsonProperty("age", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -69,6 +70,7 @@ namespace LMS.Core.Models
         public string LastName { get; set; }
         
         [Newtonsoft.Json.JsonProperty("dateOfBirth", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime DateOfBirth { get; set; }
 
         [Newtonsoft.Json.JsonProperty("age", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -102,7 +104,7 @@ namespace LMS.Core.Models
         public string Description { get; set; }
     
         [Newtonsoft.Json.JsonProperty("publicationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [DataType(DataType.Date), Display(Name = "Publication Date")]
+        [DataType(DataType.Date), Display(Name = "Publication Date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime PublicationDate { get; set; }
     
         [Newtonsoft.Json.JsonProperty("level", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -151,7 +153,7 @@ namespace LMS.Core.Models
         public string Description { get; set; }
     
         [Newtonsoft.Json.JsonProperty("publicationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [DataType(DataType.Date)]
+        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime PublicationDate { get; set; }
     
         [Newtonsoft.Json.JsonProperty("level", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -195,7 +197,7 @@ namespace LMS.Core.Models
         public string Description { get; set; }
     
         [Newtonsoft.Json.JsonProperty("publicationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [DataType(DataType.Date), Display(Name = "Publication Date")]
+        [DataType(DataType.Date), Display(Name = "Publication Date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime PublicationDate { get; set; }
     
         [Newtonsoft.Json.JsonProperty("level", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
