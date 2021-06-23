@@ -111,7 +111,6 @@ namespace LMS.Web.Controllers
         
         public async Task<IActionResult> GetAuthor(int id)
         {
-            // var request = new HttpRequestMessage(HttpMethod.Get, $"api/authors/{id}");
             var request = new HttpRequestMessage(HttpMethod.Get, string.Join("/", baseRoute, id.ToString()));
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

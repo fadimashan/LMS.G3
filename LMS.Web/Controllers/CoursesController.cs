@@ -22,10 +22,20 @@ namespace LMS.Web.Controllers
         private readonly MvcDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
 
+        record Person(string name, int age);
+
         public CoursesController(MvcDbContext context, UserManager<ApplicationUser> userManager)
         {
             _dbContext = context;
             _userManager = userManager;
+
+            var p1 = new Person("fadi", 22);
+            var p2 = new Person("shadi", 33);
+            var p3 = new Person("wael", 44);
+
+            var list1 = new List<Person> { p1, p2, p3 };
+
+            Console.WriteLine(list1);
         }
 
         // GET: Courses
@@ -488,7 +498,6 @@ namespace LMS.Web.Controllers
                     .Include(s => s.Students)
                     .Include(d => d.Documents)
                     .ToList();
-            // Variable `course` is never used
             var course = _dbContext.Course.Find(id);
             var userId = _userManager.GetUserId(User);
             if (files is not null && files.Length > 0)
@@ -551,7 +560,6 @@ namespace LMS.Web.Controllers
 
             }
             return View("GetCourses", courses);
-            //return Redirect("/Courses");
         }
     }
 }
