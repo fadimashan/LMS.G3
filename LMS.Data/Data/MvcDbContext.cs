@@ -30,8 +30,6 @@ namespace LMS.Data.Data
                 .UsingEntity<ApplicationUserCourse>(
                     a => a.HasOne(a => a.Course).WithMany(c => c.Enrollments),
                     a => a.HasOne(app => app.Student).WithMany(s => s.AttendingCourses));
-
-           
         }
     }
 }
