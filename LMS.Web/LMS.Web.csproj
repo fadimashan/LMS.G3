@@ -1,12 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>aspnet-LMS.Web-14D1C943-99E7-4285-9CBD-38C3BB3C6E9F</UserSecretsId>
     <Nullable>disable</Nullable>
   </PropertyGroup>
+
   <ItemGroup>
     <None Update="lmsmvc.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true"/>
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.9"/>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.9"/>
@@ -24,12 +27,15 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2"/>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1"/>
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\LMS.Data\LMS.Data.csproj"/>
     <ProjectReference Include="..\LMS.Core\LMS.Core.csproj"/>
   </ItemGroup>
+  
   <ItemGroup>
     <Folder Include="wwwroot\img\"/>
     <Folder Include="wwwroot\files\"/>
   </ItemGroup>
+
 </Project>
